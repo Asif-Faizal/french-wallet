@@ -14,4 +14,5 @@ class AppRouteConst {
   static const politicallyExposedRoute = 'politicallyExposed';
   static const privacyPolicyRoute = 'privacyPolicy';
   static const selfieRoute = 'selfie';
+  static const setPassCodeRoute = 'setPassCode';
 }

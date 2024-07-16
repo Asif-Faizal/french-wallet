@@ -7,6 +7,7 @@ import 'package:ewallet2/presentation/screens/signup_screen/personal_details_scr
 import 'package:ewallet2/presentation/screens/signup_screen/politically_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/privacy_policy_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/sent_otp_screen.dart';
+import 'package:ewallet2/presentation/screens/signup_screen/set_passcode_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/take_selfie_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/upload_id_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/verify_number_screen.dart';
@@ -94,6 +95,11 @@ class AppRouter {
         path: '/selfie',
         name: 'selfie',
         builder: (context, state) => TakeSelfieScreen(),
+      ),
+      GoRoute(
+        path: '/setPassCode',
+        name: 'setPassCode',
+        builder: (context, state) => SetPasscodeScreen(),
       )
     ],
   );

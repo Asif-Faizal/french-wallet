@@ -187,8 +187,8 @@ class _PromptScreenState extends State<PromptScreen> {
                               .pushNamed(AppRouteConst.corporatePromptRoute);
                         } else {
                           GoRouter.of(context)
-                              // .pushNamed(AppRouteConst.selfieRoute);
-                              .pushNamed(AppRouteConst.loginOrSignUpRoute);
+                              .pushNamed(AppRouteConst.setPassCodeRoute);
+                          // .pushNamed(AppRouteConst.loginOrSignUpRoute);
                         }
                       }
                     : null,
