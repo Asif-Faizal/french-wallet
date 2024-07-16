@@ -15,4 +15,5 @@ class AppRouteConst {
   static const privacyPolicyRoute = 'privacyPolicy';
   static const selfieRoute = 'selfie';
   static const setPassCodeRoute = 'setPassCode';
+  static const retailHomeRoute = 'retailHome';
 }

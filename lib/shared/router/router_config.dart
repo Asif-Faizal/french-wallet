@@ -1,3 +1,4 @@
+import 'package:ewallet2/presentation/screens/dashboard/retail/retail_home_screen.dart';
 import 'package:ewallet2/presentation/screens/initial/corporate_promot_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/add_email_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/address_screen.dart';
@@ -100,6 +101,11 @@ class AppRouter {
         path: '/setPassCode',
         name: 'setPassCode',
         builder: (context, state) => SetPasscodeScreen(),
+      ),
+      GoRoute(
+        path: '/retailHome',
+        name: 'retailHome',
+        builder: (context, state) => RetailHomeScreen(),
       )
     ],
   );

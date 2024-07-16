@@ -1,7 +1,9 @@
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import 'package:go_router/go_router.dart';
 
 class PrivacyPolicyScreen extends StatefulWidget {
   const PrivacyPolicyScreen({super.key});
@@ -152,9 +154,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   }
 
   void _navigateToNextScreen() {
-    // Navigate to the next screen or perform necessary actions upon acceptance
-    // Example:
-    // Navigator.of(context).pushReplacementNamed('/next_screen');
+    GoRouter.of(context).pushNamed(AppRouteConst.setPassCodeRoute);
   }
 
   void _showPolicyDialog(String title, String content) {
