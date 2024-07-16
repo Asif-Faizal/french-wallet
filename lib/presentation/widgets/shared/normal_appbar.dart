@@ -22,7 +22,7 @@ class NormalAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Theme.of(context).colorScheme.surface,
       title: Text(
         text,
-        style: Theme.of(context).textTheme.headlineSmall,
+        style: Theme.of(context).textTheme.bodyLarge,
       ),
     );
   }

@@ -8,4 +8,6 @@ class AppRouteConst {
   static const identityVerifyRoute = 'identityVerify';
   static const uploadIdScreenRoute = 'uploadIdScreen';
   static const personalDetailsRoute = 'personalDetails';
+  static const addressDetailsRoute = 'addressDetails';
+  static const addEmailRoute = 'addEmail';
 }

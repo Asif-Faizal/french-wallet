@@ -1,6 +1,8 @@
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart'; // Add this import for date formatting
 
 class PersonalDetailsScreen extends StatefulWidget {
@@ -136,7 +138,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
         child: Row(
           children: [
             Expanded(
-                flex: 2, child: Text(label, style: theme.textTheme.bodyLarge)),
+                flex: 2, child: Text(label, style: theme.textTheme.bodyMedium)),
             Expanded(
               flex: 3,
               child: TextField(
@@ -161,7 +163,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
           children: [
             Expanded(
                 flex: 2,
-                child: Text('Gender', style: theme.textTheme.bodyLarge)),
+                child: Text('Gender', style: theme.textTheme.bodyMedium)),
             Expanded(
               flex: 3,
               child: Row(
@@ -205,7 +207,8 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
           children: [
             Expanded(
                 flex: 2,
-                child: Text('Date of Birth', style: theme.textTheme.bodyLarge)),
+                child:
+                    Text('Date of Birth', style: theme.textTheme.bodyMedium)),
             Expanded(
               flex: 3,
               child: GestureDetector(
@@ -254,7 +257,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
             Expanded(
                 flex: 2,
                 child:
-                    Text('Marital Status', style: theme.textTheme.bodyLarge)),
+                    Text('Marital Status', style: theme.textTheme.bodyMedium)),
             Expanded(
               flex: 3,
               child: DropdownButtonFormField<String>(
@@ -282,7 +285,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
 
   void _saveForm() {
     if (_formKey.currentState!.validate()) {
-      // Proceed with saving or other logic
+      GoRouter.of(context).pushNamed(AppRouteConst.addressDetailsRoute);
     } else {
       // Show validation errors
     }

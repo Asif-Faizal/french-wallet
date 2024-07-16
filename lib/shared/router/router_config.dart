@@ -1,4 +1,6 @@
 import 'package:ewallet2/presentation/screens/initial/corporate_promot_screen.dart';
+import 'package:ewallet2/presentation/screens/signup_screen/add_email_screen.dart';
+import 'package:ewallet2/presentation/screens/signup_screen/address_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/identity_verify_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/personal_details_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/sent_otp_screen.dart';
@@ -58,6 +60,16 @@ class AppRouter {
         path: '/personalDetails',
         name: 'personalDetails',
         builder: (context, state) => const PersonalDetailsScreen(),
+      ),
+      GoRoute(
+        path: '/addressDetails',
+        name: 'addressDetails',
+        builder: (context, state) => const AddressDetailsScreen(),
+      ),
+      GoRoute(
+        path: '/addEmail',
+        name: 'addEmail',
+        builder: (context, state) => const EmailDetailsScreen(),
       )
     ],
   );

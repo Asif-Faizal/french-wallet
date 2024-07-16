@@ -56,7 +56,7 @@ class _UploadIdScreenState extends State<UploadIdScreen> {
               ),
               Text(
                 'Upload Photo of ID',
-                style: theme.textTheme.headlineLarge,
+                style: theme.textTheme.headlineMedium,
               ),
               SizedBox(height: size.height * 0.05),
               Row(
