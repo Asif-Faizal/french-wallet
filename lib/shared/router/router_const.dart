@@ -10,4 +10,6 @@ class AppRouteConst {
   static const personalDetailsRoute = 'personalDetails';
   static const addressDetailsRoute = 'addressDetails';
   static const addEmailRoute = 'addEmail';
+  static const incomeDetailsRoute = 'incomeDetails';
+  static const politicallyExposedRoute = 'politicallyExposed';
 }

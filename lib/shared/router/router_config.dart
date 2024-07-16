@@ -2,7 +2,9 @@ import 'package:ewallet2/presentation/screens/initial/corporate_promot_screen.da
 import 'package:ewallet2/presentation/screens/signup_screen/add_email_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/address_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/identity_verify_screen.dart';
+import 'package:ewallet2/presentation/screens/signup_screen/income_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/personal_details_screen.dart';
+import 'package:ewallet2/presentation/screens/signup_screen/politically_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/sent_otp_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/upload_id_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/verify_number_screen.dart';
@@ -70,6 +72,16 @@ class AppRouter {
         path: '/addEmail',
         name: 'addEmail',
         builder: (context, state) => const EmailDetailsScreen(),
+      ),
+      GoRoute(
+        path: '/incomeDetails',
+        name: 'incomeDetails',
+        builder: (context, state) => const OccupationIncomeDetailsScreen(),
+      ),
+      GoRoute(
+        path: '/politicallyExposed',
+        name: 'politicallyExposed',
+        builder: (context, state) => const PoliticallyExposedScreen(),
       )
     ],
   );

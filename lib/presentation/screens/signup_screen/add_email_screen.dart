@@ -14,7 +14,6 @@ class EmailDetailsScreen extends StatefulWidget {
 }
 
 class _EmailDetailsScreenState extends State<EmailDetailsScreen> {
-  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   bool _isButtonEnabled = false;
   String _userType = '';
@@ -36,8 +35,7 @@ class _EmailDetailsScreenState extends State<EmailDetailsScreen> {
 
   void _updateButtonState() {
     setState(() {
-      _isButtonEnabled = _emailController.text.isNotEmpty &&
-          _validateEmail(_emailController.text);
+      _isButtonEnabled = _emailController.text.isNotEmpty;
     });
   }
 
@@ -65,23 +63,20 @@ class _EmailDetailsScreenState extends State<EmailDetailsScreen> {
         width: size.width,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: size.height / 60),
-                Text('Add Email', style: theme.textTheme.headlineMedium),
-                SizedBox(height: size.height / 60),
-                _buildEmailRow('Email', _emailController, theme, size, true),
-                Spacer(),
-                NormalButton(
-                  size: size,
-                  title: 'Verify',
-                  onPressed: _isButtonEnabled ? _saveForm : null,
-                )
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: size.height / 60),
+              Text('Add Email', style: theme.textTheme.headlineMedium),
+              SizedBox(height: size.height / 60),
+              _buildEmailRow('Email', _emailController, theme, size, true),
+              Spacer(),
+              NormalButton(
+                size: size,
+                title: 'Verify',
+                onPressed: _isButtonEnabled ? _saveForm : null,
+              )
+            ],
           ),
         ),
       ),
@@ -94,33 +89,23 @@ class _EmailDetailsScreenState extends State<EmailDetailsScreen> {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Container(
         height: size.height / 14,
-        child: TextFormField(
+        child: TextField(
           controller: controller,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
-            errorText: isRequired && !_validateEmail(controller.text)
-                ? 'Invalid email'
-                : null,
           ),
-          validator: (value) {
-            if (isRequired && (value == null || value.isEmpty)) {
-              return 'This field is required';
-            }
-            if (value != null && value.isNotEmpty && !_validateEmail(value)) {
-              return 'Invalid email';
-            }
-            return null;
-          },
         ),
       ),
     );
   }
 
   void _saveForm() {
-    if (_formKey.currentState!.validate()) {
+    if (_validateEmail(_emailController.text)) {
       _showOtpBottomSheet(context);
     } else {
-      // Show validation errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid email address')),
+      );
     }
   }
 
@@ -136,7 +121,7 @@ class _EmailDetailsScreenState extends State<EmailDetailsScreen> {
           number: _emailController.text,
           userType: _userType,
           size: size,
-          navigateTo: AppRouteConst.identityVerifyRoute,
+          navigateTo: AppRouteConst.incomeDetailsRoute,
         );
       },
     );
