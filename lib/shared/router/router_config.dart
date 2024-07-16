@@ -5,6 +5,7 @@ import 'package:ewallet2/presentation/screens/signup_screen/identity_verify_scre
 import 'package:ewallet2/presentation/screens/signup_screen/income_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/personal_details_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/politically_screen.dart';
+import 'package:ewallet2/presentation/screens/signup_screen/privacy_policy_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/sent_otp_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/upload_id_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/verify_number_screen.dart';
@@ -82,6 +83,11 @@ class AppRouter {
         path: '/politicallyExposed',
         name: 'politicallyExposed',
         builder: (context, state) => const PoliticallyExposedScreen(),
+      ),
+      GoRoute(
+        path: '/privacyPolicy',
+        name: 'privacyPolicy',
+        builder: (context, state) => const PrivacyPolicyScreen(),
       )
     ],
   );

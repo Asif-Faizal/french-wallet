@@ -1,6 +1,8 @@
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import 'package:go_router/go_router.dart';
 
 class PoliticallyExposedScreen extends StatefulWidget {
   const PoliticallyExposedScreen({super.key});
@@ -124,10 +126,10 @@ class _PoliticallyExposedScreenState extends State<PoliticallyExposedScreen> {
           SnackBar(content: Text('Please fill in all fields')),
         );
       } else {
-        // Proceed with saving or other logic
+        GoRouter.of(context).pushNamed(AppRouteConst.privacyPolicyRoute);
       }
     } else {
-      // Proceed with saving or other logic for non-PEP
+      GoRouter.of(context).pushNamed(AppRouteConst.privacyPolicyRoute);
     }
   }
 

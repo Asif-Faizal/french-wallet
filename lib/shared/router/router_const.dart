@@ -12,4 +12,5 @@ class AppRouteConst {
   static const addEmailRoute = 'addEmail';
   static const incomeDetailsRoute = 'incomeDetails';
   static const politicallyExposedRoute = 'politicallyExposed';
+  static const privacyPolicyRoute = 'privacyPolicy';
 }
