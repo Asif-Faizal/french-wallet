@@ -164,7 +164,7 @@ class _UploadIdScreenState extends State<UploadIdScreen> {
                   TextButton(
                       onPressed: () {
                         GoRouter.of(context)
-                            .pushNamed(AppRouteConst.personalDetailsRoute);
+                            .pushNamed(AppRouteConst.selfieRoute);
                       },
                       child: Text('Enter details manually',
                           style: TextStyle(color: Colors.black, fontSize: 14)))
