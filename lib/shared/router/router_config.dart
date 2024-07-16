@@ -1,5 +1,6 @@
 import 'package:ewallet2/presentation/screens/initial/corporate_promot_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/identity_verify_screen.dart';
+import 'package:ewallet2/presentation/screens/signup_screen/personal_details_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/sent_otp_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/upload_id_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/verify_number_screen.dart';
@@ -52,6 +53,11 @@ class AppRouter {
         path: '/uploadIdScreen',
         name: 'uploadIdScreen',
         builder: (context, state) => const UploadIdScreen(),
+      ),
+      GoRoute(
+        path: '/personalDetails',
+        name: 'personalDetails',
+        builder: (context, state) => const PersonalDetailsScreen(),
       )
     ],
   );

@@ -1,6 +1,8 @@
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
@@ -160,7 +162,10 @@ class _UploadIdScreenState extends State<UploadIdScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        GoRouter.of(context)
+                            .pushNamed(AppRouteConst.personalDetailsRoute);
+                      },
                       child: Text('Enter details manually',
                           style: TextStyle(color: Colors.black, fontSize: 14)))
                 ],

@@ -7,4 +7,5 @@ class AppRouteConst {
   static const sentOtpSignInRoute = 'sentOtpSignIn';
   static const identityVerifyRoute = 'identityVerify';
   static const uploadIdScreenRoute = 'uploadIdScreen';
+  static const personalDetailsRoute = 'personalDetails';
 }
