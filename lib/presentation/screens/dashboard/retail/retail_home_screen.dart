@@ -284,8 +284,8 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
             SizedBox(
               height: size.height / 3.8,
               width: double.infinity,
-              child: Image.asset(
-                'lib/assets/card.jpg',
+              child: Image.network(
+                'https://img.freepik.com/premium-photo/abstract-amber-color-background-wallpaper-with-random-patterns-waves-curves_989263-7059.jpg',
                 fit: BoxFit.cover,
               ),
             ),
@@ -293,7 +293,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
               height: size.height / 3.8,
               width: double.infinity,
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+                filter: ImageFilter.blur(sigmaX: 0.2, sigmaY: 0.2),
                 child: Container(
                   height: size.height / 4,
                   width: double.infinity,
@@ -346,8 +346,8 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
             SizedBox(
               height: size.height / 3.8,
               width: double.infinity,
-              child: Image.asset(
-                'lib/assets/card.jpg',
+              child: Image.network(
+                'https://img.freepik.com/premium-photo/abstract-amber-color-background-wallpaper-with-random-patterns-waves-curves_989263-7059.jpg',
                 fit: BoxFit.cover,
               ),
             ),
@@ -355,7 +355,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
               height: size.height / 3.8,
               width: double.infinity,
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+                filter: ImageFilter.blur(sigmaX: 0.2, sigmaY: 0.2),
                 child: Container(
                   height: size.height / 4,
                   width: double.infinity,
