@@ -48,6 +48,79 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
     }
   }
 
+  void _showServiceListBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      builder: (context) {
+        final size = MediaQuery.of(context).size;
+        return Container(
+          padding: const EdgeInsets.all(20),
+          height: size.height * 0.5,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 50,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'All Services',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.amber.shade800,
+                ),
+              ),
+              SizedBox(height: 20),
+              Expanded(
+                child: ListView(
+                  children: [
+                    ListTile(
+                      leading: Icon(Icons.phone_android),
+                      title: Text('Mobile Recharge'),
+                      onTap: () {},
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.tv),
+                      title: Text('DTH Recharge'),
+                      onTap: () {},
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.electric_car),
+                      title: Text('Electricity Bill'),
+                      onTap: () {},
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.water),
+                      title: Text('Water Bill'),
+                      onTap: () {},
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.satellite),
+                      title: Text('Broadband Bill'),
+                      onTap: () {},
+                    ),
+                    // Add more services here as needed
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -212,7 +285,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                         fontWeight: FontWeight.bold,
                         color: Colors.amber.shade800)),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: _showServiceListBottomSheet,
                   child: Text('View all',
                       style: TextStyle(
                           fontSize: 12,

@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
@@ -120,8 +122,141 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
                 )
               ],
             ),
+            SizedBox(
+              height: size.height / 7,
+              width: size.height,
+              child: Center(
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    buildListItem(
+                      'Withdraw',
+                      Card(
+                        color: Colors.amber.shade200,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.print,
+                            ),
+                            onPressed: () {},
+                          ),
+                        ),
+                      ),
+                      size,
+                    ),
+                    buildListItem(
+                      'Balance',
+                      Card(
+                        color: Colors.amber.shade200,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.money,
+                            ),
+                            onPressed: () {},
+                          ),
+                        ),
+                      ),
+                      size,
+                    ),
+                    buildListItem(
+                      'Top Up',
+                      Card(
+                        color: Colors.amber.shade200,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.upload_file_outlined,
+                            ),
+                            onPressed: () {},
+                          ),
+                        ),
+                      ),
+                      size,
+                    ),
+                    buildListItem(
+                      'Statement',
+                      Card(
+                        color: Colors.amber.shade200,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.note,
+                            ),
+                            onPressed: () {},
+                          ),
+                        ),
+                      ),
+                      size,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              height: size.height / 40,
+            ),
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                child: Column(
+                  children: [
+                    CarouselSlider(
+                      items: [
+                        'https://as2.ftcdn.net/v2/jpg/02/69/77/25/1000_F_269772568_eqFTjMBNfzhrfsgpgnekZNkueP99OSOt.jpg',
+                        'https://c8.alamy.com/comp/RJXPNA/business-travel-special-offer-template-horizontal-banner-tourism-agency-seasonal-sale-poster-design-RJXPNA.jpg',
+                        'https://www.shutterstock.com/shutterstock/photos/793624765/display_1500/stock-vector-horizontal-sale-poster-end-of-season-special-offer-design-template-font-design-vector-793624765.jpg',
+                        'https://cdn.vectorstock.com/i/1000v/17/23/big-sale-design-special-offer-poster-template-vector-37351723.jpg',
+                      ]
+                          .map((item) => SizedBox(
+                              height: size.height / 8,
+                              width: double.infinity,
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(5),
+                                  child:
+                                      Image.network(item, fit: BoxFit.cover))))
+                          .toList(),
+                      options: CarouselOptions(
+                        height: size.height / 8,
+                        autoPlay: true,
+                        enlargeCenterPage: true,
+                        viewportFraction: 1.0,
+                        aspectRatio: 2.0,
+                        onPageChanged: (index, reason) {},
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildListItem(String text, Widget icon, Size size) {
+    final theme = Theme.of(context);
+    return Container(
+      width: size.width / 5,
+      margin: EdgeInsets.symmetric(horizontal: size.width / 60),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          icon,
+          SizedBox(
+            height: size.height / 70,
+          ),
+          Text(text, style: theme.textTheme.bodyLarge)
+        ],
       ),
     );
   }

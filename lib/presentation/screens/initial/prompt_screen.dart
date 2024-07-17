@@ -188,6 +188,7 @@ class _PromptScreenState extends State<PromptScreen> {
                         } else {
                           GoRouter.of(context)
                               .pushNamed(AppRouteConst.agentHomeRoute);
+                          // .pushNamed(AppRouteConst.retailHomeRoute);
                           // .pushNamed(AppRouteConst.loginOrSignUpRoute);
                         }
                       }
