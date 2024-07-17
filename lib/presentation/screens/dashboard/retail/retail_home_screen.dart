@@ -96,48 +96,68 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
             ),
             SizedBox(
               height: size.height / 7,
+              width: size.height,
               child: Center(
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   scrollDirection: Axis.horizontal,
                   children: [
                     buildListItem(
                       'Send',
-                      IconButton(
-                        icon: Icon(
-                          Icons.send_outlined,
+                      Card(color: Colors.amber,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.send_outlined,
+                            ),
+                            onPressed: () {},
+                          ),
                         ),
-                        onPressed: () {},
                       ),
                       size,
                     ),
                     buildListItem(
                       'Receive',
-                      IconButton(
-                        icon: Icon(
-                          Icons.download_outlined,
+                      Card(color: Colors.amber,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.download_outlined,
+                            ),
+                            onPressed: () {},
+                          ),
                         ),
-                        onPressed: () {},
                       ),
                       size,
                     ),
                     buildListItem(
                       'Top Up',
-                      IconButton(
-                        icon: Icon(
-                          Icons.upload_file_outlined,
+                      Card(color: Colors.amber,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.upload_file_outlined,
+                            ),
+                            onPressed: () {},
+                          ),
                         ),
-                        onPressed: () {},
                       ),
                       size,
                     ),
                     buildListItem(
                       'Card',
-                      IconButton(
-                        icon: Icon(
-                          Icons.payment_outlined,
+                      Card(color: Colors.amber,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.payment_outlined,
+                            ),
+                            onPressed: () {},
+                          ),
                         ),
-                        onPressed: () {},
                       ),
                       size,
                     ),
@@ -278,11 +298,11 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(10),
         child: Stack(
           children: [
             SizedBox(
-              height: size.height / 3.8,
+              height: size.height / 4.2,
               width: double.infinity,
               child: Image.network(
                 'https://img.freepik.com/premium-photo/abstract-amber-color-background-wallpaper-with-random-patterns-waves-curves_989263-7059.jpg',
@@ -290,7 +310,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
               ),
             ),
             SizedBox(
-              height: size.height / 3.8,
+              height: size.height / 4.2,
               width: double.infinity,
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 0.2, sigmaY: 0.2),
@@ -307,23 +327,37 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('VISA', style: theme.textTheme.bodyMedium),
+                          Text('VISA', style: TextStyle(fontSize: size.height/25,fontWeight: FontWeight.bold,color: Colors.white)),
                           Icon(
                             Icons.wallet,
-                            size: size.height / 20,
+                            size: size.height / 15,
                             color: Colors.white,
                           )
                         ],
                       ),
-                      Text('Balance:  *****',
-                          style: theme.textTheme.bodyMedium),
-                      Text('1234 4567 7890 1234',
-                          style: theme.textTheme.bodyMedium),
-                      SizedBox(
-                        height: size.height / 50,
+                      SizedBox(width: size.width/2,
+                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [Text('Balance:',
+                              style: TextStyle(fontSize: size.height/40,fontWeight: FontWeight.bold,color: Colors.white)),
+
+                            Text('*****',
+                                style: TextStyle(fontSize: size.height/40,fontWeight: FontWeight.bold,color: Colors.white)),
+                            Icon(Icons.visibility,color: Colors.white),
+                          ],
+                        ),
+                      ),Spacer(),
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('1234 4567 7890 1234',
+                              style: TextStyle(fontSize: size.height/40,fontWeight: FontWeight.bold,color: Colors.white)),
+                          Column(
+                            children: [Text('Valid Thru', style: TextStyle(fontSize: size.height/60,fontWeight: FontWeight.bold,color: Colors.white)),
+                              Text('09/30', style: TextStyle(fontSize: size.height/50,fontWeight: FontWeight.bold,color: Colors.white)),],
+                          )
+                        ],
                       ),
-                      Text('Valid Thru', style: theme.textTheme.bodyMedium),
-                      Text('09/30', style: theme.textTheme.bodyMedium),
+SizedBox(height: size.height/60,),
+
                     ],
                   ),
                 ),
@@ -344,53 +378,63 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
         child: Stack(
           children: [
             SizedBox(
-              height: size.height / 3.8,
+              height: size.height / 4.2,
               width: double.infinity,
               child: Image.network(
                 'https://img.freepik.com/premium-photo/abstract-amber-color-background-wallpaper-with-random-patterns-waves-curves_989263-7059.jpg',
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(
-              height: size.height / 3.8,
-              width: double.infinity,
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 0.2, sigmaY: 0.2),
-                child: Container(
-                  height: size.height / 4,
+            Column(
+              children: [
+                SizedBox(
+                  height: size.height / 4.2,
                   width: double.infinity,
-                  color: Colors.black.withOpacity(0.3),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: size.height / 25,
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(vertical: 7),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 0.2, sigmaY: 0.2),
+                    child: Container(
+                      height: size.height / 4.2,
+                      width: double.infinity,
+                      color: Colors.black.withOpacity(0.3),
+                      padding:
+                          const EdgeInsets.symmetric(vertical: 5, horizontal: 25),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(height: size.height/60,),
+                          Row(mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: size.height / 25,
+
+                                width: size.width/1.6,
+                                color: Colors.grey.shade300,
+                                margin: const EdgeInsets.symmetric(vertical: 7),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+
+                                ),
+                              ),Container(
+                                height: size.height / 25,
+
+                                width: size.width/8,
+                                color: Colors.white,
+                                margin: const EdgeInsets.symmetric(vertical: 7),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                child: Text('123',style:TextStyle(fontStyle: FontStyle.italic)),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', style: TextStyle(fontSize: 11,color: Colors.white)),
+
+                        ],
                       ),
-                      Container(
-                        height: size.height / 25,
-                        width: double.infinity,
-                        color: Colors.white,
-                        margin: const EdgeInsets.symmetric(vertical: 7),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text('1234',
-                              textAlign: TextAlign.end,
-                              style: theme.textTheme.bodyMedium),
-                        ),
-                      ),
-                      SizedBox(
-                        height: size.height / 50,
-                      ),
-                      Text('Card Holder', style: theme.textTheme.bodyMedium),
-                      Text('Mr. Xyz Abc', style: theme.textTheme.bodyMedium),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
@@ -402,10 +446,8 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
     final theme = Theme.of(context);
     return Container(
       width: size.width / 5,
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-      ),
+      margin:  EdgeInsets.symmetric(horizontal: size.width/60),
+      
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
