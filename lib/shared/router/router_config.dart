@@ -1,3 +1,4 @@
+import 'package:ewallet2/presentation/screens/dashboard/agent/agent_home_screen.dart';
 import 'package:ewallet2/presentation/screens/dashboard/retail/retail_home_screen.dart';
 import 'package:ewallet2/presentation/screens/initial/corporate_promot_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/add_email_screen.dart';
@@ -106,6 +107,11 @@ class AppRouter {
         path: '/retailHome',
         name: 'retailHome',
         builder: (context, state) => RetailHomeScreen(),
+      ),
+      GoRoute(
+        path: '/agentHome',
+        name: 'agentHome',
+        builder: (context, state) => AgentHomeScreen(),
       )
     ],
   );

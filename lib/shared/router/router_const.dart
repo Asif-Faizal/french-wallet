@@ -16,4 +16,5 @@ class AppRouteConst {
   static const selfieRoute = 'selfie';
   static const setPassCodeRoute = 'setPassCode';
   static const retailHomeRoute = 'retailHome';
+  static const agentHomeRoute = 'agentHome';
 }
