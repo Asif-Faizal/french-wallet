@@ -17,7 +17,6 @@ class _OccupationIncomeDetailsScreenState
     extends State<OccupationIncomeDetailsScreen> {
   final TextEditingController _panNumberController = TextEditingController();
   final TextEditingController _businessNameController = TextEditingController();
-  final TextEditingController _tinNumberController = TextEditingController();
   String? _userType;
   String? _selectedCorporate;
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -48,17 +47,14 @@ class _OccupationIncomeDetailsScreenState
     _retrieveData();
     _panNumberController.addListener(_updateButtonState);
     _businessNameController.addListener(_updateButtonState);
-    _tinNumberController.addListener(_updateButtonState);
   }
 
   @override
   void dispose() {
     _panNumberController.removeListener(_updateButtonState);
     _businessNameController.removeListener(_updateButtonState);
-    _tinNumberController.removeListener(_updateButtonState);
     _panNumberController.dispose();
     _businessNameController.dispose();
-    _tinNumberController.dispose();
     super.dispose();
   }
 
@@ -69,7 +65,7 @@ class _OccupationIncomeDetailsScreenState
       _selectedCorporate = prefs.getString('corporateType') ?? '';
       print(_userType);
       print(_selectedCorporate);
-      _updateButtonState(); // Ensure to update button state after retrieving data
+      _updateButtonState();
     });
   }
 
@@ -79,7 +75,6 @@ class _OccupationIncomeDetailsScreenState
         _isButtonEnabled = _selectedOccupation != null &&
             _selectedAnnualIncome != null &&
             _businessNameController.text.isNotEmpty &&
-            _tinNumberController.text.isNotEmpty &&
             _panNumberController.text.isNotEmpty;
       } else {
         _isButtonEnabled = _panNumberController.text.isNotEmpty;
@@ -127,10 +122,6 @@ class _OccupationIncomeDetailsScreenState
                 _buildTextFieldRow('Business Name', _businessNameController,
                     theme, size, true, 'Enter Business Name'),
               SizedBox(height: size.height / 60),
-              if (_userType == 'corporate' &&
-                  _selectedCorporate == 'business-owner')
-                _buildTextFieldRow('TIN Number', _tinNumberController, theme,
-                    size, true, 'Enter TIN Number'),
             ],
           ),
         ),
@@ -206,13 +197,16 @@ class _OccupationIncomeDetailsScreenState
         _panNumberController.text.isEmpty ||
         (_userType == 'corporate' &&
             _selectedCorporate == 'business-owner' &&
-            (_businessNameController.text.isEmpty ||
-                _tinNumberController.text.isEmpty))) {
+            (_businessNameController.text.isEmpty))) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please fill in all fields')),
       );
     } else {
-      GoRouter.of(context).pushNamed(AppRouteConst.politicallyExposedRoute);
+      if (_userType == 'corporate' && _selectedCorporate == 'business-owner') {
+        GoRouter.of(context).pushNamed(AppRouteConst.financialInfoRoute);
+      } else {
+        GoRouter.of(context).pushNamed(AppRouteConst.politicallyExposedRoute);
+      }
     }
   }
 }

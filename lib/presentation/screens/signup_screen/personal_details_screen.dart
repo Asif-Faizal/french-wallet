@@ -20,8 +20,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
   final TextEditingController _fathersNameController = TextEditingController();
   final TextEditingController _nationalityController = TextEditingController();
   String _gender = 'Male';
-  DateTime _selectedDate =
-      DateTime.now().subtract(Duration(days: 6570)); // 18 years ago
+  DateTime _selectedDate = DateTime.now().subtract(Duration(days: 6570));
   String _maritalStatus = 'Single';
   bool _isButtonEnabled = false;
 
@@ -111,9 +110,6 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                     height: size.height / 60,
                   ),
                   _buildMaritalStatusRow(theme, size),
-                  SizedBox(
-                    height: size.height / 12,
-                  ),
                 ],
               ),
             ),

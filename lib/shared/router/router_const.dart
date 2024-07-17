@@ -17,4 +17,7 @@ class AppRouteConst {
   static const setPassCodeRoute = 'setPassCode';
   static const retailHomeRoute = 'retailHome';
   static const agentHomeRoute = 'agentHome';
+  static const executiveLoginRoute = 'executiveLogin';
+  static const financialInfoRoute = 'financialInfo';
+  static const businessInfoRoute = 'businessInfo';
 }

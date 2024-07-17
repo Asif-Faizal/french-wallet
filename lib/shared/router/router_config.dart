@@ -1,8 +1,11 @@
 import 'package:ewallet2/presentation/screens/dashboard/agent/agent_home_screen.dart';
 import 'package:ewallet2/presentation/screens/dashboard/retail/retail_home_screen.dart';
 import 'package:ewallet2/presentation/screens/initial/corporate_promot_screen.dart';
+import 'package:ewallet2/presentation/screens/login/executive_login_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/add_email_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/address_screen.dart';
+import 'package:ewallet2/presentation/screens/signup_screen/business%20owner/business_info.dart';
+import 'package:ewallet2/presentation/screens/signup_screen/business%20owner/financial_info_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/identity_verify_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/income_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/personal_details_screen.dart';
@@ -112,6 +115,21 @@ class AppRouter {
         path: '/agentHome',
         name: 'agentHome',
         builder: (context, state) => AgentHomeScreen(),
+      ),
+      GoRoute(
+        path: '/executiveLogin',
+        name: 'executiveLogin',
+        builder: (context, state) => const ExecutiveLoginScreen(),
+      ),
+      GoRoute(
+        path: '/financialInfo',
+        name: 'financialInfo',
+        builder: (context, state) => FinancialInfoScreen(),
+      ),
+      GoRoute(
+        path: '/businessInfo',
+        name: 'businessInfo',
+        builder: (context, state) => BusinessInfoScreen(),
       )
     ],
   );

@@ -133,8 +133,13 @@ class _CorporatePromptScreenState extends State<CorporatePromptScreen> {
                     ? () async {
                         print(selectedCorporate);
                         _storeData();
-                        GoRouter.of(context)
-                            .pushNamed(AppRouteConst.loginOrSignUpRoute);
+                        if (selectedCorporate == 'business-owner') {
+                          GoRouter.of(context)
+                              .pushNamed(AppRouteConst.loginOrSignUpRoute);
+                        } else {
+                          GoRouter.of(context)
+                              .pushNamed(AppRouteConst.executiveLoginRoute);
+                        }
                       }
                     : null,
               ),
