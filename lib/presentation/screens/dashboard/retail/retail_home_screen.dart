@@ -50,11 +50,34 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        toolbarHeight: size.height / 12,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.notifications,
+                size: 30,
+              )),
+          SizedBox(
+            width: size.width / 40,
+          ),
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.message,
+                size: 30,
+              )),
+          SizedBox(
+            width: size.width / 30,
+          )
+        ],
+      ),
+      drawer: Drawer(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -83,12 +106,16 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                     children: [
                       Text(
                         'Flip card',
-                        style: theme.textTheme.bodyMedium,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.amber.shade800),
                       ),
                       SizedBox(
                         width: size.width / 40,
                       ),
-                      Icon(Icons.keyboard_double_arrow_right_rounded)
+                      Icon(Icons.rotate_90_degrees_ccw,
+                          color: Colors.amber.shade800)
                     ],
                   ),
                 )
@@ -103,7 +130,8 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                   children: [
                     buildListItem(
                       'Send',
-                      Card(color: Colors.amber,
+                      Card(
+                        color: Colors.amber.shade200,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: IconButton(
@@ -118,7 +146,8 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                     ),
                     buildListItem(
                       'Receive',
-                      Card(color: Colors.amber,
+                      Card(
+                        color: Colors.amber.shade200,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: IconButton(
@@ -133,7 +162,8 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                     ),
                     buildListItem(
                       'Top Up',
-                      Card(color: Colors.amber,
+                      Card(
+                        color: Colors.amber.shade200,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: IconButton(
@@ -148,7 +178,8 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                     ),
                     buildListItem(
                       'Card',
-                      Card(color: Colors.amber,
+                      Card(
+                        color: Colors.amber.shade200,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: IconButton(
@@ -165,22 +196,39 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                 ),
               ),
             ),
+            SizedBox(
+              height: size.height / 80,
+            ),
+            Divider(
+              color: Colors.amber.shade300,
+              thickness: 1,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Service List', style: theme.textTheme.bodyMedium),
+                Text('Service List',
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.amber.shade800)),
                 TextButton(
                   onPressed: () {},
-                  child: Text('View all'),
+                  child: Text('View all',
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber.shade800)),
                 ),
               ],
             ),
             SizedBox(
-              height: size.height / 6,
+              height: size.height / 80,
+            ),
+            SizedBox(
+              height: size.height / 8,
               child: Center(
                 child: ListView(
                   physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   scrollDirection: Axis.horizontal,
                   children: [
                     buildServiceListItem(
@@ -237,6 +285,16 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                 ),
               ),
             ),
+            SizedBox(
+              height: size.height / 40,
+            ),
+            Divider(
+              color: Colors.amber.shade300,
+              thickness: 1,
+            ),
+            SizedBox(
+              height: size.height / 40,
+            ),
             Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -248,40 +306,27 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                   children: [
                     CarouselSlider(
                       items: [
-                        'lib/assets/card.jpg',
-                        'lib/assets/card.jpg',
-                        'lib/assets/card.jpg',
-                        'lib/assets/card.jpg',
+                        'https://as2.ftcdn.net/v2/jpg/02/69/77/25/1000_F_269772568_eqFTjMBNfzhrfsgpgnekZNkueP99OSOt.jpg',
+                        'https://c8.alamy.com/comp/RJXPNA/business-travel-special-offer-template-horizontal-banner-tourism-agency-seasonal-sale-poster-design-RJXPNA.jpg',
+                        'https://www.shutterstock.com/shutterstock/photos/793624765/display_1500/stock-vector-horizontal-sale-poster-end-of-season-special-offer-design-template-font-design-vector-793624765.jpg',
+                        'https://cdn.vectorstock.com/i/1000v/17/23/big-sale-design-special-offer-poster-template-vector-37351723.jpg',
                       ]
                           .map((item) => SizedBox(
-                              height: size.height / 5,
+                              height: size.height / 8,
                               width: double.infinity,
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(5),
-                                  child: Image.asset(item, fit: BoxFit.cover))))
+                                  child:
+                                      Image.network(item, fit: BoxFit.cover))))
                           .toList(),
                       options: CarouselOptions(
-                        height: size.height / 4,
+                        height: size.height / 8,
                         autoPlay: true,
                         enlargeCenterPage: true,
                         viewportFraction: 1.0,
                         aspectRatio: 2.0,
                         onPageChanged: (index, reason) {},
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [0, 1, 2, 3].map((index) {
-                        return Container(
-                          width: 8.0,
-                          height: 8.0,
-                          margin:
-                              const EdgeInsets.only(top: 10, right: 3, left: 3),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                        );
-                      }).toList(),
                     ),
                   ],
                 ),
@@ -294,7 +339,6 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
   }
 
   Widget _buildFront(Size size) {
-    final theme = Theme.of(context);
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       child: ClipRRect(
@@ -327,7 +371,11 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('VISA', style: TextStyle(fontSize: size.height/25,fontWeight: FontWeight.bold,color: Colors.white)),
+                          Text('VISA',
+                              style: TextStyle(
+                                  fontSize: size.height / 25,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
                           Icon(
                             Icons.wallet,
                             size: size.height / 15,
@@ -335,29 +383,53 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                           )
                         ],
                       ),
-                      SizedBox(width: size.width/2,
-                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [Text('Balance:',
-                              style: TextStyle(fontSize: size.height/40,fontWeight: FontWeight.bold,color: Colors.white)),
-
+                      SizedBox(
+                        width: size.width / 2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Balance:',
+                                style: TextStyle(
+                                    fontSize: size.height / 40,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white)),
                             Text('*****',
-                                style: TextStyle(fontSize: size.height/40,fontWeight: FontWeight.bold,color: Colors.white)),
-                            Icon(Icons.visibility,color: Colors.white),
+                                style: TextStyle(
+                                    fontSize: size.height / 40,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white)),
+                            Icon(Icons.visibility, color: Colors.white),
                           ],
                         ),
-                      ),Spacer(),
-                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      ),
+                      Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('1234 4567 7890 1234',
-                              style: TextStyle(fontSize: size.height/40,fontWeight: FontWeight.bold,color: Colors.white)),
+                              style: TextStyle(
+                                  fontSize: size.height / 40,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
                           Column(
-                            children: [Text('Valid Thru', style: TextStyle(fontSize: size.height/60,fontWeight: FontWeight.bold,color: Colors.white)),
-                              Text('09/30', style: TextStyle(fontSize: size.height/50,fontWeight: FontWeight.bold,color: Colors.white)),],
+                            children: [
+                              Text('Valid Thru',
+                                  style: TextStyle(
+                                      fontSize: size.height / 60,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white)),
+                              Text('09/30',
+                                  style: TextStyle(
+                                      fontSize: size.height / 50,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white)),
+                            ],
                           )
                         ],
                       ),
-SizedBox(height: size.height/60,),
-
+                      SizedBox(
+                        height: size.height / 60,
+                      ),
                     ],
                   ),
                 ),
@@ -370,7 +442,6 @@ SizedBox(height: size.height/60,),
   }
 
   Widget _buildBack(Size size) {
-    final theme = Theme.of(context);
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       child: ClipRRect(
@@ -388,7 +459,7 @@ SizedBox(height: size.height/60,),
             Column(
               children: [
                 SizedBox(
-                  height: size.height / 4.2,
+                  height: size.height / 6,
                   width: double.infinity,
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 0.2, sigmaY: 0.2),
@@ -396,44 +467,57 @@ SizedBox(height: size.height/60,),
                       height: size.height / 4.2,
                       width: double.infinity,
                       color: Colors.black.withOpacity(0.3),
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 5, horizontal: 25),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 25),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          SizedBox(height: size.height/60,),
-                          Row(mainAxisAlignment: MainAxisAlignment.center,
+                          SizedBox(
+                            height: size.height / 60,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
                                 height: size.height / 25,
-
-                                width: size.width/1.6,
+                                width: size.width / 1.8,
                                 color: Colors.grey.shade300,
                                 margin: const EdgeInsets.symmetric(vertical: 7),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-
-                                ),
-                              ),Container(
+                              ),
+                              Container(
                                 height: size.height / 25,
-
-                                width: size.width/8,
+                                width: size.width / 5.7,
                                 color: Colors.white,
-                                margin: const EdgeInsets.symmetric(vertical: 7),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                child: Text('123',style:TextStyle(fontStyle: FontStyle.italic)),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text('123',
+                                        style: TextStyle(
+                                            fontStyle: FontStyle.italic)),
+                                    IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(Icons.visibility),
+                                      iconSize: 14,
+                                    )
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                          Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', style: TextStyle(fontSize: 11,color: Colors.white)),
-
+                          Text(
+                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                              style:
+                                  TextStyle(fontSize: 11, color: Colors.white)),
                         ],
                       ),
                     ),
                   ),
                 ),
+                Container(
+                  height: size.height / 20,
+                  color: Colors.black,
+                )
               ],
             ),
           ],
@@ -446,8 +530,7 @@ SizedBox(height: size.height/60,),
     final theme = Theme.of(context);
     return Container(
       width: size.width / 5,
-      margin:  EdgeInsets.symmetric(horizontal: size.width/60),
-      
+      margin: EdgeInsets.symmetric(horizontal: size.width / 60),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -455,7 +538,7 @@ SizedBox(height: size.height/60,),
           SizedBox(
             height: size.height / 70,
           ),
-          Text(text, style: theme.textTheme.bodyMedium)
+          Text(text, style: theme.textTheme.bodyLarge)
         ],
       ),
     );
@@ -464,22 +547,25 @@ SizedBox(height: size.height/60,),
   Widget buildServiceListItem(String text, Widget icon, Size size) {
     final theme = Theme.of(context);
     return Container(
-      width: size.width / 2.5,
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
+      width: size.width / 4,
+      child: Card(
+        color: Colors.amber.shade200,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             icon,
-            SizedBox(
-              height: size.height / 70,
-            ),
-            Text(text, style: theme.textTheme.bodyMedium)
+            Padding(
+              padding: EdgeInsets.only(
+                  left: size.width / 60,
+                  right: size.width / 60,
+                  bottom: size.height / 200),
+              child: Text(
+                text,
+                style: theme.textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+            )
           ],
         ),
       ),

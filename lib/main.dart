@@ -31,6 +31,7 @@ class MyAppView extends StatelessWidget {
     return BlocBuilder<LocalizationBloc, LocalizationState>(
       builder: (context, state) {
         return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
           routerDelegate: AppRouter.router.routerDelegate,
           routeInformationParser: AppRouter.router.routeInformationParser,
           routeInformationProvider: AppRouter.router.routeInformationProvider,
