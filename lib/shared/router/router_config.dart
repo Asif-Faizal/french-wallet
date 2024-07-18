@@ -6,6 +6,7 @@ import 'package:ewallet2/presentation/screens/signup_screen/add_email_screen.dar
 import 'package:ewallet2/presentation/screens/signup_screen/address_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/business%20owner/business_info.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/business%20owner/financial_info_screen.dart';
+import 'package:ewallet2/presentation/screens/signup_screen/business%20owner/upload_docs_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/identity_verify_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/income_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/personal_details_screen.dart';
@@ -130,6 +131,11 @@ class AppRouter {
         path: '/businessInfo',
         name: 'businessInfo',
         builder: (context, state) => BusinessInfoScreen(),
+      ),
+      GoRoute(
+        path: '/uploadPdf',
+        name: 'uploadPdf',
+        builder: (context, state) => UploadPdfScreen(),
       )
     ],
   );

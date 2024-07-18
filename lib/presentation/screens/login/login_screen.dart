@@ -1,11 +1,15 @@
-import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../widgets/shared/normal_appbar.dart';
-import '../../widgets/shared/otp_bottom_sheet.dart';
+import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
+import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import 'package:ewallet2/presentation/widgets/shared/otp_bottom_sheet.dart';
+import 'package:ewallet2/shared/config/api_config.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,10 +20,9 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _phoneController = TextEditingController();
-  PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'FR');
+  PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'IN');
   String _userType = '';
   bool _isButtonEnabled = false;
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   void initState() {
@@ -36,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _retrieveData() async {
-    final SharedPreferences prefs = await _prefs;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _userType = prefs.getString('userType') ?? 'default_value';
     });
@@ -53,8 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
     showModalBottomSheet(
       useSafeArea: false,
       enableDrag: true,
-      scrollControlDisabledMaxHeightRatio: size.height,
-      // isDismissible: false,
+      isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       context: context,
       builder: (BuildContext context) {
@@ -66,6 +68,146 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       },
     );
+  }
+
+  Future<void> checkMobile(String mobile) async {
+
+    final Map<String, String> headers = {
+      'X-Password': Config.password,
+      'X-Username': Config.username,
+      'Appversion': Config.appVersion,
+      'Content-Type': 'application/json',
+      'Deviceid': Config.deviceId,
+    };
+
+    final Map<String, String> body = {
+      'mobile': mobile,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(Config.check_mobile_url),
+        headers: headers,
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        if (kDebugMode) {
+          print('Response body: ${response.body}');
+        }
+      } else {
+        if (kDebugMode) {
+          print('Failed with status code: ${response.statusCode}');
+          print('Response body: ${response.body}');
+        }
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Error fetching data'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.red,
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  Future<void> sentOtpMobile(String mobile) async {
+
+    final Map<String, String> headers = {
+      'X-Password': Config.password,
+      'X-Username': Config.username,
+      'Appversion': Config.appVersion,
+      'Content-Type': 'application/json',
+      'Deviceid': Config.deviceId,
+    };
+
+    final Map<String, String> body = {
+      'mobile': mobile,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(Config.sent_mobile_otp_url),
+        headers: headers,
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        if (kDebugMode) {
+          print('Response body: ${response.body}');
+        }
+      } else {
+        if (kDebugMode) {
+          print('Failed with status code: ${response.statusCode}');
+          print('Response body: ${response.body}');
+        }
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Error fetching data'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.red,
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  
+  Future<void> verifyOtpMobile(String mobile,String otp) async {
+
+    final Map<String, String> headers = {
+      'X-Password': Config.password,
+      'X-Username': Config.username,
+      'Appversion': Config.appVersion,
+      'Content-Type': 'application/json',
+      'Deviceid': Config.deviceId,
+    };
+
+    final Map<String, String> body = {
+      'mobile': mobile,
+      'otp': otp,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(Config.verify_mobile_otp_url),
+        headers: headers,
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        if (kDebugMode) {
+          print('Response body: ${response.body}');
+        }
+      } else {
+        if (kDebugMode) {
+          print('Failed with status code: ${response.statusCode}');
+          print('Response body: ${response.body}');
+        }
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Error fetching data'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.red,
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   @override
@@ -117,7 +259,10 @@ class _LoginScreenState extends State<LoginScreen> {
               size: size,
               title: 'Get OTP',
               onPressed: _isButtonEnabled
-                  ? () {
+                  ? () async {
+                      await checkMobile(_phoneNumber.phoneNumber ?? '');
+                      await sentOtpMobile(_phoneNumber.phoneNumber ?? '');
+                      await verifyOtpMobile(_phoneNumber.phoneNumber ?? '','1234');
                       _showOtpBottomSheet(context);
                     }
                   : null,

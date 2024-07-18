@@ -20,4 +20,5 @@ class AppRouteConst {
   static const executiveLoginRoute = 'executiveLogin';
   static const financialInfoRoute = 'financialInfo';
   static const businessInfoRoute = 'businessInfo';
+  static const uploadPdfRoute = 'uploadPdf';
 }

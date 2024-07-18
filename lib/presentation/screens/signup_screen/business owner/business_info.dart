@@ -1,6 +1,8 @@
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class BusinessInfoScreen extends StatefulWidget {
   const BusinessInfoScreen({super.key});
@@ -43,6 +45,31 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
     'Transportation',
     'Other'
   ];
+
+  bool get _isButtonEnabled {
+    return _legalNameController.text.isNotEmpty &&
+        _registrationNumberController.text.isNotEmpty &&
+        _officialWebsiteController.text.isNotEmpty &&
+        _officialEmailController.text.isNotEmpty &&
+        _companyNumberController.text.isNotEmpty &&
+        _selectedBusinessType != null &&
+        _selectedIndustrySector != null &&
+        _selectedDate != null;
+  }
+
+  void _updateButtonState() {
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _legalNameController.addListener(_updateButtonState);
+    _registrationNumberController.addListener(_updateButtonState);
+    _officialWebsiteController.addListener(_updateButtonState);
+    _officialEmailController.addListener(_updateButtonState);
+    _companyNumberController.addListener(_updateButtonState);
+  }
 
   @override
   void dispose() {
@@ -177,8 +204,7 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
                   decoration: InputDecoration(
                     labelText: _selectedDate == null
                         ? 'Date of Incorporation'
-                        : 'Incorporation Date: ${_selectedDate!.toLocal()}'
-                            .split(' ')[0],
+                        : '${_selectedDate!.toLocal()}'.split(' ')[0],
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -194,10 +220,12 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
         padding: EdgeInsets.all(15),
         child: NormalButton(
           size: size,
-          title: 'save',
-          onPressed: () {
-            // Handle submit
-          },
+          title: 'Save',
+          onPressed: _isButtonEnabled
+              ? () {
+                  GoRouter.of(context).pushNamed(AppRouteConst.uploadPdfRoute);
+                }
+              : null,
         ),
       ),
     );
