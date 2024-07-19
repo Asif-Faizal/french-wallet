@@ -1,6 +1,10 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../shared/router/router_const.dart';
+import '../../../widgets/shared/normal_appbar.dart';
 
 class UploadPdfScreen extends StatefulWidget {
   const UploadPdfScreen({super.key});
@@ -35,9 +39,7 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Upload PDFs'),
-      ),
+      appBar: NormalAppBar(text: ''),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -107,7 +109,8 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
           title: 'Continue',
           onPressed: (_pdfFile1 != null && _pdfFile2 != null)
               ? () {
-                  // Handle submit
+                  GoRouter.of(context)
+                      .pushNamed(AppRouteConst.politicallyExposedRoute);
                 }
               : null,
         ),

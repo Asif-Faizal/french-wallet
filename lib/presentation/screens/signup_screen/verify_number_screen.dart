@@ -47,14 +47,14 @@ class VerifyNumber extends StatelessWidget {
                 child: Text(
                   AppLocalizations.of(context)!.sms_charges,
                   style: theme.textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.start,
                 ),
               ),
               Center(
                 child: Text(
                   AppLocalizations.of(context)!.thanks_for_using,
                   style: theme.textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.start,
                 ),
               ),
               const Spacer(),

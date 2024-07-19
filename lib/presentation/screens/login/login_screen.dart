@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:ewallet2/shared/router/router_const.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -70,8 +72,44 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> checkMobile(String mobile) async {
+  Future<void> _handleDeviceStatus(
+      int userLinkedDevices, int primaryDevice) async {
+    if (userLinkedDevices == 0 && primaryDevice == 0) {
+      _showAlertDialog('Sign Up',
+          'Please sign in, as your mobile number is not registered with our application');
+    } else if (userLinkedDevices == 1 && primaryDevice == 1) {
+      await sentOtpMobile(_phoneNumber.phoneNumber ?? '');
+      _showOtpBottomSheet(context);
+      print('Primary device #############################################');
+    } else if (userLinkedDevices == 1 && primaryDevice == 0) {
+      await sentOtpMobile(_phoneNumber.phoneNumber ?? '');
+      _showOtpBottomSheet(context);
+      print('Not a primary device #########################################');
+    }
+  }
 
+  void _showAlertDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              child: Text('Sign Up'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                GoRouter.of(context).pushNamed(AppRouteConst.verifyNumberRoute);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> checkMobile(String mobile) async {
     final Map<String, String> headers = {
       'X-Password': Config.password,
       'X-Username': Config.username,
@@ -93,9 +131,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        final userLinkedDevices = responseData["user_linked_devices"];
+        final primaryDevice = responseData["primary_device"];
         if (kDebugMode) {
-          print('Response body: ${response.body}');
+          print('Response body: ${responseData}');
+          print('User linked devices: $userLinkedDevices ++++++++++++++++++++');
+          print('Primary device: $primaryDevice ++++++++++++++++++++');
         }
+
+        // await _handleDeviceStatus(userLinkedDevices, primaryDevice);
+        await _handleDeviceStatus(1, 0);
       } else {
         if (kDebugMode) {
           print('Failed with status code: ${response.statusCode}');
@@ -117,7 +162,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> sentOtpMobile(String mobile) async {
-
     final Map<String, String> headers = {
       'X-Password': Config.password,
       'X-Username': Config.username,
@@ -140,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         if (kDebugMode) {
-          print('Response body: ${response.body}');
+          print('Response body: ${responseData}');
         }
       } else {
         if (kDebugMode) {
@@ -162,9 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  
-  Future<void> verifyOtpMobile(String mobile,String otp) async {
-
+  Future<void> verifyOtpMobile(String mobile, String otp) async {
     final Map<String, String> headers = {
       'X-Password': Config.password,
       'X-Username': Config.username,
@@ -187,8 +229,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+
         if (kDebugMode) {
-          print('Response body: ${response.body}');
+          print('Response body: ${responseData}');
         }
       } else {
         if (kDebugMode) {
@@ -261,9 +304,8 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: _isButtonEnabled
                   ? () async {
                       await checkMobile(_phoneNumber.phoneNumber ?? '');
-                      await sentOtpMobile(_phoneNumber.phoneNumber ?? '');
-                      await verifyOtpMobile(_phoneNumber.phoneNumber ?? '','1234');
-                      _showOtpBottomSheet(context);
+                      await verifyOtpMobile(
+                          _phoneNumber.phoneNumber ?? '', '1234');
                     }
                   : null,
             ),
