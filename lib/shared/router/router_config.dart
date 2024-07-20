@@ -3,6 +3,7 @@ import 'package:ewallet2/presentation/screens/dashboard/coorporate/coorporate_ho
 import 'package:ewallet2/presentation/screens/dashboard/retail/retail_home_screen.dart';
 import 'package:ewallet2/presentation/screens/initial/corporate_promot_screen.dart';
 import 'package:ewallet2/presentation/screens/login/executive_login_screen.dart';
+import 'package:ewallet2/presentation/screens/services/coorporate/view_child_card_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/search_user_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/completed_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/enter_amount_screen.dart';
@@ -166,6 +167,11 @@ class AppRouter {
         path: '/errorAnimation',
         name: 'errorAnimation',
         builder: (context, state) => ErrorAnimationScreen(),
+      ),
+      GoRoute(
+        path: '/viewChildCard',
+        name: 'viewChildCard',
+        builder: (context, state) => ViewChildCardScreen(),
       )
     ],
   );

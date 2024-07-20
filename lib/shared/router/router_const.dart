@@ -26,4 +26,5 @@ class AppRouteConst {
   static const enterAmountRoute = 'enterAmount';
   static const completedAnimationRoute = 'completedAnimation';
   static const errorAnimationRoute = 'errorAnimation';
+  static const viewChildCardRoute = 'viewChildCard';
 }

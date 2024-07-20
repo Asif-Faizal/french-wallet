@@ -19,7 +19,7 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _isFront = true;
-  List<String> _selectedItems = [];
+  String _selectedItems = '';
 
   @override
   void initState() {
@@ -33,8 +33,6 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
       ..addListener(() {
         setState(() {});
       });
-
-    _loadPreferences(); // Load preferences when initializing
   }
 
   @override
@@ -56,25 +54,66 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
 
   Future<void> _savePreferences() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('selected_items', _selectedItems);
-  }
-
-  Future<void> _loadPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _selectedItems = prefs.getStringList('selected_items') ?? [];
-    });
+    await prefs.setString('selected_value', _selectedItems);
   }
 
   void _onListItemSelected(String item) {
     setState(() {
-      if (_selectedItems.contains(item)) {
-        _selectedItems.remove(item);
-      } else {
-        _selectedItems.add(item);
-      }
+      _selectedItems = item;
+      _savePreferences();
     });
-    _savePreferences();
+  }
+
+  void _showManageChildCardOptions() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.credit_card),
+                title: Text('View List of Cards'),
+                onTap: () {
+                  Navigator.pop(context);
+                  GoRouter.of(context)
+                      .pushNamed(AppRouteConst.viewChildCardRoute);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.block),
+                title: Text('Block or Unblock'),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Handle action here
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.transfer_within_a_station),
+                title: Text('Transfer from Child'),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Handle action here
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.transfer_within_a_station),
+                title: Text('Transfer to Child'),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Handle action here
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -141,6 +180,10 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                 )
               ],
             ),
+            Divider(
+              color: Colors.amber.shade300,
+              thickness: 1,
+            ),
             SizedBox(
               height: size.height / 7,
               width: size.height,
@@ -198,9 +241,7 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                             icon: Icon(
                               Icons.credit_card,
                             ),
-                            onPressed: () {
-                              _onListItemSelected('Manage');
-                            },
+                            onPressed: _showManageChildCardOptions,
                           ),
                         ),
                       ),
@@ -209,9 +250,6 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                   ],
                 ),
               ),
-            ),
-            SizedBox(
-              height: size.height / 40,
             ),
             Divider(
               color: Colors.amber.shade300,
@@ -278,7 +316,7 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
           ),
           Text(
             text,
-            style: theme.textTheme.bodyMedium,
+            style: theme.textTheme.bodySmall,
             textAlign: TextAlign.center,
           )
         ],

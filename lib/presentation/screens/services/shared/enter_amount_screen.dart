@@ -1,8 +1,9 @@
-import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
-import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
+import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EnterAmountPage extends StatefulWidget {
   @override
@@ -12,11 +13,20 @@ class EnterAmountPage extends StatefulWidget {
 class _EnterAmountPageState extends State<EnterAmountPage> {
   final TextEditingController _amountController = TextEditingController();
   bool _isButtonEnabled = false;
+  String? _selectedItems;
 
   @override
   void initState() {
     super.initState();
+    _loadPreferences();
     _amountController.addListener(_validateAmount);
+  }
+
+  Future<void> _loadPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedItems = prefs.getString('selected_value');
+    });
   }
 
   @override
@@ -32,21 +42,35 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
     });
   }
 
+  String _getButtonTitle() {
+    if (_selectedItems == 'Send') {
+      return 'Proceed';
+    } else if (_selectedItems == 'Receive') {
+      return 'Request';
+    } else {
+      return 'Proceed';
+    }
+  }
+
   void _handleSubmit() {
-    showModalBottomSheet(
-      context: context,
-      isDismissible: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
-      ),
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return TransactionPinBottomSheet(onPinEntered: (String pin) {
-          // Handle the entered PIN here
-          print("Entered PIN: $pin");
-        });
-      },
-    );
+    if (_selectedItems == 'Send') {
+      showModalBottomSheet(
+        context: context,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+        ),
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return TransactionPinBottomSheet(onPinEntered: (String pin) {
+            // Handle the entered PIN here
+            print("Entered PIN: $pin");
+          });
+        },
+      );
+    } else if (_selectedItems == 'Receive') {
+      GoRouter.of(context).pushNamed(AppRouteConst.coorporateHomeRoute);
+    }
   }
 
   @override
@@ -84,7 +108,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
             Spacer(),
             NormalButton(
               size: size,
-              title: 'Submit',
+              title: _getButtonTitle(),
               onPressed: _isButtonEnabled ? _handleSubmit : null,
             ),
             SizedBox(height: size.height / 80),
@@ -111,12 +135,21 @@ class _TransactionPinBottomSheetState extends State<TransactionPinBottomSheet> {
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
   String _enteredPin = '';
   bool _isButtonEnabled = false;
+  String? _selectedItems;
 
   @override
   void initState() {
     super.initState();
+    _loadPreferences();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_focusNodes[0]);
+    });
+  }
+
+  Future<void> _loadPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedItems = prefs.getString('selected_value');
     });
   }
 
@@ -125,6 +158,8 @@ class _TransactionPinBottomSheetState extends State<TransactionPinBottomSheet> {
     setState(() {
       _isButtonEnabled = _enteredPin.length == 6;
     });
+    print(
+        '###########################${_selectedItems ?? "No selected items"}##########################');
   }
 
   @override

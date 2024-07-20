@@ -93,6 +93,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                       selectorType: PhoneInputSelectorType.DROPDOWN,
                     ),
                     ignoreBlank: false,
+                    maxLength: 10,
                     autoValidateMode: AutovalidateMode.disabled,
                     initialValue: _phoneNumber,
                     textFieldController: _phoneController,
@@ -100,6 +101,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                     keyboardType: const TextInputType.numberWithOptions(
                         signed: true, decimal: true),
                     inputDecoration: InputDecoration(
+                      counterText: '',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(7),
                       ),
