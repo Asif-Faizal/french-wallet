@@ -1,7 +1,11 @@
 import 'package:ewallet2/presentation/screens/dashboard/agent/agent_home_screen.dart';
+import 'package:ewallet2/presentation/screens/dashboard/coorporate/coorporate_home_screen.dart';
 import 'package:ewallet2/presentation/screens/dashboard/retail/retail_home_screen.dart';
 import 'package:ewallet2/presentation/screens/initial/corporate_promot_screen.dart';
 import 'package:ewallet2/presentation/screens/login/executive_login_screen.dart';
+import 'package:ewallet2/presentation/screens/services/coorporate/top_up_screen.dart';
+import 'package:ewallet2/presentation/screens/services/shared/completed_screen.dart';
+import 'package:ewallet2/presentation/screens/services/shared/enter_amount_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/add_email_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/address_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/business%20owner/business_info.dart';
@@ -136,6 +140,26 @@ class AppRouter {
         path: '/uploadPdf',
         name: 'uploadPdf',
         builder: (context, state) => UploadPdfScreen(),
+      ),
+      GoRoute(
+        path: '/coorporateHome',
+        name: 'coorporateHome',
+        builder: (context, state) => CoorporateHomeScreen(),
+      ),
+      GoRoute(
+        path: '/topUpCorporate',
+        name: 'topUpCorporate',
+        builder: (context, state) => TopupCorporateScreen(),
+      ),
+      GoRoute(
+        path: '/enterAmount',
+        name: 'enterAmount',
+        builder: (context, state) => EnterAmountPage(),
+      ),
+      GoRoute(
+        path: '/completedAnimation',
+        name: 'completedAnimation',
+        builder: (context, state) => CompletedAnimationScreen(),
       )
     ],
   );

@@ -78,13 +78,21 @@ class _LoginScreenState extends State<LoginScreen> {
       _showAlertDialog('Sign Up',
           'Please sign in, as your mobile number is not registered with our application');
     } else if (userLinkedDevices == 1 && primaryDevice == 1) {
-      await sentOtpMobile(_phoneNumber.phoneNumber ?? '');
-      _showOtpBottomSheet(context);
-      print('Primary device #############################################');
+      final otpStatus = await sentOtpMobile(_phoneNumber.phoneNumber ?? '');
+      if (otpStatus == 'Success') {
+        _showOtpBottomSheet(context);
+        print('Primary device #############################################');
+      } else {
+        _showOtpErrorSnackBar();
+      }
     } else if (userLinkedDevices == 1 && primaryDevice == 0) {
-      await sentOtpMobile(_phoneNumber.phoneNumber ?? '');
-      _showOtpBottomSheet(context);
-      print('Not a primary device #########################################');
+      final otpStatus = await sentOtpMobile(_phoneNumber.phoneNumber ?? '');
+      if (otpStatus == 'Success') {
+        _showOtpBottomSheet(context);
+        print('Not a primary device #########################################');
+      } else {
+        _showOtpErrorSnackBar();
+      }
     }
   }
 
@@ -109,7 +117,18 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> checkMobile(String mobile) async {
+  void _showOtpErrorSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.red,
+      content: Text(
+        'Otp has been generated recently. Try again after some time.',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+    ));
+  }
+
+  Future<String> checkMobile(String mobile) async {
     final Map<String, String> headers = {
       'X-Password': Config.password,
       'X-Username': Config.username,
@@ -139,8 +158,9 @@ class _LoginScreenState extends State<LoginScreen> {
           print('Primary device: $primaryDevice ++++++++++++++++++++');
         }
 
-        // await _handleDeviceStatus(userLinkedDevices, primaryDevice);
-        await _handleDeviceStatus(1, 0);
+        await _handleDeviceStatus(userLinkedDevices, primaryDevice);
+        // await _handleDeviceStatus(1, 0);
+        return 'Success';
       } else {
         if (kDebugMode) {
           print('Failed with status code: ${response.statusCode}');
@@ -151,6 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.red,
         ));
+        return 'Error';
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -158,10 +179,11 @@ class _LoginScreenState extends State<LoginScreen> {
         behavior: SnackBarBehavior.floating,
         backgroundColor: Colors.red,
       ));
+      return 'Error';
     }
   }
 
-  Future<void> sentOtpMobile(String mobile) async {
+  Future<String> sentOtpMobile(String mobile) async {
     final Map<String, String> headers = {
       'X-Password': Config.password,
       'X-Username': Config.username,
@@ -183,9 +205,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        final status = responseData["status"];
         if (kDebugMode) {
           print('Response body: ${responseData}');
+          print(
+              '??????????????????????????????????????????????????????????????????');
+          print(status);
         }
+        return status;
       } else {
         if (kDebugMode) {
           print('Failed with status code: ${response.statusCode}');
@@ -196,6 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.red,
         ));
+        return 'Error';
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -203,6 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
         behavior: SnackBarBehavior.floating,
         backgroundColor: Colors.red,
       ));
+      return 'Error';
     }
   }
 

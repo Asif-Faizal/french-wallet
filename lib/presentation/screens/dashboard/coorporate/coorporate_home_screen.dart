@@ -2,17 +2,20 @@ import 'dart:ui';
 
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-class AgentHomeScreen extends StatefulWidget {
-  const AgentHomeScreen({super.key});
+import 'package:go_router/go_router.dart';
+
+class CoorporateHomeScreen extends StatefulWidget {
+  const CoorporateHomeScreen({super.key});
 
   @override
-  State<AgentHomeScreen> createState() => _AgentHomeScreenState();
+  State<CoorporateHomeScreen> createState() => _CoorporateHomeScreenState();
 }
 
-class _AgentHomeScreenState extends State<AgentHomeScreen>
+class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -103,22 +106,13 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
               children: [
                 TextButton(
                   onPressed: _flipCard,
-                  child: Row(
-                    children: [
-                      Text(
-                        'Flip card',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Colors.amber.shade800),
-                      ),
-                      SizedBox(
-                        width: size.width / 40,
-                      ),
-                      Icon(Icons.rotate_90_degrees_ccw,
-                          color: Colors.amber.shade800)
-                    ],
-                  ),
+                  child: Icon(Icons.rotate_90_degrees_ccw,
+                      color: Colors.amber.shade900),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Icon(Icons.visibility_off_outlined,
+                      color: Colors.amber.shade900),
                 )
               ],
             ),
@@ -126,27 +120,30 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
               height: size.height / 7,
               width: size.height,
               child: Center(
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     buildListItem(
-                      'Withdraw',
+                      'Send\nMoney',
                       Card(
                         color: Colors.amber.shade200,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: IconButton(
                             icon: Icon(
-                              Icons.print,
+                              Icons.upload,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              GoRouter.of(context)
+                                  .pushNamed(AppRouteConst.topUpCorporateRoute);
+                            },
                           ),
                         ),
                       ),
                       size,
                     ),
                     buildListItem(
-                      'Balance',
+                      'Receive\nMoney',
                       Card(
                         color: Colors.amber.shade200,
                         child: Padding(
@@ -162,30 +159,14 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
                       size,
                     ),
                     buildListItem(
-                      'Top Up',
+                      'Manage\nChild Card',
                       Card(
                         color: Colors.amber.shade200,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: IconButton(
                             icon: Icon(
-                              Icons.upload_file_outlined,
-                            ),
-                            onPressed: () {},
-                          ),
-                        ),
-                      ),
-                      size,
-                    ),
-                    buildListItem(
-                      'Statement',
-                      Card(
-                        color: Colors.amber.shade200,
-                        child: Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.note,
+                              Icons.credit_card,
                             ),
                             onPressed: () {},
                           ),
@@ -257,12 +238,17 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
       margin: EdgeInsets.symmetric(horizontal: size.width / 60),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           icon,
           SizedBox(
             height: size.height / 70,
           ),
-          Text(text, style: theme.textTheme.bodyLarge)
+          Text(
+            text,
+            style: theme.textTheme.bodyMedium,
+            textAlign: TextAlign.center,
+          )
         ],
       ),
     );
@@ -316,19 +302,21 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
                       SizedBox(
                         width: size.width / 2,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text('Balance:',
                                 style: TextStyle(
                                     fontSize: size.height / 40,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white)),
-                            Text('*****',
+                            SizedBox(
+                              width: size.width / 40,
+                            ),
+                            Text('**********',
                                 style: TextStyle(
                                     fontSize: size.height / 40,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white)),
-                            Icon(Icons.visibility, color: Colors.white),
                           ],
                         ),
                       ),
@@ -336,7 +324,7 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('1234 4567 7890 1234',
+                          Text('1234 **** **** 1234',
                               style: TextStyle(
                                   fontSize: size.height / 40,
                                   fontWeight: FontWeight.bold,
@@ -410,26 +398,21 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
                             children: [
                               Container(
                                 height: size.height / 25,
-                                width: size.width / 1.8,
+                                width: size.width / 1.6,
                                 color: Colors.grey.shade300,
                                 margin: const EdgeInsets.symmetric(vertical: 7),
                               ),
                               Container(
                                 height: size.height / 25,
-                                width: size.width / 5.7,
+                                width: size.width / 10,
                                 color: Colors.white,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Text('123',
+                                    Text('***',
                                         style: TextStyle(
                                             fontStyle: FontStyle.italic)),
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(Icons.visibility),
-                                      iconSize: 14,
-                                    )
                                   ],
                                 ),
                               ),

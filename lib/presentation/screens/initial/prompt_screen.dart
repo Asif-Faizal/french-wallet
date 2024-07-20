@@ -175,27 +175,33 @@ class _PromptScreenState extends State<PromptScreen> {
                 ],
               ),
               SizedBox(height: size.height / 5),
-              NormalButton(
-                size: size,
-                title: AppLocalizations.of(context)!.proceed,
-                onPressed: selectedUserType != null
-                    ? () async {
-                        print(selectedUserType);
-                        await _storeData();
-                        if (selectedUserType == 'corporate') {
-                          GoRouter.of(context)
-                              .pushNamed(AppRouteConst.corporatePromptRoute);
-                        } else {
-                          GoRouter.of(context)
-                              // .pushNamed(AppRouteConst.agentHomeRoute);
-                              .pushNamed(AppRouteConst.loginRoute);
-                          // .pushNamed(AppRouteConst.loginOrSignUpRoute);
-                        }
-                      }
-                    : null,
-              ),
             ],
           ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(
+            bottom: size.height / 40,
+            left: size.width / 15,
+            right: size.width / 15),
+        child: NormalButton(
+          size: size,
+          title: AppLocalizations.of(context)!.proceed,
+          onPressed: selectedUserType != null
+              ? () async {
+                  print(selectedUserType);
+                  await _storeData();
+                  if (selectedUserType == 'corporate') {
+                    GoRouter.of(context)
+                        .pushNamed(AppRouteConst.corporatePromptRoute);
+                  } else {
+                    GoRouter.of(context)
+                        // .pushNamed(AppRouteConst.enterAmountRoute);
+                        .pushNamed(AppRouteConst.coorporateHomeRoute);
+                    // .pushNamed(AppRouteConst.loginOrSignUpRoute);
+                  }
+                }
+              : null,
         ),
       ),
     );

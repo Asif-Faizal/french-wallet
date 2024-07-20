@@ -1,7 +1,9 @@
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 class SetPasscodeScreen extends StatefulWidget {
   const SetPasscodeScreen({Key? key}) : super(key: key);
@@ -49,7 +51,8 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
     } else if (passcode != confirmPasscode) {
       _showSnackBar('Passcodes do not match.');
     } else {
-      // Handle the passcode setting logic
+      // GoRouter.of(context).pushNamed(AppRouteConst.agentHomeRoute);
+      GoRouter.of(context).pushNamed(AppRouteConst.retailHomeRoute);
       _showSnackBar('Passcode set successfully.');
     }
   }
