@@ -1,12 +1,11 @@
 import 'dart:ui';
-
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import Shared Preferences
 
 class CoorporateHomeScreen extends StatefulWidget {
   const CoorporateHomeScreen({super.key});
@@ -20,6 +19,7 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _isFront = true;
+  List<String> _selectedItems = [];
 
   @override
   void initState() {
@@ -33,6 +33,8 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
       ..addListener(() {
         setState(() {});
       });
+
+    _loadPreferences(); // Load preferences when initializing
   }
 
   @override
@@ -50,6 +52,29 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
       }
       _isFront = !_isFront;
     }
+  }
+
+  Future<void> _savePreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('selected_items', _selectedItems);
+  }
+
+  Future<void> _loadPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedItems = prefs.getStringList('selected_items') ?? [];
+    });
+  }
+
+  void _onListItemSelected(String item) {
+    setState(() {
+      if (_selectedItems.contains(item)) {
+        _selectedItems.remove(item);
+      } else {
+        _selectedItems.add(item);
+      }
+    });
+    _savePreferences();
   }
 
   @override
@@ -134,8 +159,9 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                               Icons.upload,
                             ),
                             onPressed: () {
+                              _onListItemSelected('Send');
                               GoRouter.of(context)
-                                  .pushNamed(AppRouteConst.topUpCorporateRoute);
+                                  .pushNamed(AppRouteConst.searchUserRoute);
                             },
                           ),
                         ),
@@ -152,7 +178,11 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                             icon: Icon(
                               Icons.money,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              _onListItemSelected('Receive');
+                              GoRouter.of(context)
+                                  .pushNamed(AppRouteConst.searchUserRoute);
+                            },
                           ),
                         ),
                       ),
@@ -168,7 +198,9 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                             icon: Icon(
                               Icons.credit_card,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              _onListItemSelected('Manage');
+                            },
                           ),
                         ),
                       ),

@@ -7,14 +7,14 @@ import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import '../../../../shared/router/router_const.dart';
 
-class TopupCorporateScreen extends StatefulWidget {
-  const TopupCorporateScreen({super.key});
+class SearchUserScreen extends StatefulWidget {
+  const SearchUserScreen({super.key});
 
   @override
-  _TopupCorporateScreenState createState() => _TopupCorporateScreenState();
+  _SearchUserScreenState createState() => _SearchUserScreenState();
 }
 
-class _TopupCorporateScreenState extends State<TopupCorporateScreen> {
+class _SearchUserScreenState extends State<SearchUserScreen> {
   final TextEditingController _phoneController = TextEditingController();
   PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'FR');
   String? _selectedWalletType;

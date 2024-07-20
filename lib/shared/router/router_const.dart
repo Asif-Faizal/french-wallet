@@ -22,7 +22,8 @@ class AppRouteConst {
   static const businessInfoRoute = 'businessInfo';
   static const uploadPdfRoute = 'uploadPdf';
   static const coorporateHomeRoute = 'coorporateHome';
-  static const topUpCorporateRoute = 'topUpCorporate';
+  static const searchUserRoute = 'searchUser';
   static const enterAmountRoute = 'enterAmount';
   static const completedAnimationRoute = 'completedAnimation';
+  static const errorAnimationRoute = 'errorAnimation';
 }

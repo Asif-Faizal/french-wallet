@@ -3,9 +3,10 @@ import 'package:ewallet2/presentation/screens/dashboard/coorporate/coorporate_ho
 import 'package:ewallet2/presentation/screens/dashboard/retail/retail_home_screen.dart';
 import 'package:ewallet2/presentation/screens/initial/corporate_promot_screen.dart';
 import 'package:ewallet2/presentation/screens/login/executive_login_screen.dart';
-import 'package:ewallet2/presentation/screens/services/coorporate/top_up_screen.dart';
+import 'package:ewallet2/presentation/screens/services/shared/search_user_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/completed_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/enter_amount_screen.dart';
+import 'package:ewallet2/presentation/screens/services/shared/error_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/add_email_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/address_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/business%20owner/business_info.dart';
@@ -147,9 +148,9 @@ class AppRouter {
         builder: (context, state) => CoorporateHomeScreen(),
       ),
       GoRoute(
-        path: '/topUpCorporate',
-        name: 'topUpCorporate',
-        builder: (context, state) => TopupCorporateScreen(),
+        path: '/searchUser',
+        name: 'searchUser',
+        builder: (context, state) => SearchUserScreen(),
       ),
       GoRoute(
         path: '/enterAmount',
@@ -160,6 +161,11 @@ class AppRouter {
         path: '/completedAnimation',
         name: 'completedAnimation',
         builder: (context, state) => CompletedAnimationScreen(),
+      ),
+      GoRoute(
+        path: '/errorAnimation',
+        name: 'errorAnimation',
+        builder: (context, state) => ErrorAnimationScreen(),
       )
     ],
   );
