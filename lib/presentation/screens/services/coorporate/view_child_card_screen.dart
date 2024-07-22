@@ -19,6 +19,7 @@ class _ViewChildCardScreenState extends State<ViewChildCardScreen> {
     return Scaffold(
       appBar: NormalAppBar(text: ''),
       body: ListView.builder(
+        physics: BouncingScrollPhysics(),
         padding: EdgeInsets.all(20),
         itemCount: _cardList.length,
         itemBuilder: (context, index) {
@@ -87,9 +88,12 @@ class _ChildCardState extends State<ChildCard>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: widget.size.height / 3,
+      height: widget.size.height / 3 - widget.size.height / 100,
       child: Column(
         children: [
+          SizedBox(
+            height: widget.size.height / 80,
+          ),
           Transform(
             transform: Matrix4.rotationY(_animation.value * math.pi),
             alignment: Alignment.center,

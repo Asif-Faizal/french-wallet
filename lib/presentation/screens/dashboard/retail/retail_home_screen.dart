@@ -2,7 +2,9 @@ import 'dart:ui';
 import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class RetailHomeScreen extends StatefulWidget {
   const RetailHomeScreen({super.key});
@@ -227,7 +229,10 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                             icon: Icon(
                               Icons.download_outlined,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              GoRouter.of(context)
+                                  .pushNamed(AppRouteConst.retailReceiveRoute);
+                            },
                           ),
                         ),
                       ),
