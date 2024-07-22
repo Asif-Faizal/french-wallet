@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'package:ewallet2/shared/country_code.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import '../../../../shared/config/api_config.dart';
 
 class RetailReceiveScreen extends StatefulWidget {
   const RetailReceiveScreen({super.key});
@@ -14,11 +18,12 @@ class RetailReceiveScreen extends StatefulWidget {
 
 class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _searchController = TextEditingController();
-  PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'IN');
   bool _isButtonEnabled = false;
   Iterable<Contact> _contacts = [];
-  Iterable<Contact> _filteredContacts = [];
+
+  final List<Map<String, String>> _countryCodes = CountryCode.countryCodes;
+  String _selectedCountryCode = 'IN';
+  String _selectedCountryDialCode = '+91';
 
   @override
   void initState() {
@@ -31,14 +36,46 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
   void dispose() {
     _phoneController.removeListener(_validatePhoneNumber);
     _phoneController.dispose();
-    _searchController.dispose();
     super.dispose();
   }
 
   void _validatePhoneNumber() {
     setState(() {
-      _isButtonEnabled = _phoneController.text.length == 10;
+      _isButtonEnabled = _phoneController.text.length >= 10;
     });
+  }
+
+  void _showCountryCodePicker() async {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Select Country Code'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: _countryCodes.map((country) {
+                return ListTile(
+                  leading: Text(
+                    country['flag']!,
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  title: Text('${country['name']} (${country['dialCode']})'),
+                  onTap: () {
+                    setState(() {
+                      _selectedCountryCode = country['code']!;
+                      _selectedCountryDialCode = country['dialCode']!;
+                    });
+                    Navigator.pop(context);
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _requestContactPermission() async {
@@ -46,7 +83,11 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
     if (permissionStatus.isGranted) {
       _loadContacts();
     } else {
-      // Handle permission denied
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error fetching Contacts'),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ));
     }
   }
 
@@ -54,11 +95,28 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
     final contacts = await ContactsService.getContacts();
     setState(() {
       _contacts = contacts;
-      _filteredContacts = contacts;
     });
   }
 
-  void _showContactPicker() {
+  void _showContactPicker() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Loading Contacts'),
+          content: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    // Fetch contacts
+    await _requestContactPermission();
+
+    // Close the loading indicator
+    Navigator.of(context).pop();
+
+    // Show the bottom sheet with the contacts
     showModalBottomSheet(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       context: context,
@@ -66,36 +124,11 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
         return Column(
           children: [
             SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  labelText: 'Search Contacts',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                  ),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    if (value.isEmpty) {
-                      _filteredContacts = _contacts;
-                    } else {
-                      _filteredContacts = _contacts.where((contact) {
-                        final name = contact.displayName?.toLowerCase() ?? '';
-                        final search = value.toLowerCase();
-                        return name.contains(search);
-                      }).toList();
-                    }
-                  });
-                },
-              ),
-            ),
             Expanded(
               child: ListView.builder(
-                itemCount: _filteredContacts.length,
+                itemCount: _contacts.length,
                 itemBuilder: (context, index) {
-                  final contact = _filteredContacts.elementAt(index);
+                  final contact = _contacts.elementAt(index);
                   return ListTile(
                     leading:
                         (contact.avatar != null && contact.avatar!.isNotEmpty)
@@ -113,11 +146,8 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
                           contact.phones!.isNotEmpty) {
                         final phoneNumber = contact.phones!.first.value ?? '';
                         _phoneController.text = phoneNumber;
-                        _phoneNumber = PhoneNumber(
-                          phoneNumber: phoneNumber,
-                          isoCode: _phoneNumber.isoCode,
-                        );
-                        setState(() {});
+                        separatePhoneAndDialCode(
+                            phoneNumber); // Update country code
                         Navigator.pop(context);
                       }
                     },
@@ -129,6 +159,65 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
         );
       },
     );
+  }
+
+  void separatePhoneAndDialCode(String phoneNumber) {
+    Map<String, String> foundedCountry = {};
+    for (var country in _countryCodes) {
+      String dialCode = country["dialCode"] ?? '';
+      if (phoneNumber.startsWith(dialCode)) {
+        foundedCountry = country;
+        break;
+      }
+    }
+
+    if (foundedCountry.isNotEmpty) {
+      var dialCode = foundedCountry["dialCode"]!;
+      var newPhoneNumber = phoneNumber.substring(dialCode.length);
+      setState(() {
+        _selectedCountryCode = foundedCountry["code"]!;
+        _selectedCountryDialCode = dialCode;
+        _phoneController.text = newPhoneNumber;
+      });
+      print({'dialCode': dialCode, 'newPhoneNumber': newPhoneNumber});
+    }
+  }
+
+  Future<void> _sendHardcodedRequest() async {
+    final url = Config.check_benificiary;
+
+    final requestPayload = [
+      {
+        "phoneNumbers": [
+          {"label": "mobile", "number": "+9651800407267864"},
+          {"label": "mobile", "number": "+965 65840897"},
+          {"label": "mobile", "number": "+9651800407267864"}
+        ]
+      },
+    ];
+
+    final requestBody = jsonEncode(requestPayload);
+
+    print('Request URL: $url');
+    print('Request Headers: ${{
+      'Content-Type': 'application/json',
+      'Deviceid': Config.deviceId,
+      'Authorization': Config.token
+    }}');
+    print('Request Body: $requestBody');
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Deviceid': Config.deviceId,
+        'Authorization': Config.token
+      },
+      body: requestBody,
+    );
+
+    print('Response Status Code: ${response.statusCode}');
+    print('Response Body: ${response.body}');
   }
 
   @override
@@ -150,28 +239,42 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             SizedBox(height: size.height / 40),
-            InternationalPhoneNumberInput(
-              onInputChanged: (PhoneNumber number) {
-                setState(() {
-                  _phoneNumber = number;
-                });
-              },
-              selectorConfig: const SelectorConfig(
-                selectorType: PhoneInputSelectorType.DROPDOWN,
-              ),
-              ignoreBlank: false,
-              autoValidateMode: AutovalidateMode.disabled,
-              initialValue: _phoneNumber,
-              textFieldController: _phoneController,
-              formatInput: false,
-              keyboardType: const TextInputType.numberWithOptions(
-                  signed: true, decimal: true),
-              inputDecoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(7),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    onPressed: _showCountryCodePicker,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Row(
+                        children: [
+                          Text(
+                            _selectedCountryDialCode,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-                hintText: 'Phone Number',
-              ),
+                SizedBox(width: 10),
+                Expanded(
+                  flex: 3,
+                  child: TextField(
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                      hintText: 'Phone Number',
+                    ),
+                  ),
+                ),
+              ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -185,6 +288,9 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
                 ),
               ],
             ),
+            Spacer(),
+            ElevatedButton(
+                onPressed: _sendHardcodedRequest, child: Text('test')),
           ],
         ),
       ),
