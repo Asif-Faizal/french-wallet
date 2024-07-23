@@ -5,6 +5,7 @@ import 'package:ewallet2/presentation/screens/initial/corporate_promot_screen.da
 import 'package:ewallet2/presentation/screens/login/executive_login_screen.dart';
 import 'package:ewallet2/presentation/screens/services/coorporate/view_child_card_screen.dart';
 import 'package:ewallet2/presentation/screens/services/retail/receive_screen.dart';
+import 'package:ewallet2/presentation/screens/services/retail/send_money.dart';
 import 'package:ewallet2/presentation/screens/services/shared/search_user_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/completed_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/enter_amount_screen.dart';
@@ -155,9 +156,11 @@ class AppRouter {
         builder: (context, state) => SearchUserScreen(),
       ),
       GoRoute(
-        path: '/enterAmount',
-        name: 'enterAmount',
-        builder: (context, state) => EnterAmountPage(),
+        path: '/enterAmount/:phoneNumber',
+        builder: (context, state) {
+          final phoneNumber = state.params['phoneNumber']!;
+          return EnterAmountPage(phoneNumber: phoneNumber);
+        },
       ),
       GoRoute(
         path: '/completedAnimation',
@@ -178,6 +181,11 @@ class AppRouter {
         path: '/retailReceive',
         name: 'retailReceive',
         builder: (context, state) => RetailReceiveScreen(),
+      ),
+      GoRoute(
+        path: '/retailSent',
+        name: 'retailSent',
+        builder: (context, state) => RetailSentScreen(),
       )
     ],
   );

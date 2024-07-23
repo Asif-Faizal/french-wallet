@@ -1,11 +1,17 @@
+import 'package:ewallet2/shared/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class EnterAmountPage extends StatefulWidget {
+  const EnterAmountPage({super.key, required this.phoneNumber});
+  final String phoneNumber;
+
   @override
   _EnterAmountPageState createState() => _EnterAmountPageState();
 }
@@ -44,7 +50,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
 
   String _getButtonTitle() {
     if (_selectedItems == 'Send') {
-      return 'Proceed';
+      return 'Pay';
     } else if (_selectedItems == 'Receive') {
       return 'Request';
     } else {
@@ -52,32 +58,146 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
     }
   }
 
-  void _handleSubmit() {
-    if (_selectedItems == 'Send') {
-      showModalBottomSheet(
-        context: context,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
-        ),
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return TransactionPinBottomSheet(onPinEntered: (String pin) {
-            // Handle the entered PIN here
-            print("Entered PIN: $pin");
-          });
-        },
-      );
-    } else if (_selectedItems == 'Receive') {
-      GoRouter.of(context).pushNamed(AppRouteConst.coorporateHomeRoute);
+  Future<void> _makeSendRequest(String pin) async {
+    final url = Config.sent_money;
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': Config.token,
+    };
+
+    final body = jsonEncode({
+      'mobile': widget.phoneNumber,
+      'currency': 'KWD',
+      'amount': double.tryParse(_amountController.text) ?? 0.0,
+      'user_pin': pin,
+      'remark': 'Test transaction',
+    });
+
+    try {
+      final response =
+          await http.post(Uri.parse(url), headers: headers, body: body);
+      final responseData = jsonDecode(response.body);
+      print(body);
+      print(responseData);
+      final remark = responseData['remark'];
+      final statusCode = responseData['status_code'];
+      final status = responseData['status'];
+      print('Status Code: $statusCode');
+
+      if (response.statusCode == 200) {
+        if (status == 'Fail') {
+          GoRouter.of(context).pushNamed(AppRouteConst.errorAnimationRoute);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(remark),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ));
+        } else if (statusCode == 'Success') {
+          GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
+        } else {}
+      } else {
+        GoRouter.of(context).pushNamed(AppRouteConst.errorAnimationRoute);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Request failed: ${response.statusCode}'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error: $e'),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ));
     }
+  }
+
+  Future<void> _makeReceiveRequest(String pin) async {
+    final url = Config.add_request;
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': Config.token,
+    };
+
+    final body = jsonEncode({
+      "mobile_no": widget.phoneNumber,
+      "currency": "KWD",
+      "amount": double.tryParse(_amountController.text) ?? 0.0,
+      "user_pin": pin
+    });
+
+    try {
+      final response =
+          await http.post(Uri.parse(url), headers: headers, body: body);
+      final responseData = jsonDecode(response.body);
+      print(body);
+      print(responseData);
+      final remark = responseData['remark'];
+      final statusCode = responseData['status_code'];
+      final status = responseData['status'];
+      print('Status Code: $statusCode');
+
+      if (response.statusCode == 200) {
+        if (status == 'Fail') {
+          GoRouter.of(context).pushNamed(AppRouteConst.errorAnimationRoute);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(remark),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ));
+        } else if (status == 'Success') {
+          GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(remark),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ));
+        }
+      } else {
+        GoRouter.of(context).pushNamed(AppRouteConst.errorAnimationRoute);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Request failed: ${response.statusCode}'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error: $e'),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ));
+    }
+  }
+
+  void _handleSubmit() {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+      ),
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return TransactionPinBottomSheet(
+          onPinEntered: (String pin) {
+            if (_selectedItems == 'Send') {
+              _makeSendRequest(pin);
+            } else if (_selectedItems == 'Receive') {
+              _makeReceiveRequest(pin);
+            }
+          },
+          buttonTitle: _getButtonTitle(),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: NormalAppBar(text: ''),
+      appBar: NormalAppBar(text: widget.phoneNumber),
       body: Padding(
         padding: EdgeInsets.all(size.width / 20),
         child: Column(
@@ -121,8 +241,10 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
 
 class TransactionPinBottomSheet extends StatefulWidget {
   final Function(String) onPinEntered;
+  final String buttonTitle;
 
-  TransactionPinBottomSheet({required this.onPinEntered});
+  TransactionPinBottomSheet(
+      {required this.onPinEntered, required this.buttonTitle});
 
   @override
   _TransactionPinBottomSheetState createState() =>
@@ -131,8 +253,8 @@ class TransactionPinBottomSheet extends StatefulWidget {
 
 class _TransactionPinBottomSheetState extends State<TransactionPinBottomSheet> {
   final List<TextEditingController> _pinControllers =
-      List.generate(6, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+      List.generate(4, (_) => TextEditingController());
+  final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
   String _enteredPin = '';
   bool _isButtonEnabled = false;
   String? _selectedItems;
@@ -156,10 +278,8 @@ class _TransactionPinBottomSheetState extends State<TransactionPinBottomSheet> {
   void _handlePinInput() {
     _enteredPin = _pinControllers.map((controller) => controller.text).join();
     setState(() {
-      _isButtonEnabled = _enteredPin.length == 6;
+      _isButtonEnabled = _enteredPin.length == 4;
     });
-    print(
-        '###########################${_selectedItems ?? "No selected items"}##########################');
   }
 
   @override
@@ -187,7 +307,7 @@ class _TransactionPinBottomSheetState extends State<TransactionPinBottomSheet> {
             SizedBox(height: size.height / 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(6, (index) {
+              children: List.generate(4, (index) {
                 return Container(
                   width: size.width / 10,
                   height: size.height / 10,
@@ -201,12 +321,16 @@ class _TransactionPinBottomSheetState extends State<TransactionPinBottomSheet> {
                     obscureText: true,
                     style: TextStyle(fontSize: 24),
                     onChanged: (value) {
-                      if (value.isNotEmpty && index < 5) {
-                        FocusScope.of(context)
-                            .requestFocus(_focusNodes[index + 1]);
-                      } else if (value.isEmpty && index > 0) {
-                        FocusScope.of(context)
-                            .requestFocus(_focusNodes[index - 1]);
+                      if (value.isNotEmpty) {
+                        if (index < 3) {
+                          FocusScope.of(context)
+                              .requestFocus(_focusNodes[index + 1]);
+                        }
+                      } else if (value.isEmpty) {
+                        if (index > 0) {
+                          FocusScope.of(context)
+                              .requestFocus(_focusNodes[index - 1]);
+                        }
                       }
                       _handlePinInput();
                     },
@@ -223,13 +347,11 @@ class _TransactionPinBottomSheetState extends State<TransactionPinBottomSheet> {
             SizedBox(height: size.height / 15),
             NormalButton(
               size: MediaQuery.of(context).size,
-              title: 'Pay',
+              title: widget.buttonTitle,
               onPressed: _isButtonEnabled
                   ? () {
                       widget.onPinEntered(_enteredPin);
                       Navigator.of(context).pop();
-                      GoRouter.of(context)
-                          .pushNamed(AppRouteConst.completedAnimationRoute);
                     }
                   : null,
             ),

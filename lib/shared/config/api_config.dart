@@ -9,6 +9,14 @@ class Config {
       'https://api-innovitegra.online/login/Register/verify_otp_register';
   static const String check_benificiary =
       'https://api-innovitegra.online/user/Beneficiary/check_beneficiary';
+  static const String check_mobile_for_transaction =
+      'https://api-innovitegra.online/bank_accounts/Send_money/check_mobile_for_transaction';
+  static const String sent_money =
+      'https://api-innovitegra.online/bank_accounts/Send_money/send_money_to_user';
+  static const String list_request_sender =
+      'https://api-innovitegra.online/bank_accounts/Request_money/list_request_sender';
+  static const String add_request =
+      'https://api-innovitegra.online/bank_accounts/Request_money/add_request';
   static const String appVersion = '4.0.4';
   static const String deviceId =
       '986t534666587645342345243273485345331343576895323';

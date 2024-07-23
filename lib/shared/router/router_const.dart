@@ -28,4 +28,5 @@ class AppRouteConst {
   static const errorAnimationRoute = 'errorAnimation';
   static const viewChildCardRoute = 'viewChildCard';
   static const retailReceiveRoute = 'retailReceive';
+  static const retailSendRoute = 'retailSent';
 }

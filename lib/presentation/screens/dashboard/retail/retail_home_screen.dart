@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RetailHomeScreen extends StatefulWidget {
   const RetailHomeScreen({super.key});
@@ -112,7 +113,6 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                       title: Text('Broadband Bill'),
                       onTap: () {},
                     ),
-                    // Add more services here as needed
                   ],
                 ),
               ),
@@ -213,7 +213,13 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                             icon: Icon(
                               Icons.send_outlined,
                             ),
-                            onPressed: () {},
+                            onPressed: () async {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setString('selected_value', 'Send');
+                              GoRouter.of(context)
+                                  .pushNamed(AppRouteConst.retailSendRoute);
+                            },
                           ),
                         ),
                       ),
@@ -229,7 +235,11 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                             icon: Icon(
                               Icons.download_outlined,
                             ),
-                            onPressed: () {
+                            onPressed: () async {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setString(
+                                  'selected_value', 'Receive');
                               GoRouter.of(context)
                                   .pushNamed(AppRouteConst.retailReceiveRoute);
                             },
@@ -413,6 +423,14 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
           ],
         ),
       ),
+      floatingActionButton: Card(
+          elevation: 10,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: IconButton(onPressed: () {}, icon: Icon(Icons.qr_code_2)),
+          )),
     );
   }
 

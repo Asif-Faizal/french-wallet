@@ -10,14 +10,14 @@ import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import '../../../../shared/config/api_config.dart';
 
-class RetailReceiveScreen extends StatefulWidget {
-  const RetailReceiveScreen({super.key});
+class RetailSentScreen extends StatefulWidget {
+  const RetailSentScreen({super.key});
 
   @override
-  State<RetailReceiveScreen> createState() => _RetailReceiveScreenState();
+  State<RetailSentScreen> createState() => _RetailSentScreenState();
 }
 
-class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
+class _RetailSentScreenState extends State<RetailSentScreen> {
   final TextEditingController _phoneController = TextEditingController();
   bool _isButtonEnabled = false;
   Iterable<Contact> _contacts = [];
@@ -84,44 +84,29 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
     if (permissionStatus.isGranted) {
       _loadContacts();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error fetching Contacts'),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-      ));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error fetching Contacts'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ));
+      }
     }
   }
 
   void _loadContacts() async {
     final contacts = await ContactsService.getContacts();
-    setState(() {
-      _contacts = contacts;
-    });
+    if (mounted) {
+      setState(() {
+        _contacts = contacts;
+      });
+    }
   }
 
   Future<void> _sendContactsRequest(List<String> phoneNumbers) async {
     final url = Config.check_benificiary;
 
-    final requestPayload =
-        // [
-        //   {
-        //     "phoneNumbers": [
-        //       {"label": "mobile", "number": "+9651800407267864"},
-        //       {"label": "mobile", "number": "+965 65840897"},
-        //       {"label": "mobile", "number": "+9651800407267864"}
-        //     ]
-        //   },
-        //   {
-        //     "phoneNumbers": [
-        //       {"label": "mobile", "number": "+919566036720"},
-        //       {"label": "mobile", "number": "+919566036720"},
-        //       {"label": "mobile", "number": "+919566036720"}
-        //     ]
-        //   },
-        //   {"phoneNumbers": []}
-        // ];
-
-        [
+    final requestPayload = [
       {
         "phoneNumbers": phoneNumbers.map((number) {
           return {"label": "mobile", "number": number};
@@ -130,7 +115,7 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
     ];
 
     final requestBody = jsonEncode(requestPayload);
-    print(requestBody);
+
     final response = await http.post(
       Uri.parse(url),
       headers: {
@@ -140,7 +125,6 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
       },
       body: requestBody,
     );
-    print(response.body);
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
@@ -227,7 +211,7 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
       if (responseData['status'] == 'Success') {
         print(
             '########################################$phoneNumber######################################');
-        GoRouter.of(context).go('/enterAmount/$phoneNumber');
+        GoRouter.of(context).push('/enterAmount/$phoneNumber');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Transaction failed: ${responseData['message']}'),
@@ -256,7 +240,6 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
       },
     );
 
-    // Fetch contacts
     await _requestContactPermission();
     Navigator.of(context).pop();
 
@@ -293,7 +276,7 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
       }
     }
     return {
-      'dialCode': '+91', // Default to India if no match is found
+      'dialCode': '+91',
       'phone': phoneNumber,
     };
   }
@@ -307,7 +290,7 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: NormalAppBar(text: 'Receive Money'),
+      appBar: NormalAppBar(text: 'Send Money'),
       body: Padding(
         padding: EdgeInsets.symmetric(
           vertical: size.height / 60,
