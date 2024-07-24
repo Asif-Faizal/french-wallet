@@ -80,9 +80,8 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
       print(body);
       print(responseData);
       final remark = responseData['remark'];
-      final statusCode = responseData['status_code'];
       final status = responseData['status'];
-      print('Status Code: $statusCode');
+      print('Status: $status');
 
       if (response.statusCode == 200) {
         if (status == 'Fail') {
@@ -92,7 +91,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ));
-        } else if (statusCode == 'Success') {
+        } else if (status == 'Success') {
           GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
         } else {}
       } else {
@@ -133,9 +132,8 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
       print(body);
       print(responseData);
       final remark = responseData['remark'];
-      final statusCode = responseData['status_code'];
       final status = responseData['status'];
-      print('Status Code: $statusCode');
+      print('Status: $status');
 
       if (response.statusCode == 200) {
         if (status == 'Fail') {

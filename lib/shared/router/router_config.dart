@@ -6,10 +6,13 @@ import 'package:ewallet2/presentation/screens/login/executive_login_screen.dart'
 import 'package:ewallet2/presentation/screens/services/coorporate/view_child_card_screen.dart';
 import 'package:ewallet2/presentation/screens/services/retail/receive_screen.dart';
 import 'package:ewallet2/presentation/screens/services/retail/send_money.dart';
+import 'package:ewallet2/presentation/screens/services/shared/scan_qr_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/search_user_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/completed_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/enter_amount_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/error_screen.dart';
+import 'package:ewallet2/presentation/screens/services/shared/show_qr_screen.dart';
+import 'package:ewallet2/presentation/screens/services/shared/transaction_list_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/add_email_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/address_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/business%20owner/business_info.dart';
@@ -186,6 +189,21 @@ class AppRouter {
         path: '/retailSent',
         name: 'retailSent',
         builder: (context, state) => RetailSentScreen(),
+      ),
+      GoRoute(
+        path: '/qrCode',
+        name: 'qrCode',
+        builder: (context, state) => QRCodeScreen(),
+      ),
+      GoRoute(
+        path: '/qrCodeScan',
+        name: 'qrCodeScan',
+        builder: (context, state) => QRCodeScanScreen(),
+      ),
+      GoRoute(
+        path: '/transactionList',
+        name: 'transactionList',
+        builder: (context, state) => TransactionListScreen(),
       )
     ],
   );

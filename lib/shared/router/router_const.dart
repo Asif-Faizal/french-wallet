@@ -29,4 +29,7 @@ class AppRouteConst {
   static const viewChildCardRoute = 'viewChildCard';
   static const retailReceiveRoute = 'retailReceive';
   static const retailSendRoute = 'retailSent';
+  static const qrCodeRoute = 'qrCode';
+  static const qrCodeScanRoute = 'qrCodeScan';
+  static const transactionListRoute = 'transactionList';
 }

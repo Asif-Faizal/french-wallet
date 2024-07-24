@@ -17,9 +17,13 @@ class Config {
       'https://api-innovitegra.online/bank_accounts/Request_money/list_request_sender';
   static const String add_request =
       'https://api-innovitegra.online/bank_accounts/Request_money/add_request';
+  static const String get_user_qr =
+      'https://api-innovitegra.online/user/get_user_qr';
+  static const String get_statement =
+      'https://api-innovitegra.online/transaction/statement/get_statement';
   static const String appVersion = '4.0.4';
   static const String deviceId =
       '986t534666587645342345243273485345331343576895323';
   static const String token =
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyNjgiLCJleHAiOjE3MjE3MjQ5NDAsImlzcyI6IkFaZVdhbGxldCJ9.GK8PI-0HYSEWls1Ta0EBZXGrgaicY-e9LBkJN9X1Zgw';
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyNjEiLCJleHAiOjE3MjE3OTkzNzgsImlzcyI6IkFaZVdhbGxldCJ9.PF_q-muBROCgt7Zz-omIA3zVvbgchwVmfpcU2luH8kk';
 }
