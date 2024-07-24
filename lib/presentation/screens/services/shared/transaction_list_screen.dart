@@ -1,3 +1,4 @@
+import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart'; // Import for date formatting
@@ -21,9 +22,7 @@ class TransactionListScreen extends StatelessWidget {
         ),
       )..add(LoadTransactions()),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('Transaction List'),
-        ),
+        appBar: NormalAppBar(text: 'Statements'),
         body: BlocBuilder<TransactionBloc, TransactionState>(
           builder: (context, state) {
             if (state is TransactionLoading) {
@@ -57,8 +56,7 @@ class TransactionListScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   '${transaction.amount} ${transaction.currency}',
-                                  style:
-                                      Theme.of(context).textTheme.headlineSmall,
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 SizedBox(height: size.height / 80),
                                 Text(

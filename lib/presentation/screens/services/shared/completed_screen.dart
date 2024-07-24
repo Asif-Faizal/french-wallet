@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -21,11 +22,22 @@ class _CompletedAnimationScreenState extends State<CompletedAnimationScreen>
     super.initState();
     _controller = AnimationController(vsync: this);
     _getUser();
+    playSound();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _navigateToNextScreen(_userType);
       }
     });
+  }
+
+  void playSound() async {
+    final player = AudioPlayer();
+    try {
+      await Future.delayed(Duration(seconds: 1));
+      await player.play(AssetSource("Coin.mp3"));
+    } catch (e) {
+      print("Error playing sound: $e");
+    }
   }
 
   Future<void> _getUser() async {
