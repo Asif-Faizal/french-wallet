@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart'; // Import for date formatting
 import '../../../../data/statement/transaction_data_source.dart';
 import '../../../../data/statement/transaction_repo_impl.dart';
 import '../../../../domain/statement/fetch_transaction.dart';
@@ -10,6 +11,7 @@ import '../../../bloc/statement/transaction_state.dart';
 class TransactionListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return BlocProvider(
       create: (context) => TransactionBloc(
         fetchTransactions: FetchTransactions(
@@ -32,21 +34,59 @@ class TransactionListScreen extends StatelessWidget {
                 itemCount: state.transactions.length,
                 itemBuilder: (context, index) {
                   final transaction = state.transactions[index];
+
+                  DateTime transactionDate = DateTime.parse(transaction.date);
+
+                  final formattedDate =
+                      DateFormat('dd MMM yyyy').format(transactionDate);
+                  final formattedTime =
+                      DateFormat('HH:mm').format(transactionDate);
+
                   return Card(
                     margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     child: ListTile(
-                      title:
-                          Text('Transaction ID: ${transaction.transactionId}'),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Type: ${transaction.type}'),
-                          Text(
-                              'Amount: ${transaction.amount} ${transaction.currency}'),
-                          Text('Status: ${transaction.status}'),
-                          Text('Date: ${transaction.date}'),
-                          Text('Time: ${transaction.time}'),
-                        ],
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      title: SizedBox(
+                        height: size.height / 10,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${transaction.amount} ${transaction.currency}',
+                                  style:
+                                      Theme.of(context).textTheme.headlineSmall,
+                                ),
+                                SizedBox(height: size.height / 80),
+                                Text(
+                                  'Type: ${transaction.type}',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                Text(
+                                  'Transaction ID: ${transaction.transactionId}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall, // Subheading style
+                                ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(formattedDate,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall),
+                                Text(formattedTime,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );

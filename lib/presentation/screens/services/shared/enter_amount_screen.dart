@@ -270,6 +270,7 @@ class _TransactionPinBottomSheetState extends State<TransactionPinBottomSheet> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _selectedItems = prefs.getString('selected_value');
+      print(_selectedItems);
     });
   }
 

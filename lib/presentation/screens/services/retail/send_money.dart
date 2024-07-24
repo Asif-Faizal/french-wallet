@@ -23,7 +23,6 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
   Iterable<Contact> _contacts = [];
 
   final List<Map<String, String>> _countryCodes = CountryCode.countryCodes;
-  String _selectedCountryCode = 'IN';
   String _selectedCountryDialCode = '+91';
 
   @override
@@ -65,7 +64,6 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
                   title: Text('${country['name']} (${country['dialCode']})'),
                   onTap: () {
                     setState(() {
-                      _selectedCountryCode = country['code']!;
                       _selectedCountryDialCode = country['dialCode']!;
                     });
                     Navigator.pop(context);

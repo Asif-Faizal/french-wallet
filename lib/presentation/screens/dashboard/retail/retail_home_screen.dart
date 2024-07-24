@@ -141,7 +141,10 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
               width: size.width / 40,
             ),
             IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  GoRouter.of(context)
+                      .pushNamed(AppRouteConst.transactionListRoute);
+                },
                 icon: Icon(
                   Icons.message,
                   size: 30,
