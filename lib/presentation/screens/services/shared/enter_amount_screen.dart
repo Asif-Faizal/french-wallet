@@ -78,6 +78,8 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
           await http.post(Uri.parse(url), headers: headers, body: body);
       final responseData = jsonDecode(response.body);
       print(body);
+      print(
+          '==================================SENDING MONEY==============================');
       print(responseData);
       final remark = responseData['remark'];
       final status = responseData['status'];
@@ -130,6 +132,8 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
           await http.post(Uri.parse(url), headers: headers, body: body);
       final responseData = jsonDecode(response.body);
       print(body);
+      print(
+          '==================================REQUESTING MONEY==============================');
       print(responseData);
       final remark = responseData['remark'];
       final status = responseData['status'];
@@ -218,8 +222,8 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
                 ),
                 prefix: Icon(Icons.attach_money),
                 contentPadding: EdgeInsets.symmetric(
-                  vertical: size.height / 30,
-                  horizontal: size.width / 20,
+                  vertical: size.height / 60,
+                  horizontal: size.width / 40,
                 ),
               ),
             ),
@@ -270,7 +274,8 @@ class _TransactionPinBottomSheetState extends State<TransactionPinBottomSheet> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _selectedItems = prefs.getString('selected_value');
-      print(_selectedItems);
+      print(
+          '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@$_selectedItems@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
     });
   }
 

@@ -1,3 +1,4 @@
+import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -13,9 +14,7 @@ class _QRCodeScanScreenState extends State<QRCodeScanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Scan QR Code'),
-      ),
+      appBar: NormalAppBar(text: ''),
       body: Stack(
         children: [
           MobileScanner(
@@ -26,9 +25,44 @@ class _QRCodeScanScreenState extends State<QRCodeScanScreen> {
                 setState(() {
                   _result = barcode.rawValue;
                 });
-                _controller.stop(); // Stop scanning after detecting a QR code
+                _controller.stop();
               }
             },
+          ),
+          Center(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                ClipPath(
+                  clipper: CutoutClipper(),
+                  child: Container(
+                    color: Colors.amber.shade100.withOpacity(0.9),
+                  ),
+                ),
+                Container(
+                  width: 250,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white, width: 4.0),
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 100,
+            left: 20,
+            right: 20,
+            child: Text(
+              'Scan a QR Code to Pay',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
           ),
           if (_result != null)
             Positioned(
@@ -54,4 +88,24 @@ class _QRCodeScanScreenState extends State<QRCodeScanScreen> {
     _controller.dispose();
     super.dispose();
   }
+}
+
+class CutoutClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path()
+      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..addRRect(RRect.fromRectAndRadius(
+        Rect.fromCenter(
+            center: Offset(size.width / 2, size.height / 2),
+            width: 250,
+            height: 250),
+        Radius.circular(16.0),
+      ))
+      ..fillType = PathFillType.evenOdd;
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }

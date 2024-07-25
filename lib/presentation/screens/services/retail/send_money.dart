@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:ewallet2/shared/country_code.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -21,6 +20,7 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
   final TextEditingController _phoneController = TextEditingController();
   bool _isButtonEnabled = false;
   Iterable<Contact> _contacts = [];
+  bool _contactsLoaded = false;
 
   final List<Map<String, String>> _countryCodes = CountryCode.countryCodes;
   String _selectedCountryDialCode = '+91';
@@ -82,23 +82,20 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
     if (permissionStatus.isGranted) {
       _loadContacts();
     } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Error fetching Contacts'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ));
-      }
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error fetching Contacts'),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ));
     }
   }
 
   void _loadContacts() async {
     final contacts = await ContactsService.getContacts();
-    if (mounted) {
-      setState(() {
-        _contacts = contacts;
-      });
-    }
+    setState(() {
+      _contacts = contacts;
+      _contactsLoaded = true;
+    });
   }
 
   Future<void> _sendContactsRequest(List<String> phoneNumbers) async {
@@ -113,7 +110,7 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
     ];
 
     final requestBody = jsonEncode(requestPayload);
-
+    print(requestBody);
     final response = await http.post(
       Uri.parse(url),
       headers: {
@@ -123,6 +120,7 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
       },
       body: requestBody,
     );
+    print(response.body);
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
@@ -171,12 +169,51 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
                         },
                       );
                     }).toList(),
+                    Text(
+                      'Non-ePurse Users',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    SizedBox(height: 10),
+                    ..._contacts.where((contact) {
+                      final phoneNumber = contact.phones?.isNotEmpty == true
+                          ? contact.phones!.first.value?.replaceAll(' ', '')
+                          : null;
+                      return phoneNumber != null &&
+                          responseData['data'].every((userContact) =>
+                              userContact['phoneNumber'] != phoneNumber);
+                    }).map<Widget>((contact) {
+                      final displayName = contact.displayName ?? '';
+                      final phoneNumber = contact.phones?.isNotEmpty == true
+                          ? contact.phones!.first.value?.replaceAll(' ', '')
+                          : '';
+                      return ListTile(
+                        leading: CircleAvatar(
+                          child: Text(
+                            displayName.isNotEmpty ? displayName[0] : '?',
+                          ),
+                        ),
+                        title: Text(displayName),
+                        subtitle: Text(phoneNumber ?? ''),
+                        trailing: TextButton(
+                          child: Text('Invite'),
+                          onPressed: () {
+                            // Logic to send invite
+                          },
+                        ),
+                      );
+                    }).toList(),
                   ],
                 ),
               ),
             );
           },
         );
+      } else if (responseData['status'] == 'Fail') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error: ${responseData['message']}'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ));
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -207,6 +244,7 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
       if (responseData['status'] == 'Success') {
+        print(response.body);
         print(
             '########################################$phoneNumber######################################');
         GoRouter.of(context).push('/enterAmount/$phoneNumber');
@@ -238,6 +276,7 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
       },
     );
 
+    // Fetch contacts
     await _requestContactPermission();
     Navigator.of(context).pop();
 
@@ -269,14 +308,11 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
       if (phoneNumber.startsWith(dialCode)) {
         return {
           'dialCode': dialCode,
-          'phone': phoneNumber.substring(dialCode.length),
+          'phone': phoneNumber.substring(dialCode.length)
         };
       }
     }
-    return {
-      'dialCode': '+91',
-      'phone': phoneNumber,
-    };
+    return {'dialCode': '', 'phone': phoneNumber};
   }
 
   void _submit() {
@@ -288,7 +324,7 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: NormalAppBar(text: 'Send Money'),
+      appBar: NormalAppBar(text: 'Receive Money'),
       body: Padding(
         padding: EdgeInsets.symmetric(
           vertical: size.height / 60,
@@ -305,36 +341,33 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
             SizedBox(height: size.height / 40),
             Row(
               children: [
-                Expanded(
+                Container(
+                  height: size.height / 15,
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                     onPressed: _showCountryCodePicker,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: Row(
-                        children: [
-                          Text(
-                            _selectedCountryDialCode,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ],
-                      ),
+                    child: Text(
+                      _selectedCountryDialCode,
+                      style: TextStyle(color: Colors.black),
                     ),
                   ),
                 ),
                 SizedBox(width: 10),
                 Expanded(
                   flex: 3,
-                  child: TextField(
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(7),
+                  child: Container(
+                    height: size.height / 15,
+                    child: TextField(
+                      controller: _phoneController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        hintText: 'Phone Number',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
-                      hintText: 'Phone Number',
                     ),
                   ),
                 ),
@@ -343,16 +376,18 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(
-                  onPressed: _showContactPicker,
-                  child: Text(
-                    'Select from Contacts',
-                    style: TextStyle(fontSize: 14),
+                if (_contactsLoaded)
+                  TextButton(
+                    child: Text('Select from Contacts'),
+                    onPressed: _showContactPicker,
+                  )
+                else
+                  TextButton(
+                    child: Text('Loading Contacts...'),
+                    onPressed: null,
                   ),
-                ),
               ],
-            ),
-            Spacer(),
+            )
           ],
         ),
       ),
@@ -360,7 +395,7 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
         padding: EdgeInsets.all(15),
         child: NormalButton(
           size: size,
-          title: 'Submit',
+          title: 'Check',
           onPressed: _isButtonEnabled ? _submit : null,
         ),
       ),
