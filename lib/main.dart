@@ -1,5 +1,10 @@
+import 'package:ewallet2/data/image/image_datasource.dart';
+import 'package:ewallet2/data/image/image_repo.dart';
 import 'package:ewallet2/data/signup/industry_sector/industry_sector_datasource.dart';
 import 'package:ewallet2/data/signup/industry_sector/industry_sector_repo_impl.dart';
+import 'package:ewallet2/domain/image/upload_image.dart';
+import 'package:ewallet2/presentation/bloc/image/image_bloc.dart';
+import 'package:ewallet2/shared/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -20,12 +25,15 @@ import 'presentation/bloc/statement/transaction_event.dart';
 import 'shared/theme/theme.dart';
 import 'shared/router/router_config.dart';
 import 'package:http/http.dart' as http;
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+//import 'package:onesignal_flutter/onesignal_flutter.dart';
+// import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
+  // OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+  // OneSignal.initialize('APP ID');
+  // OneSignal.Notifications.requestPermission(true);
   runApp(const MyApp());
 }
 
@@ -70,6 +78,12 @@ class MyApp extends StatelessWidget {
             ),
           )..add(FetchIndustrySectors()),
         ),
+        BlocProvider<UploadImageBloc>(
+            create: (context) => UploadImageBloc(
+                uploadImageUseCase: UploadImageUseCase(
+                    repository: ImageRepository(
+                        dataSource:
+                            ImageDataSource(uploadUrl: Config.upload_image)))))
       ],
       child: const MyAppView(),
     );
