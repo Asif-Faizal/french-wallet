@@ -135,7 +135,15 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
             BlocBuilder<BusinessTypeBloc, BusinessTypeState>(
               builder: (context, state) {
                 if (state is BusinessTypeLoading) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(
+                      child: TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Business Type',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ));
                 } else if (state is BusinessTypeLoaded) {
                   return DropdownButtonFormField<String>(
                     decoration: InputDecoration(
@@ -167,7 +175,15 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
             BlocBuilder<IndustrySectorBloc, IndustrySectorState>(
               builder: (context, state) {
                 if (state is IndustrySectorLoading) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(
+                      child: TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Industry Sector',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ));
                 } else if (state is IndustrySectorLoaded) {
                   return DropdownButtonFormField<String>(
                     decoration: InputDecoration(
