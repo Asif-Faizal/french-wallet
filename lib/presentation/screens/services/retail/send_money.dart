@@ -196,9 +196,7 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
                         subtitle: Text(phoneNumber ?? ''),
                         trailing: TextButton(
                           child: Text('Invite'),
-                          onPressed: () {
-                            // Logic to send invite
-                          },
+                          onPressed: () {},
                         ),
                       );
                     }).toList(),

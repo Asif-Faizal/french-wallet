@@ -1,8 +1,14 @@
-import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
-import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
-import 'package:ewallet2/shared/router/router_const.dart';
+import 'package:ewallet2/presentation/bloc/industry%20sector/industry_sector_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../../../domain/signup/business_type_entity.dart';
+import '../../../../domain/signup/industry_type_entity.dart';
+import '../../../../shared/router/router_const.dart';
+import '../../../bloc/business info/business_info_bloc.dart';
+import '../../../widgets/shared/normal_appbar.dart';
+import '../../../widgets/shared/normal_button.dart';
 
 class BusinessInfoScreen extends StatefulWidget {
   const BusinessInfoScreen({super.key});
@@ -25,27 +31,6 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
   String? _selectedIndustrySector;
   DateTime? _selectedDate;
 
-  final List<String> _businessTypeOptions = [
-    'Sole Proprietorship',
-    'Partnership',
-    'Corporation',
-    'Limited Liability Company (LLC)',
-    'Nonprofit'
-  ];
-
-  final List<String> _industrySectorOptions = [
-    'Agriculture',
-    'Manufacturing',
-    'Construction',
-    'Retail',
-    'Finance',
-    'Healthcare',
-    'Technology',
-    'Education',
-    'Transportation',
-    'Other'
-  ];
-
   bool get _isButtonEnabled {
     return _legalNameController.text.isNotEmpty &&
         _registrationNumberController.text.isNotEmpty &&
@@ -57,10 +42,6 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
         _selectedDate != null;
   }
 
-  void _updateButtonState() {
-    setState(() {});
-  }
-
   @override
   void initState() {
     super.initState();
@@ -69,16 +50,12 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
     _officialWebsiteController.addListener(_updateButtonState);
     _officialEmailController.addListener(_updateButtonState);
     _companyNumberController.addListener(_updateButtonState);
+
+    context.read<BusinessTypeBloc>().add(FetchBusinessTypes());
   }
 
-  @override
-  void dispose() {
-    _legalNameController.dispose();
-    _registrationNumberController.dispose();
-    _officialWebsiteController.dispose();
-    _officialEmailController.dispose();
-    _companyNumberController.dispose();
-    super.dispose();
+  void _updateButtonState() {
+    setState(() {});
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -155,45 +132,68 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
               ),
             ),
             SizedBox(height: size.height / 40),
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                labelText: 'Business Type',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              value: _selectedBusinessType,
-              items: _businessTypeOptions
-                  .map((type) => DropdownMenuItem<String>(
-                        value: type,
-                        child: Text(type),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedBusinessType = value;
-                });
+            BlocBuilder<BusinessTypeBloc, BusinessTypeState>(
+              builder: (context, state) {
+                if (state is BusinessTypeLoading) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (state is BusinessTypeLoaded) {
+                  return DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Business Type',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    value: _selectedBusinessType,
+                    items: state.businessTypes
+                        .map((BusinessType type) => DropdownMenuItem<String>(
+                              value: type.businessType,
+                              child: Text(type.businessType),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedBusinessType = value;
+                      });
+                    },
+                  );
+                } else if (state is BusinessTypeError) {
+                  return Text('Failed to load business types');
+                }
+                return SizedBox();
               },
             ),
             SizedBox(height: size.height / 40),
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                labelText: 'Industry Sector',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              value: _selectedIndustrySector,
-              items: _industrySectorOptions
-                  .map((sector) => DropdownMenuItem<String>(
-                        value: sector,
-                        child: Text(sector),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedIndustrySector = value;
-                });
+            BlocBuilder<IndustrySectorBloc, IndustrySectorState>(
+              builder: (context, state) {
+                if (state is IndustrySectorLoading) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (state is IndustrySectorLoaded) {
+                  return DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Industry Sector',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    value: _selectedIndustrySector,
+                    items: state.industrySectors
+                        .map(
+                            (IndustrySector sector) => DropdownMenuItem<String>(
+                                  value: sector.industrySector,
+                                  child: Text(sector.industrySector),
+                                ))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedIndustrySector = value;
+                      });
+                    },
+                  );
+                } else if (state is IndustrySectorError) {
+                  return Text('Failed to load industry sectors');
+                }
+                return SizedBox();
               },
             ),
             SizedBox(height: size.height / 40),

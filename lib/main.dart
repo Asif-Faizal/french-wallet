@@ -1,16 +1,25 @@
+import 'package:ewallet2/data/signup/industry%20sector/industry_sector_datasource.dart';
+import 'package:ewallet2/data/signup/industry%20sector/industry_sector_repo_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'data/signup/business type/business_info_datasource.dart';
+import 'data/signup/business type/business_info_repo_impl.dart';
 import 'data/statement/transaction_data_source.dart';
 import 'data/statement/transaction_repo_impl.dart';
+import 'domain/signup/get_business_type.dart';
+import 'domain/signup/get_industry_sector.dart';
 import 'domain/statement/fetch_transaction.dart';
 import 'l10n/l10n.dart';
+import 'presentation/bloc/business info/business_info_bloc.dart';
+import 'presentation/bloc/industry sector/industry_sector_bloc.dart';
 import 'presentation/bloc/language/localization_bloc.dart';
 import 'presentation/bloc/statement/transaction_bloc.dart';
 import 'presentation/bloc/statement/transaction_event.dart';
 import 'shared/theme/theme.dart';
 import 'shared/router/router_config.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -34,6 +43,28 @@ class MyApp extends StatelessWidget {
               ),
             ),
           )..add(LoadTransactions()),
+        ),
+        BlocProvider<BusinessTypeBloc>(
+          create: (context) => BusinessTypeBloc(
+            getBusinessTypes: GetBusinessTypes(
+              repository: BusinessInfoRepositoryImpl(
+                dataSource: BusinessInfoDataSourceImpl(
+                  client: http.Client(),
+                ),
+              ),
+            ),
+          )..add(FetchBusinessTypes()),
+        ),
+        BlocProvider<IndustrySectorBloc>(
+          create: (context) => IndustrySectorBloc(
+            getIndustrySectors: GetIndustrySectors(
+              repository: IndustrySectorRepositoryImpl(
+                dataSource: IndustrySectorDataSourceImpl(
+                  client: http.Client(),
+                ),
+              ),
+            ),
+          )..add(FetchIndustrySectors()),
         ),
       ],
       child: const MyAppView(),

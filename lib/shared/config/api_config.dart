@@ -21,6 +21,10 @@ class Config {
       'https://api-innovitegra.online/user/get_user_qr';
   static const String get_statement =
       'https://api-innovitegra.online/transaction/statement/get_statement';
+  static const String get_industry_type =
+      'https://api-innovitegra.online/merchant/get_industry_type';
+  static const String get_business_type =
+      'https://api-innovitegra.online/merchant/get_business_type';
   static const String appVersion = '4.0.4';
   static const String deviceId =
       '986t534666587645342345243273485345331343576895323';
