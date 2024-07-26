@@ -1,9 +1,14 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:io';
 
 import '../../../../shared/router/router_const.dart';
+import '../../../bloc/documents/doc_bloc.dart';
+import '../../../bloc/documents/doc_event.dart';
+import '../../../bloc/documents/doc_state.dart';
 import '../../../widgets/shared/normal_appbar.dart';
 
 class UploadPdfScreen extends StatefulWidget {
@@ -31,6 +36,12 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
           _pdfFile2 = result.files.first;
         }
       });
+
+      if (_pdfFile1 != null && _pdfFile2 != null) {
+        final formData = File(_pdfFile1!.path!);
+
+        context.read<UploadPdfBloc>().add(UploadPdfFileEvent(_pdfFile1!));
+      }
     }
   }
 
@@ -38,83 +49,111 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: NormalAppBar(text: ''),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () => _pickPdf(1),
-              child: Card(
-                child: Container(
-                  width: double.infinity,
-                  height: size.height / 4,
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.picture_as_pdf,
-                        size: size.height / 10,
-                      ),
-                      SizedBox(height: size.height / 40),
-                      Text(
-                        _pdfFile1 != null ? _pdfFile1!.name : 'Upload PDF 1',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+    return BlocConsumer<UploadPdfBloc, UploadPdfState>(
+      listener: (context, state) {
+        if (state is UploadPdfSuccess) {
+          print('Response: ${state.uploadPdfEntity}');
+          if (state.uploadPdfEntity.status == 'Success') {
+            print(state.uploadPdfEntity.imageId);
+            GoRouter.of(context)
+                .pushNamed(AppRouteConst.politicallyExposedRoute);
+          }
+        } else if (state is UploadPdfFailure) {
+          print('Failed to upload PDF: ${state.error}');
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.error)));
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: const NormalAppBar(text: ''),
+          body: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Center(
+                  child: InkWell(
+                    onTap: () => _pickPdf(1),
+                    child: Card(
+                      child: Container(
+                        width: size.width / 1.5,
+                        height: size.height / 6,
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.picture_as_pdf,
+                              size: size.height / 20,
+                            ),
+                            SizedBox(height: size.height / 40),
+                            Text(
+                              _pdfFile1 != null
+                                  ? _pdfFile1!.name
+                                  : 'Upload PDF 1',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-            SizedBox(height: size.height / 40),
-            InkWell(
-              onTap: () => _pickPdf(2),
-              child: Card(
-                child: Container(
-                  width: double.infinity,
-                  height: size.height / 4,
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.picture_as_pdf,
-                        size: size.height / 10,
+                SizedBox(height: size.height / 20),
+                InkWell(
+                  onTap: () => _pickPdf(2),
+                  child: Card(
+                    child: Container(
+                      width: size.width / 1.5,
+                      height: size.height / 6,
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.picture_as_pdf,
+                            size: size.height / 20,
+                          ),
+                          SizedBox(height: size.height / 40),
+                          Text(
+                            _pdfFile2 != null
+                                ? _pdfFile2!.name
+                                : 'Upload PDF 2',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: size.height / 40),
-                      Text(
-                        _pdfFile2 != null ? _pdfFile2!.name : 'Upload PDF 2',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(15),
-        child: NormalButton(
-          size: size,
-          title: 'Continue',
-          onPressed: (_pdfFile1 != null && _pdfFile2 != null)
-              ? () {
-                  GoRouter.of(context)
-                      .pushNamed(AppRouteConst.politicallyExposedRoute);
-                }
-              : null,
-        ),
-      ),
+          ),
+          bottomNavigationBar: Padding(
+            padding: const EdgeInsets.all(15),
+            child: NormalButton(
+              size: size,
+              title: 'Continue',
+              onPressed: (_pdfFile1 != null && _pdfFile2 != null)
+                  ? () {
+                      context
+                          .read<UploadPdfBloc>()
+                          .add(UploadPdfFileEvent(_pdfFile1!));
+                    }
+                  : null,
+            ),
+          ),
+        );
+      },
     );
   }
 }

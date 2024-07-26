@@ -1,8 +1,12 @@
+import 'package:ewallet2/data/documents/doc_datasource.dart';
+import 'package:ewallet2/data/documents/doc_repo.dart';
 import 'package:ewallet2/data/image/image_datasource.dart';
 import 'package:ewallet2/data/image/image_repo.dart';
 import 'package:ewallet2/data/signup/industry_sector/industry_sector_datasource.dart';
 import 'package:ewallet2/data/signup/industry_sector/industry_sector_repo_impl.dart';
+import 'package:ewallet2/domain/documents/upload_doc.dart';
 import 'package:ewallet2/domain/image/upload_image.dart';
+import 'package:ewallet2/presentation/bloc/documents/doc_bloc.dart';
 import 'package:ewallet2/presentation/bloc/image/image_bloc.dart';
 import 'package:ewallet2/shared/config/api_config.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +87,11 @@ class MyApp extends StatelessWidget {
                 uploadImageUseCase: UploadImageUseCase(
                     repository: ImageRepository(
                         dataSource:
-                            ImageDataSource(uploadUrl: Config.upload_image)))))
+                            ImageDataSource(uploadUrl: Config.upload_image))))),
+        BlocProvider(
+            create: (context) => UploadPdfBloc(UploadPdfUseCase(
+                UploadPdfRepositoryImpl(
+                    UploadPdfDataSourceImpl(http.Client())))))
       ],
       child: const MyAppView(),
     );

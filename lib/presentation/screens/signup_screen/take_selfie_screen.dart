@@ -42,17 +42,41 @@ class TakeSelfieScreenBody extends StatefulWidget {
 class _TakeSelfieScreenBodyState extends State<TakeSelfieScreenBody> {
   final ImagePicker _picker = ImagePicker();
   XFile? _selfieImage;
-
-  bool get _isButtonEnabled => _selfieImage != null;
+  bool _isButtonEnabled = false;
 
   Future<void> _takeSelfie() async {
-    final XFile? pickedImage =
-        await _picker.pickImage(source: ImageSource.camera);
+    final XFile? pickedImage = await _picker.pickImage(
+        source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
     if (pickedImage != null) {
       setState(() {
         _selfieImage = pickedImage;
       });
+      context.read<UploadImageBloc>().add(TakeImageEvent(image: _selfieImage!));
     }
+  }
+
+  void _showProgressDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 40),
+              Text('Uploading...'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _hideProgressDialog(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).pop();
   }
 
   @override
@@ -64,11 +88,20 @@ class _TakeSelfieScreenBodyState extends State<TakeSelfieScreenBody> {
       listener: (context, state) {
         if (state is UploadImageSuccess) {
           print('Response: ${state.imageModel.toJson()}');
-          GoRouter.of(context).pushNamed(AppRouteConst.personalDetailsRoute);
+          print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&${state.imageModel.status}');
+          if (state.imageModel.status == 'Success') {
+            setState(() {
+              _isButtonEnabled = true;
+            });
+          }
+          _hideProgressDialog(context);
         } else if (state is UploadImageFailure) {
           print('Failed to upload image: ${state.error}');
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(state.error)));
+          _hideProgressDialog(context);
+        } else if (state is UploadImageInProgress) {
+          _showProgressDialog(context);
         }
       },
       builder: (context, state) {
@@ -130,14 +163,12 @@ class _TakeSelfieScreenBodyState extends State<TakeSelfieScreenBody> {
                   NormalButton(
                     size: size,
                     title: AppLocalizations.of(context)!.continue_text,
-                    onPressed:
-                        _isButtonEnabled && state is! UploadImageInProgress
-                            ? () {
-                                context
-                                    .read<UploadImageBloc>()
-                                    .add(TakeImageEvent(image: _selfieImage!));
-                              }
-                            : null,
+                    onPressed: _isButtonEnabled
+                        ? () {
+                            GoRouter.of(context)
+                                .pushNamed(AppRouteConst.personalDetailsRoute);
+                          }
+                        : null,
                   ),
                   SizedBox(height: size.height / 30),
                 ],
