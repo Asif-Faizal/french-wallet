@@ -1,4 +1,4 @@
-import 'package:ewallet2/domain/signup/industry_sector_repo.dart';
+import 'package:ewallet2/domain/signup/industry_sector/industry_sector_repo.dart';
 
 import 'industry_type_entity.dart';
 

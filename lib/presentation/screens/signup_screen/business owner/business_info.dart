@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../domain/signup/business_type_entity.dart';
-import '../../../../domain/signup/industry_type_entity.dart';
+import '../../../../domain/signup/business_type/business_type_entity.dart';
+import '../../../../domain/signup/industry_sector/industry_type_entity.dart';
 import '../../../../shared/router/router_const.dart';
 import '../../../bloc/business info/business_info_bloc.dart';
 import '../../../widgets/shared/normal_appbar.dart';

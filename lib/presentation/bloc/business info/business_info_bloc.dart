@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../domain/signup/business_type_entity.dart';
-import '../../../domain/signup/get_business_type.dart';
+import '../../../domain/signup/business_type/business_type_entity.dart';
+import '../../../domain/signup/business_type/get_business_type.dart';
 
 part 'business_info_event.dart';
 part 'business_info_state.dart';

@@ -1,5 +1,5 @@
-import '../../../domain/signup/business_info_repo.dart';
-import '../../../domain/signup/business_type_entity.dart';
+import '../../../domain/signup/business_type/business_info_repo.dart';
+import '../../../domain/signup/business_type/business_type_entity.dart';
 import 'business_info_datasource.dart';
 
 class BusinessInfoRepositoryImpl implements BusinessInfoRepository {

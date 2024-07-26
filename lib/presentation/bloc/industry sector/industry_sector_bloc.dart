@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../domain/signup/industry_type_entity.dart';
-import '../../../domain/signup/get_industry_sector.dart';
+import '../../../domain/signup/industry_sector/industry_type_entity.dart';
+import '../../../domain/signup/industry_sector/get_industry_sector.dart';
 
 part 'industry_sector_event.dart';
 part 'industry_sector_state.dart';

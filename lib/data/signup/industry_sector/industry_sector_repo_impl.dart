@@ -1,5 +1,5 @@
-import '../../../domain/signup/industry_sector_repo.dart';
-import '../../../domain/signup/industry_type_entity.dart';
+import '../../../domain/signup/industry_sector/industry_sector_repo.dart';
+import '../../../domain/signup/industry_sector/industry_type_entity.dart';
 import 'industry_sector_datasource.dart';
 
 class IndustrySectorRepositoryImpl implements IndustrySectorRepository {

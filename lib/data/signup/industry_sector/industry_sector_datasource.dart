@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../../../shared/config/api_config.dart';
-import '../industry sector/industry_sector_model.dart';
+import 'industry_sector_model.dart';
 
 abstract class IndustrySectorDataSource {
   Future<List<IndustrySectorModel>> fetchIndustrySectors();
