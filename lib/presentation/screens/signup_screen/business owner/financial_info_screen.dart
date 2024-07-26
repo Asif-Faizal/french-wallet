@@ -3,6 +3,7 @@ import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FinancialInfoScreen extends StatefulWidget {
   const FinancialInfoScreen({super.key});
@@ -155,7 +156,16 @@ class _FinancialInfoScreenState extends State<FinancialInfoScreen> {
           size: size,
           title: 'Continue',
           onPressed: _isButtonEnabled
-              ? () {
+              ? () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  await prefs.setString('tinNumber', _tinController.text);
+                  await prefs.setString('turnover', _selectedTurnover!);
+                  await prefs.setString(
+                      'companyBuilding', _buildingController.text);
+                  await prefs.setString('companyCity', _cityController.text);
+                  await prefs.setString(
+                      'companyPincode', _pincodeController.text);
                   GoRouter.of(context)
                       .pushNamed(AppRouteConst.businessInfoRoute);
                 }

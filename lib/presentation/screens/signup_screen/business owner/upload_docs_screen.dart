@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../shared/router/router_const.dart';
 import '../../../bloc/documents/doc_bloc.dart';
@@ -38,8 +38,6 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
       });
 
       if (_pdfFile1 != null && _pdfFile2 != null) {
-        final formData = File(_pdfFile1!.path!);
-
         context.read<UploadPdfBloc>().add(UploadPdfFileEvent(_pdfFile1!));
       }
     }
@@ -50,8 +48,10 @@ class _UploadPdfScreenState extends State<UploadPdfScreen> {
     final size = MediaQuery.of(context).size;
 
     return BlocConsumer<UploadPdfBloc, UploadPdfState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is UploadPdfSuccess) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('docId', state.uploadPdfEntity.imageId);
           print('Response: ${state.uploadPdfEntity}');
           if (state.uploadPdfEntity.status == 'Success') {
             print(state.uploadPdfEntity.imageId);

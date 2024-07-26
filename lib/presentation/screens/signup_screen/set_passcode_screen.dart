@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import '../../../shared/config/api_config.dart';
 
 class SetPasscodeScreen extends StatefulWidget {
   const SetPasscodeScreen({Key? key}) : super(key: key);
@@ -40,7 +44,87 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
     super.dispose();
   }
 
-  void _setPasscode() {
+  Future<void> sendDetails() async {
+    final Map<String, String> headers = {
+      'X-Password': Config.password,
+      'X-Username': Config.username,
+      'Appversion': Config.appVersion,
+      'Content-Type': 'application/json',
+      'Deviceid': Config.deviceId,
+    };
+
+    final body = {
+      "mobile": "+917559913633",
+      "email": "tes@gmail.com",
+      "first_name": "tesname",
+      "user_country_id": "IND",
+      "user_gender": "1",
+      "password": "loginpwd",
+      "user_civil_id": "ADHAR ID",
+      "civil_id_expiry": "EXP ID IF AVAILABLE",
+      "fcm_id": "348ehweriwrew",
+      "gcm_id": "348ehweriwrew",
+      "civil_id_image": "image of aadhar",
+      "selfie_image": "selfie image",
+      "dob": "2019-12-02",
+      "user_type": "MERCHANT",
+      "ubo_info": [
+        {
+          "full_name": "John Doe",
+          "percentage_ubo": "50%",
+          "part_of_ownership": "Owner",
+          "nationality": "Indian",
+          "mobile": "+919876543210",
+          "email": "john.doe@example.com",
+          "alternate_email": "j.doe@example.com",
+          "address": "123 Street, City, Country"
+        }
+      ],
+      "fin_info": {
+        "annual_turnover": "1000000",
+        "tin_number": "TIN123456",
+        "pan_number": "PAN123456"
+      },
+      "business_kyc_info": {
+        "business_type": "Education",
+        "industry_type": "E-Commerce",
+        "official_website": "https://www.example.com",
+        "alternate_mobile": "+919876543211",
+        "building_no": "10",
+        "door_number": "12A",
+        "street": "Main Street",
+        "city": "Metropolis",
+        "state": "StateName",
+        "country": "CountryName",
+        "postal_code": "123456",
+        "email_address": "business@example.com",
+        "alternate_email": "alt.business@example.com"
+      }
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('https://api-innovitegra.online/login/Register/register_v2'),
+        headers: headers,
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final jwtToken = responseData["jwt_token"];
+        print(jwtToken);
+        print(response.body);
+        return jwtToken;
+      } else {
+        _showSnackBar('Error: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      _showSnackBar('Exception: $e');
+    }
+    return null;
+  }
+
+  void _setPasscode() async {
     String passcode =
         _passcodeControllers.map((controller) => controller.text).join();
     String confirmPasscode =
@@ -51,7 +135,9 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
     } else if (passcode != confirmPasscode) {
       _showSnackBar('Passcodes do not match.');
     } else {
-      // GoRouter.of(context).pushNamed(AppRouteConst.agentHomeRoute);
+      await sendDetails();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('passcode', passcode);
       GoRouter.of(context).pushNamed(AppRouteConst.retailHomeRoute);
       _showSnackBar('Passcode set successfully.');
     }

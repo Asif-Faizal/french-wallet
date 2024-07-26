@@ -99,8 +99,10 @@ class _EmailDetailsScreenState extends State<EmailDetailsScreen> {
     );
   }
 
-  void _saveForm() {
+  void _saveForm() async {
     if (_validateEmail(_emailController.text)) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('email', _emailController.text);
       _showOtpBottomSheet(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

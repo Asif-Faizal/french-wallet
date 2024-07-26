@@ -1,6 +1,7 @@
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../shared/router/router_const.dart';
 import '../../widgets/shared/normal_appbar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -81,7 +82,11 @@ class _IdentityVerifyScreenState extends State<IdentityVerifyScreen> {
                   builder: (context, isEnabled, child) {
                     return NormalButton(
                       onPressed: isEnabled
-                          ? () {
+                          ? () async {
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setString(
+                                  'idNumber', _idController.text);
                               GoRouter.of(context)
                                   .pushNamed(AppRouteConst.uploadIdScreenRoute);
                             }

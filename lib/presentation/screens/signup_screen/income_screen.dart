@@ -191,7 +191,10 @@ class _OccupationIncomeDetailsScreenState
     );
   }
 
-  void _saveForm() {
+  void _saveForm() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('panNumber', _panNumberController.text);
+    await prefs.setString('businessName', _businessNameController.text);
     if (_selectedOccupation == null ||
         _selectedAnnualIncome == null ||
         _panNumberController.text.isEmpty ||

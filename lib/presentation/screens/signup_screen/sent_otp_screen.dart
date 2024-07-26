@@ -17,7 +17,7 @@ class SentOtpSignInScreen extends StatefulWidget {
 
 class _SentOtpSignInState extends State<SentOtpSignInScreen> {
   final TextEditingController _phoneController = TextEditingController();
-  PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'FR');
+  PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'IN');
   String _userType = '';
   bool _isButtonEnabled = false;
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -117,8 +117,13 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
               size: size,
               title: AppLocalizations.of(context)!.validate_num,
               onPressed: _isButtonEnabled
-                  ? () {
+                  ? () async {
                       _showOtpBottomSheet(context);
+                      print(_phoneNumber);
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.setString(
+                          'phoneNumber', _phoneNumber.toString());
                     }
                   : null,
             ),

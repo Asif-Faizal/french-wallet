@@ -3,7 +3,8 @@ import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart'; // Add this import for date formatting
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Add this import for date formatting
 
 class PersonalDetailsScreen extends StatefulWidget {
   const PersonalDetailsScreen({super.key});
@@ -279,11 +280,18 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
     );
   }
 
-  void _saveForm() {
+  void _saveForm() async {
     if (_formKey.currentState!.validate()) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('firstName', _firstNameController.text);
+      await prefs.setString('fullName',
+          '${_firstNameController.text} ${_lastNameController.text}');
+      await prefs.setString('gender', _gender);
+      await prefs.setString('dob', _selectedDate.toString());
+      await prefs.setString('nationality', _nationalityController.text);
       GoRouter.of(context).pushNamed(AppRouteConst.addressDetailsRoute);
     } else {
-      // Show validation errors
+      print('Form is invalid');
     }
   }
 }

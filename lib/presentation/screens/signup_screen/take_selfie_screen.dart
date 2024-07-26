@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../data/image/image_datasource.dart';
 import '../../../data/image/image_repo.dart';
 import '../../../domain/image/upload_image.dart';
@@ -85,10 +86,12 @@ class _TakeSelfieScreenBodyState extends State<TakeSelfieScreenBody> {
     final theme = Theme.of(context);
 
     return BlocConsumer<UploadImageBloc, UploadImageState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is UploadImageSuccess) {
           print('Response: ${state.imageModel.toJson()}');
-          print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&${state.imageModel.status}');
+          print(state.imageModel.imageId);
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('selfieImage', state.imageModel.imageId);
           if (state.imageModel.status == 'Success') {
             setState(() {
               _isButtonEnabled = true;

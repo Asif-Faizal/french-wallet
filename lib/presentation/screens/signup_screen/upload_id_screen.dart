@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 
 import '../../bloc/image/image_event.dart';
@@ -71,10 +72,13 @@ class _UploadIdScreenState extends State<UploadIdScreen> {
     final theme = Theme.of(context);
 
     return BlocConsumer<UploadImageBloc, UploadImageState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is UploadImageSuccess) {
           print('Response: ${state.imageModel.toJson()}');
-          print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&${state.imageModel.status}');
+          print(state.imageModel.imageId);
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('idImageFront', state.imageModel.imageId);
+          await prefs.setString('idImageBack', state.imageModel.imageId);
           if (state.imageModel.status == 'Success') {
             setState(() {
               _isButtonEnabled = _frontPhoto != null && _backPhoto != null;

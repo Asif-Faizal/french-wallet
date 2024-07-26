@@ -17,3 +17,5 @@ samples, guidance on mobile development, and a full API reference.
 #
 
 mobile number , civil id, front and back of id, selfie, first name, last name, gender, date of birth, father's name, nationality, maritial status, ADDRESS (residential and communicational), Email, Occupation, anual income, PAN, politically exposed (if yes - name of politician, position and relation), passocde.
+
+userType, phoneNumber, idNumber, idImageFront, idImageBack, selfieImage, firstName, fullName, gender, dob, nationality, address, email, panNumber, businessName, tinNumber, turnover, companyBuilding, companyCity, companyPincode, companyWebsite, companyMail, companyPhone, businessType, industryType, dicId, passcode

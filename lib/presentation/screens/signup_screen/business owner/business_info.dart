@@ -2,6 +2,7 @@ import 'package:ewallet2/presentation/bloc/industry%20sector/industry_sector_blo
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../domain/signup/business_type/business_type_entity.dart';
 import '../../../../domain/signup/industry_sector/industry_type_entity.dart';
@@ -238,7 +239,18 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
           size: size,
           title: 'Save',
           onPressed: _isButtonEnabled
-              ? () {
+              ? () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  await prefs.setString(
+                      'companyWebsite', _officialWebsiteController.text);
+                  await prefs.setString(
+                      'companyMail', _officialEmailController.text);
+                  await prefs.setString(
+                      'companyPhone', _companyNumberController.text);
+                  await prefs.setString('businessType', _selectedBusinessType!);
+                  await prefs.setString(
+                      'industryType', _selectedIndustrySector!);
                   GoRouter.of(context).pushNamed(AppRouteConst.uploadPdfRoute);
                 }
               : null,

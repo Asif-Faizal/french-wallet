@@ -3,6 +3,7 @@ import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddressDetailsScreen extends StatefulWidget {
   const AddressDetailsScreen({super.key});
@@ -245,11 +246,12 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
     );
   }
 
-  void _saveForm() {
+  void _saveForm() async {
     if (_formKey.currentState!.validate()) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('address',
+          '${_streetAddressController.text}, ${_cityController.text}, ${_stateController.text}, ${_countryController.text}, ${_zipCodeController.text}');
       GoRouter.of(context).pushNamed(AppRouteConst.addEmailRoute);
-    } else {
-      // Show validation errors
-    }
+    } else {}
   }
 }
