@@ -25,6 +25,10 @@ class Config {
       'https://api-innovitegra.online/merchant/get_industry_type';
   static const String get_business_type =
       'https://api-innovitegra.online/merchant/get_business_type';
+  static const String upload_image =
+      'https://api-innovitegra.online/uploads/image';
+  static const String upload_document =
+      "https://api-innovitegra.online/uploads/document";
   static const String appVersion = '4.0.4';
   static const String deviceId =
       '986t534666587645342345243273485345331343576895323';

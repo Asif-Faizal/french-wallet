@@ -1,4 +1,5 @@
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
+import 'package:ewallet2/shared/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
@@ -6,6 +7,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:path/path.dart' as path;
 
 class TakeSelfieScreen extends StatefulWidget {
   const TakeSelfieScreen({super.key});
@@ -19,7 +24,6 @@ class _TakeSelfieScreenState extends State<TakeSelfieScreen> {
   XFile? _selfieImage;
 
   bool get _isButtonEnabled => _selfieImage != null;
-
   Future<void> _takeSelfie() async {
     final XFile? pickedImage =
         await _picker.pickImage(source: ImageSource.camera);
@@ -27,6 +31,31 @@ class _TakeSelfieScreenState extends State<TakeSelfieScreen> {
       setState(() {
         _selfieImage = pickedImage;
       });
+      await _uploadImage(_selfieImage!);
+    }
+  }
+
+  Future<void> _uploadImage(XFile image) async {
+    final uri = Uri.parse(Config.upload_image);
+    final request = http.MultipartRequest('POST', uri)
+      ..files.add(
+        http.MultipartFile(
+          'image_file',
+          File(image.path).readAsBytes().asStream(),
+          File(image.path).lengthSync(),
+          filename: path.basename(image.path),
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
+
+    final response = await request.send();
+
+    final responseBody = await response.stream.bytesToString();
+
+    if (response.statusCode == 200) {
+      print('Response data: $responseBody');
+    } else {
+      print('Failed to upload image. Status code: ${response.statusCode}');
     }
   }
 
