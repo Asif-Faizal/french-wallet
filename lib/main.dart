@@ -20,8 +20,12 @@ import 'presentation/bloc/statement/transaction_event.dart';
 import 'shared/theme/theme.dart';
 import 'shared/router/router_config.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

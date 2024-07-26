@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "901484966560",
+    "project_id": "epurse-da7c1",
+    "storage_bucket": "epurse-da7c1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901484966560:android:f564bcb15304dac3934fc5",
+        "android_client_info": {
+          "package_name": "com.example.ewallet2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7oWci-Mo_yjOzKXbV8LgqlJ-ypBIq6Jk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
