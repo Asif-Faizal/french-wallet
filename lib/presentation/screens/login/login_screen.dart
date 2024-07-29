@@ -254,7 +254,11 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
     final response = await http.post(
       Uri.parse(Config.login),
       headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json',
+        'X-Password': Config.password,
+        'X-Username': Config.username,
+        'Appversion': Config.appVersion,
+        'Deviceid': Config.deviceId
       },
       body: jsonEncode(<String, String>{
         'mobile': widget.number,
@@ -263,9 +267,22 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
     );
 
     if (response.statusCode == 200) {
-      Navigator.of(context).pop();
-      GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
+      final responseData = jsonDecode(response.body);
+      final status = responseData["status"];
+      final message = responseData["message"];
       print(response.body);
+      print(status);
+      print(message);
+      if (status == 'Fail') {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text(message)));
+      } else if (status == 'Success') {
+        Navigator.of(context).pop();
+        GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
+      }
     } else {
       showDialog(
         context: context,
