@@ -4,13 +4,17 @@ import 'package:ewallet2/data/documents/doc_datasource.dart';
 import 'package:ewallet2/data/documents/doc_repo.dart';
 import 'package:ewallet2/data/image/image_datasource.dart';
 import 'package:ewallet2/data/image/image_repo.dart';
+import 'package:ewallet2/data/login/login_datasource.dart';
+import 'package:ewallet2/data/login/login_repo_impl.dart';
 import 'package:ewallet2/data/signup/industry_sector/industry_sector_datasource.dart';
 import 'package:ewallet2/data/signup/industry_sector/industry_sector_repo_impl.dart';
 import 'package:ewallet2/domain/checkmobile/checkmobile.dart';
 import 'package:ewallet2/domain/documents/upload_doc.dart';
 import 'package:ewallet2/domain/image/upload_image.dart';
+import 'package:ewallet2/domain/login/login.dart';
 import 'package:ewallet2/presentation/bloc/documents/doc_bloc.dart';
 import 'package:ewallet2/presentation/bloc/image/image_bloc.dart';
+import 'package:ewallet2/presentation/bloc/login/login_bloc.dart';
 import 'package:ewallet2/shared/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -96,12 +100,17 @@ class MyApp extends StatelessWidget {
             create: (context) => UploadPdfBloc(UploadPdfUseCase(
                 UploadPdfRepositoryImpl(
                     UploadPdfDataSourceImpl(http.Client()))))),
-        BlocProvider<LoginBloc>(
-          create: (context) => LoginBloc(
+        BlocProvider<CheckMobileBloc>(
+          create: (context) => CheckMobileBloc(
               checkMobileUseCase: CheckMobileUseCase(
                   checkMobileRepository: CheckMobileRepositoryImpl(
                       dataSource: CheckMobileDataSourceImpl()))),
-        )
+        ),
+        BlocProvider<LoginBloc>(
+            create: (context) => LoginBloc(
+                loginUseCase: LoginUseCase(
+                    repository: LoginRepositoryImpl(
+                        dataSource: LoginDataSourceImpl()))))
       ],
       child: const MyAppView(),
     );

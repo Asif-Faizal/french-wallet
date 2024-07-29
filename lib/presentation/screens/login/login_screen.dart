@@ -1,7 +1,3 @@
-import 'dart:convert';
-import 'package:ewallet2/shared/config/api_config.dart';
-import 'package:http/http.dart' as http;
-
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,6 +14,9 @@ import '../../../domain/checkmobile/checkmobile.dart';
 import '../../bloc/checkmobile/checkmobile_bloc.dart';
 import '../../bloc/checkmobile/checkmobile_event.dart';
 import '../../bloc/checkmobile/checkmobile_state.dart';
+import '../../bloc/login/login_bloc.dart';
+import '../../bloc/login/login_event.dart';
+import '../../bloc/login/login_state.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,14 +30,14 @@ class _LoginScreenState extends State<LoginScreen> {
   PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'IN');
   String _userType = '';
   bool _isButtonEnabled = false;
-  late LoginBloc _loginBloc;
+  late CheckMobileBloc _CheckMobileBloc;
 
   @override
   void initState() {
     super.initState();
     _retrieveData();
     _phoneController.addListener(_validatePhoneNumber);
-    _loginBloc = LoginBloc(
+    _CheckMobileBloc = CheckMobileBloc(
         checkMobileUseCase: CheckMobileUseCase(
             checkMobileRepository: CheckMobileRepositoryImpl(
                 dataSource: CheckMobileDataSourceImpl())));
@@ -48,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _phoneController.removeListener(_validatePhoneNumber);
     _phoneController.dispose();
-    _loginBloc.close();
+    _CheckMobileBloc.close();
     super.dispose();
   }
 
@@ -131,7 +130,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onLoginButtonPressed() {
     if (_phoneController.text.isNotEmpty) {
-      _loginBloc.add(CheckMobileEvent(mobile: _phoneNumber.phoneNumber ?? ''));
+      _CheckMobileBloc.add(
+          CheckMobileEvent(mobile: _phoneNumber.phoneNumber ?? ''));
     }
   }
 
@@ -181,21 +181,21 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            BlocConsumer<LoginBloc, LoginState>(
-              bloc: _loginBloc,
+            BlocConsumer<CheckMobileBloc, CheckMobileState>(
+              bloc: _CheckMobileBloc,
               listener: (context, state) {
-                if (state is LoginSuccess) {
+                if (state is CheckMobileSuccess) {
                   Navigator.of(context).pop();
                   _showOtpBottomSheet(context);
-                } else if (state is LoginError) {
+                } else if (state is CheckMobileError) {
                   Navigator.of(context).pop();
                   _showErrorDialog(context, state.message);
-                } else if (state is LoginLoading) {
+                } else if (state is CheckMobileLoading) {
                   _showLoadingDialog(context);
                 }
               },
               builder: (context, state) {
-                if (state is LoginLoading) {
+                if (state is CheckMobileLoading) {
                   return const Spacer();
                 }
                 return const Spacer();
@@ -249,121 +249,114 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
     super.dispose();
   }
 
-  Future<void> _login() async {
+  void _login() {
     final password = _controllers.map((controller) => controller.text).join();
-    final response = await http.post(
-      Uri.parse(Config.login),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'X-Password': Config.password,
-        'X-Username': Config.username,
-        'Appversion': Config.appVersion,
-        'Deviceid': Config.deviceId
-      },
-      body: jsonEncode(<String, String>{
-        'mobile': widget.number,
-        'password': password,
-      }),
+    BlocProvider.of<LoginBloc>(context).add(
+      LoginSubmitted(
+        password: password,
+        mobile: widget.number,
+      ),
     );
-
-    if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      final status = responseData["status"];
-      final message = responseData["message"];
-      print(response.body);
-      print(status);
-      print(message);
-      if (status == 'Fail') {
-        Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.red,
-            content: Text(message)));
-      } else if (status == 'Success') {
-        Navigator.of(context).pop();
-        GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
-      }
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Login Failed'),
-            content: Text('Invalid credentials. Please try again.'),
-            actions: [
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 16.0,
-          right: 16.0,
-          top: 16.0,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Enter Passcode for ${widget.number}',
-              style: Theme.of(context).textTheme.bodyLarge,
+    return BlocConsumer<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state is LoginSuccess) {
+          Navigator.of(context).pop();
+          GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
+        } else if (state is LoginError) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text(state.message),
+          ));
+        } else if (state is LoginLoading) {
+          _showLoadingDialog(context);
+        }
+      },
+      builder: (context, state) {
+        return SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              left: 16.0,
+              right: 16.0,
+              top: 16.0,
             ),
-            SizedBox(height: widget.size.height / 30),
-            Text(
-              'Passcode',
-              style: Theme.of(context).textTheme.bodySmall,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Enter Passcode for ${widget.number}',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                SizedBox(height: widget.size.height / 30),
+                Text(
+                  'Passcode',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                SizedBox(height: widget.size.height / 80),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(6, (index) {
+                    return SizedBox(
+                      width: 50,
+                      child: TextField(
+                        controller: _controllers[index],
+                        focusNode: _focusNodes[index],
+                        textAlign: TextAlign.center,
+                        keyboardType: TextInputType.number,
+                        maxLength: 1,
+                        decoration: InputDecoration(
+                          counter: Offstage(),
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          if (value.length == 1 && index < 5) {
+                            _focusNodes[index].unfocus();
+                            FocusScope.of(context)
+                                .requestFocus(_focusNodes[index + 1]);
+                          }
+                        },
+                      ),
+                    );
+                  }),
+                ),
+                SizedBox(height: widget.size.height / 20),
+                NormalButton(
+                  size: widget.size,
+                  title: 'Login',
+                  onPressed: _login,
+                ),
+                SizedBox(height: widget.size.height / 20),
+              ],
             ),
-            SizedBox(height: widget.size.height / 80),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(6, (index) {
-                return SizedBox(
-                  width: 50,
-                  child: TextField(
-                    controller: _controllers[index],
-                    focusNode: _focusNodes[index],
-                    textAlign: TextAlign.center,
-                    keyboardType: TextInputType.number,
-                    maxLength: 1,
-                    decoration: InputDecoration(
-                      counter: Offstage(),
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (value) {
-                      if (value.length == 1 && index < 5) {
-                        _focusNodes[index].unfocus();
-                        FocusScope.of(context)
-                            .requestFocus(_focusNodes[index + 1]);
-                      }
-                    },
-                  ),
-                );
-              }),
-            ),
-            SizedBox(height: widget.size.height / 20),
-            NormalButton(
-              size: widget.size,
-              title: 'Login',
-              onPressed: _login,
-            ),
-            SizedBox(height: widget.size.height / 20),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text('Loading...'),
+            ],
+          ),
+        );
+      },
     );
   }
 }

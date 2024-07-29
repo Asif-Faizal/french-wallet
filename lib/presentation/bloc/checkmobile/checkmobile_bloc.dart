@@ -5,35 +5,32 @@ import '../../../domain/checkmobile/checkmobile.dart';
 import 'checkmobile_event.dart';
 import 'checkmobile_state.dart';
 
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
+class CheckMobileBloc extends Bloc<CheckMobileEvent, CheckMobileState> {
   final CheckMobileUseCase checkMobileUseCase;
 
-  LoginBloc({required this.checkMobileUseCase}) : super(LoginInitial()) {
+  CheckMobileBloc({required this.checkMobileUseCase})
+      : super(CheckMobileInitial()) {
     on<CheckMobileEvent>(_onCheckMobileEvent);
   }
 
   Future<void> _onCheckMobileEvent(
-      CheckMobileEvent event, Emitter<LoginState> emit) async {
-    emit(LoginLoading());
+      CheckMobileEvent event, Emitter<CheckMobileState> emit) async {
+    emit(CheckMobileLoading());
     try {
-      // Call the use case and get the response
       final CheckMobileResponseModel response =
           await checkMobileUseCase.call(event.mobile);
-
-      // Handle the response based on the data
       if (response.userLinkedDevices == 0 && response.primaryDevice == 0) {
-        emit(LoginError(
+        emit(CheckMobileError(
             message:
                 'Sign Up: Please sign in, as your mobile number is not registered with our application'));
       } else if (response.userLinkedDevices == 0 &&
           response.primaryDevice == 1) {
-        emit(LoginSuccess());
+        emit(CheckMobileSuccess());
       } else {
-        // Handle other cases if needed
-        emit(LoginSuccess()); // Or emit a specific state
+        emit(CheckMobileSuccess());
       }
     } catch (e) {
-      emit(LoginError(message: e.toString()));
+      emit(CheckMobileError(message: e.toString()));
     }
   }
 }

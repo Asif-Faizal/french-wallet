@@ -1,20 +1,20 @@
 import 'package:equatable/equatable.dart';
 
-abstract class LoginState extends Equatable {
+abstract class CheckMobileState extends Equatable {
   @override
   List<Object> get props => [];
 }
 
-class LoginInitial extends LoginState {}
+class CheckMobileInitial extends CheckMobileState {}
 
-class LoginLoading extends LoginState {}
+class CheckMobileLoading extends CheckMobileState {}
 
-class LoginSuccess extends LoginState {}
+class CheckMobileSuccess extends CheckMobileState {}
 
-class LoginError extends LoginState {
+class CheckMobileError extends CheckMobileState {
   final String message;
 
-  LoginError({required this.message});
+  CheckMobileError({required this.message});
 
   @override
   List<Object> get props => [message];
