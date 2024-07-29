@@ -134,3 +134,105 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
     );
   }
 }
+
+  // Future<String> sentOtpMobile(String mobile) async {
+  //   final Map<String, String> headers = {
+  //     'X-Password': Config.password,
+  //     'X-Username': Config.username,
+  //     'Appversion': Config.appVersion,
+  //     'Content-Type': 'application/json',
+  //     'Deviceid': Config.deviceId,
+  //   };
+
+  //   final Map<String, String> body = {
+  //     'mobile': mobile,
+  //   };
+
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(Config.sent_mobile_otp_url),
+  //       headers: headers,
+  //       body: jsonEncode(body),
+  //     );
+  //     final responseData = jsonDecode(response.body);
+  //     final message = responseData["message"];
+  //     print(message);
+
+  //     if (response.statusCode == 200) {
+  //       final responseData = jsonDecode(response.body);
+  //       final status = responseData["status"];
+  //       if (kDebugMode) {
+  //         print('Response body: ${responseData}');
+  //         print(
+  //             '??????????????????????????????????????????????????????????????????');
+  //         print(status);
+  //       }
+  //       return status;
+  //     } else {
+  //       if (kDebugMode) {
+  //         print('Failed with status code: ${response.statusCode}');
+  //         print('Response body: ${response.body}');
+  //       }
+  //       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+  //         content: Text('Error fetching data'),
+  //         behavior: SnackBarBehavior.floating,
+  //         backgroundColor: Colors.red,
+  //       ));
+  //       return 'Error';
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       content: Text(e.toString()),
+  //       behavior: SnackBarBehavior.floating,
+  //       backgroundColor: Colors.red,
+  //     ));
+  //     return 'Error';
+  //   }
+  // }
+
+  // Future<void> verifyOtpMobile(String mobile, String otp) async {
+  //   final Map<String, String> headers = {
+  //     'X-Password': Config.password,
+  //     'X-Username': Config.username,
+  //     'Appversion': Config.appVersion,
+  //     'Content-Type': 'application/json',
+  //     'Deviceid': Config.deviceId,
+  //   };
+
+  //   final Map<String, String> body = {
+  //     'mobile': mobile,
+  //     'otp': otp,
+  //   };
+
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(Config.verify_mobile_otp_url),
+  //       headers: headers,
+  //       body: jsonEncode(body),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       final responseData = jsonDecode(response.body);
+
+  //       if (kDebugMode) {
+  //         print('Response body: ${responseData}');
+  //       }
+  //     } else {
+  //       if (kDebugMode) {
+  //         print('Failed with status code: ${response.statusCode}');
+  //         print('Response body: ${response.body}');
+  //       }
+  //       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+  //         content: Text('Error fetching data'),
+  //         behavior: SnackBarBehavior.floating,
+  //         backgroundColor: Colors.red,
+  //       ));
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       content: Text(e.toString()),
+  //       behavior: SnackBarBehavior.floating,
+  //       backgroundColor: Colors.red,
+  //     ));
+  //   }
+  // }

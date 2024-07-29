@@ -54,6 +54,7 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
   String? industryType;
   String? docId;
   String? passcode;
+  String? jwt_token2;
 
   @override
   void initState() {
@@ -151,53 +152,103 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
     };
 
     final body = {
-      "mobile": phoneNumber,
-      "email": email,
-      "first_name": firstName,
-      "user_country_id": nationality,
-      "user_gender": gender,
-      "password": passcode,
-      "user_civil_id": idNumber,
+      "mobile": "+917559913001",
+      "email": "tes@gmail.com",
+      "first_name": "tesname",
+      "user_country_id": "IND",
+      "user_gender": "1",
+      "password": "loginpwd",
+      "user_civil_id": "ADHAR ID",
       "civil_id_expiry": "EXP ID IF AVAILABLE",
       "fcm_id": "348ehweriwrew",
       "gcm_id": "348ehweriwrew",
-      "civil_id_image": idImageFront,
-      "selfie_image": selfieImage,
-      "dob": '2006-08-03',
-      "user_type": userType,
+      "civil_id_image": "image of aadhar",
+      "selfie_image": "selfie image",
+      "dob": "2019-12-02",
+      "user_type": "MERCHANT",
       "ubo_info": [
         {
-          "full_name": fullName,
+          "full_name": "John Doe",
           "percentage_ubo": "50%",
           "part_of_ownership": "Owner",
-          "nationality": nationality,
-          "mobile": phoneNumber,
-          "email": email,
+          "nationality": "Indian",
+          "mobile": "+919876543210",
+          "email": "john.doe@example.com",
           "alternate_email": "j.doe@example.com",
-          "address": address
+          "address": "123 Street, City, Country"
         }
       ],
       "fin_info": {
-        "annual_turnover": turnover,
-        "tin_number": tinNumber,
-        "pan_number": panNumber
+        "annual_turnover": "1000000",
+        "tin_number": "TIN123456",
+        "pan_number": "PAN123456"
       },
       "business_kyc_info": {
-        "business_type": businessType,
-        "industry_type": industryType,
-        "official_website": companyWebsite,
-        "alternate_mobile": companyPhone,
-        "building_no": companyBuilding,
+        "business_type": "Education",
+        "industry_type": "E-Commerce",
+        "official_website": "https://www.example.com",
+        "alternate_mobile": "+919876543211",
+        "building_no": "10",
         "door_number": "12A",
         "street": "Main Street",
-        "city": companyCity,
+        "city": "Metropolis",
         "state": "StateName",
         "country": "CountryName",
-        "postal_code": companyPincode,
-        "email_address": companyMail,
+        "postal_code": "123456",
+        "email_address": "business@example.com",
         "alternate_email": "alt.business@example.com"
       }
-    };
+    }
+
+        // {
+        //   "mobile": phoneNumber,
+        //   "email": email,
+        //   "first_name": firstName,
+        //   "user_country_id": nationality,
+        //   "user_gender": gender,
+        //   "password": passcode,
+        //   "user_civil_id": idNumber,
+        //   "civil_id_expiry": "EXP ID IF AVAILABLE",
+        //   "fcm_id": "348ehweriwrew",
+        //   "gcm_id": "348ehweriwrew",
+        //   "civil_id_image": idImageFront,
+        //   "selfie_image": selfieImage,
+        //   "dob": '2006-08-03',
+        //   "user_type": userType,
+        //   "ubo_info": [
+        //     {
+        //       "full_name": fullName,
+        //       "percentage_ubo": "50%",
+        //       "part_of_ownership": "Owner",
+        //       "nationality": nationality,
+        //       "mobile": phoneNumber,
+        //       "email": email,
+        //       "alternate_email": "j.doe@example.com",
+        //       "address": address
+        //     }
+        //   ],
+        //   "fin_info": {
+        //     "annual_turnover": turnover,
+        //     "tin_number": tinNumber,
+        //     "pan_number": panNumber
+        //   },
+        //   "business_kyc_info": {
+        //     "business_type": businessType,
+        //     "industry_type": industryType,
+        //     "official_website": companyWebsite,
+        //     "alternate_mobile": companyPhone,
+        //     "building_no": companyBuilding,
+        //     "door_number": "12A",
+        //     "street": "Main Street",
+        //     "city": companyCity,
+        //     "state": "StateName",
+        //     "country": "CountryName",
+        //     "postal_code": companyPincode,
+        //     "email_address": companyMail,
+        //     "alternate_email": "alt.business@example.com"
+        //   }
+        // }
+        ;
     try {
       final response = await http.post(
         Uri.parse(Config.register_v2),
@@ -216,6 +267,8 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', jwt_token);
         await prefs.setString('refresh_token', refresh_token);
+        jwt_token2 = prefs.getString('jwt_token');
+        print('JWT TOKEN: $jwt_token2');
         return {'status': status, 'message': message};
       } else {
         final responseData = jsonDecode(response.body);
@@ -241,10 +294,11 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
       final result = await sendDetails();
       if (result['status'] == 'Success') {
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('passcode', passcode);
-        GoRouter.of(context).pushNamed(AppRouteConst.retailHomeRoute);
+        GoRouter.of(context).pushNamed(AppRouteConst.setTransactionPinRoute);
         _showSnackBar('Passcode set successfully.');
         prefs.clear();
+        await prefs.setString('passcode', passcode);
+        await prefs.setString('jwt_token', jwt_token2!);
       } else {
         _showSnackBar('Error: ${result['message']}');
       }

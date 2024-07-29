@@ -32,4 +32,5 @@ class AppRouteConst {
   static const qrCodeRoute = 'qrCode';
   static const qrCodeScanRoute = 'qrCodeScan';
   static const transactionListRoute = 'transactionList';
+  static const setTransactionPinRoute = 'setTransactionPin';
 }
