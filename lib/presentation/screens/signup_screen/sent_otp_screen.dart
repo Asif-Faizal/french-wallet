@@ -45,7 +45,7 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
 
   void _validatePhoneNumber() {
     setState(() {
-      _isButtonEnabled = _phoneController.text.length == 10;
+      _isButtonEnabled = _phoneController.text.length >= 1;
     });
   }
 

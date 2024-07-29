@@ -29,9 +29,11 @@ class Config {
       'https://api-innovitegra.online/uploads/image';
   static const String upload_document =
       "https://api-innovitegra.online/uploads/document";
+  static const String register_v2 =
+      'https://api-innovitegra.online/login/Register/register_v2';
   static const String appVersion = '4.0.4';
   static const String deviceId =
-      '986t534666587645342345243273485345331343576895323';
+      '986t534666587645342345243273485345331343576895623';
   static const String token =
       'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyNjEiLCJleHAiOjE3MjE5Nzc3NDksImlzcyI6IkFaZVdhbGxldCJ9.fSb9GVe9rlhLRV0zarHX4yINjuTtQuqstZAQveTRpQ0';
 }

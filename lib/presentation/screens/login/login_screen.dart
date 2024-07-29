@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _validatePhoneNumber() {
     setState(() {
-      _isButtonEnabled = _phoneController.text.length == 10;
+      _isButtonEnabled = _phoneController.text.length >= 1;
     });
   }
 

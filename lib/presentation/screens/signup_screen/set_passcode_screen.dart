@@ -27,6 +27,103 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
   final List<FocusNode> _confirmPasscodeFocusNodes =
       List.generate(6, (index) => FocusNode());
 
+  String? userType;
+  String? phoneNumber;
+  String? idNumber;
+  String? idImageFront;
+  String? idImageBack;
+  String? selfieImage;
+  String? firstName;
+  String? fullName;
+  String? gender;
+  String? dob;
+  String? nationality;
+  String? address;
+  String? email;
+  String? panNumber;
+  String? businessName;
+  String? tinNumber;
+  String? turnover;
+  String? companyBuilding;
+  String? companyCity;
+  String? companyPincode;
+  String? companyWebsite;
+  String? companyMail;
+  String? companyPhone;
+  String? businessType;
+  String? industryType;
+  String? docId;
+  String? passcode;
+
+  @override
+  void initState() {
+    _getUserInfo();
+    super.initState();
+  }
+
+  void _getUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      userType = prefs.getString('userType')!.toUpperCase();
+      phoneNumber = prefs.getString('phoneNumber');
+      idNumber = prefs.getString('idNumber');
+      idImageFront = prefs.getString('idImageFront');
+      idImageBack = prefs.getString('idImageBack');
+      selfieImage = prefs.getString('selfieImage');
+      firstName = prefs.getString('firstName');
+      fullName = prefs.getString('fullName');
+      gender = prefs.getString('gender');
+      dob = prefs.getString('dob');
+      nationality = prefs.getString('nationality');
+      address = prefs.getString('address');
+      email = prefs.getString('email');
+      panNumber = prefs.getString('panNumber');
+      businessName = prefs.getString('businessName');
+      tinNumber = prefs.getString('tinNumber');
+      turnover = prefs.getString('turnover');
+      companyBuilding = prefs.getString('companyBuilding');
+      companyCity = prefs.getString('companyCity');
+      companyPincode = prefs.getString('companyPincode');
+      companyWebsite = prefs.getString('companyWebsite');
+      companyMail = prefs.getString('companyMail');
+      companyPhone = prefs.getString('companyPhone');
+      businessType = prefs.getString('businessType');
+      industryType = prefs.getString('industryType');
+      docId = prefs.getString('docId');
+      passcode = prefs.getString('passcode');
+    });
+
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    print('User Type: $userType');
+    print('Phone Number: $phoneNumber');
+    print('ID Number: $idNumber');
+    print('ID Image Front: $idImageFront');
+    print('ID Image Back: $idImageBack');
+    print('Selfie Image: $selfieImage');
+    print('First Name: $firstName');
+    print('Full Name: $fullName');
+    print('Gender: $gender');
+    print('DOB: $dob');
+    print('Nationality: $nationality');
+    print('Address: $address');
+    print('Email: $email');
+    print('PAN Number: $panNumber');
+    print('Business Name: $businessName');
+    print('TIN Number: $tinNumber');
+    print('Turnover: $turnover');
+    print('Company Building: $companyBuilding');
+    print('Company City: $companyCity');
+    print('Company Pincode: $companyPincode');
+    print('Company Website: $companyWebsite');
+    print('Company Mail: $companyMail');
+    print('Company Phone: $companyPhone');
+    print('Business Type: $businessType');
+    print('Industry Type: $industryType');
+    print('DIC ID: $docId');
+    print('Passcode: $passcode');
+  }
+
   @override
   void dispose() {
     for (var controller in _passcodeControllers) {
@@ -44,7 +141,7 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
     super.dispose();
   }
 
-  Future<void> sendDetails() async {
+  Future<Map<String, String>> sendDetails() async {
     final Map<String, String> headers = {
       'X-Password': Config.password,
       'X-Username': Config.username,
@@ -54,74 +151,80 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
     };
 
     final body = {
-      "mobile": "+917559913633",
-      "email": "tes@gmail.com",
-      "first_name": "tesname",
-      "user_country_id": "IND",
-      "user_gender": "1",
-      "password": "loginpwd",
-      "user_civil_id": "ADHAR ID",
+      "mobile": phoneNumber,
+      "email": email,
+      "first_name": firstName,
+      "user_country_id": nationality,
+      "user_gender": gender,
+      "password": passcode,
+      "user_civil_id": idNumber,
       "civil_id_expiry": "EXP ID IF AVAILABLE",
       "fcm_id": "348ehweriwrew",
       "gcm_id": "348ehweriwrew",
-      "civil_id_image": "image of aadhar",
-      "selfie_image": "selfie image",
-      "dob": "2019-12-02",
-      "user_type": "MERCHANT",
+      "civil_id_image": idImageFront,
+      "selfie_image": selfieImage,
+      "dob": '2006-08-03',
+      "user_type": userType,
       "ubo_info": [
         {
-          "full_name": "John Doe",
+          "full_name": fullName,
           "percentage_ubo": "50%",
           "part_of_ownership": "Owner",
-          "nationality": "Indian",
-          "mobile": "+919876543210",
-          "email": "john.doe@example.com",
+          "nationality": nationality,
+          "mobile": phoneNumber,
+          "email": email,
           "alternate_email": "j.doe@example.com",
-          "address": "123 Street, City, Country"
+          "address": address
         }
       ],
       "fin_info": {
-        "annual_turnover": "1000000",
-        "tin_number": "TIN123456",
-        "pan_number": "PAN123456"
+        "annual_turnover": turnover,
+        "tin_number": tinNumber,
+        "pan_number": panNumber
       },
       "business_kyc_info": {
-        "business_type": "Education",
-        "industry_type": "E-Commerce",
-        "official_website": "https://www.example.com",
-        "alternate_mobile": "+919876543211",
-        "building_no": "10",
+        "business_type": businessType,
+        "industry_type": industryType,
+        "official_website": companyWebsite,
+        "alternate_mobile": companyPhone,
+        "building_no": companyBuilding,
         "door_number": "12A",
         "street": "Main Street",
-        "city": "Metropolis",
+        "city": companyCity,
         "state": "StateName",
         "country": "CountryName",
-        "postal_code": "123456",
-        "email_address": "business@example.com",
+        "postal_code": companyPincode,
+        "email_address": companyMail,
         "alternate_email": "alt.business@example.com"
       }
     };
-
     try {
       final response = await http.post(
-        Uri.parse('https://api-innovitegra.online/login/Register/register_v2'),
+        Uri.parse(Config.register_v2),
         headers: headers,
         body: jsonEncode(body),
       );
+      print(body);
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        final jwtToken = responseData["jwt_token"];
-        print(jwtToken);
+        final status = responseData["status"];
+        final message = responseData["message"];
+        final jwt_token = responseData["jwt_token"];
+        final refresh_token = responseData["refresh_token"];
         print(response.body);
-        return jwtToken;
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('jwt_token', jwt_token);
+        await prefs.setString('refresh_token', refresh_token);
+        return {'status': status, 'message': message};
       } else {
-        _showSnackBar('Error: ${response.reasonPhrase}');
+        final responseData = jsonDecode(response.body);
+        final message = responseData["message"];
+        return {'status': 'Fail', 'message': message};
       }
     } catch (e) {
-      _showSnackBar('Exception: $e');
+      return {'status': 'Fail', 'message': 'Exception: $e'};
     }
-    return null;
   }
 
   void _setPasscode() async {
@@ -135,96 +238,102 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
     } else if (passcode != confirmPasscode) {
       _showSnackBar('Passcodes do not match.');
     } else {
-      await sendDetails();
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('passcode', passcode);
-      GoRouter.of(context).pushNamed(AppRouteConst.retailHomeRoute);
-      _showSnackBar('Passcode set successfully.');
+      final result = await sendDetails();
+      if (result['status'] == 'Success') {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('passcode', passcode);
+        GoRouter.of(context).pushNamed(AppRouteConst.retailHomeRoute);
+        _showSnackBar('Passcode set successfully.');
+        prefs.clear();
+      } else {
+        _showSnackBar('Error: ${result['message']}');
+      }
     }
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        content: Text(message)));
   }
 
-  Widget _buildPasscodeFields(List<TextEditingController> controllers,
-      List<FocusNode> focusNodes, double fieldHeight) {
-    final theme = Theme.of(context);
+  Widget _buildPasscodeFields(
+      List<TextEditingController> controllers, List<FocusNode> focusNodes) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(6, (index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: SizedBox(
-            width: 40,
-            height: fieldHeight,
-            child: TextField(
-              obscureText: true,
-              obscuringCharacter: '*',
-              controller: controllers[index],
-              focusNode: focusNodes[index],
-              keyboardType: TextInputType.number,
-              textInputAction:
-                  index == 5 ? TextInputAction.done : TextInputAction.next,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyLarge,
-              maxLength: 1,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              onChanged: (value) {
-                if (value.isNotEmpty && index < 5) {
-                  FocusScope.of(context).requestFocus(focusNodes[index + 1]);
-                } else if (value.isNotEmpty && index == 5) {
-                  FocusScope.of(context)
-                      .requestFocus(_confirmPasscodeFocusNodes[0]);
-                }
-                if (value.isEmpty && index > 0) {
-                  FocusScope.of(context).requestFocus(focusNodes[index - 1]);
-                }
-              },
-              decoration: InputDecoration(
-                counterText: '',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-        );
-      }),
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: List.generate(
+        6,
+        (index) => _buildPasscodeField(controllers[index], focusNodes, index),
+      ),
+    );
+  }
+
+  Widget _buildPasscodeField(
+      TextEditingController controller, List<FocusNode> focusNodes, int index) {
+    return SizedBox(
+      width: 50,
+      child: TextField(
+        controller: controller,
+        focusNode: focusNodes[index],
+        textAlign: TextAlign.center,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        keyboardType: TextInputType.number,
+        maxLength: 1,
+        onChanged: (value) {
+          if (value.isNotEmpty) {
+            if (index < focusNodes.length - 1) {
+              FocusScope.of(context).requestFocus(focusNodes[index + 1]);
+            }
+          } else {
+            if (index > 0) {
+              FocusScope.of(context).requestFocus(focusNodes[index - 1]);
+            }
+          }
+        },
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          counterText: '',
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
-
     return Scaffold(
-      appBar: NormalAppBar(text: ''),
+      appBar: NormalAppBar(text: 'Set Passcode'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: size.height / 60),
-            Text(
-              'Set a PIN for accessing your eWallet securely',
-              style: theme.textTheme.headlineMedium,
+            const SizedBox(height: 30),
+            const Text(
+              'Enter your 6-digit passcode:',
+              style: TextStyle(fontSize: 20),
             ),
-            SizedBox(height: size.height / 20),
-            Text('Enter Passcode', style: theme.textTheme.bodyMedium),
-            SizedBox(height: size.height / 40),
+            const SizedBox(height: 10),
+            _buildPasscodeFields(_passcodeControllers, _passcodeFocusNodes),
+            const SizedBox(height: 50),
+            const Text(
+              'Confirm your 6-digit passcode:',
+              style: TextStyle(fontSize: 20),
+            ),
+            const SizedBox(height: 10),
             _buildPasscodeFields(
-                _passcodeControllers, _passcodeFocusNodes, size.height / 16),
-            SizedBox(height: size.height / 20),
-            Text('Confirm Passcode', style: theme.textTheme.bodyMedium),
-            SizedBox(height: size.height / 40),
-            _buildPasscodeFields(_confirmPasscodeControllers,
-                _confirmPasscodeFocusNodes, size.height / 16),
-            SizedBox(height: size.height / 20),
-            const Spacer(),
-            NormalButton(
-                size: size, title: 'Set Passcode', onPressed: _setPasscode),
+                _confirmPasscodeControllers, _confirmPasscodeFocusNodes),
           ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.all(15),
+        child: NormalButton(
+          onPressed: _setPasscode,
+          title: 'Confirm Passcode',
+          size: size,
         ),
       ),
     );
