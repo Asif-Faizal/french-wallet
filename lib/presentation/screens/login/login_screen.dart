@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'package:ewallet2/shared/config/api_config.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -74,7 +78,6 @@ class _LoginScreenState extends State<LoginScreen> {
           number: _phoneNumber.phoneNumber ?? '',
           userType: _userType,
           size: size,
-          navigateTo: '',
         );
       },
     );
@@ -216,13 +219,11 @@ class OtpBottomSheet extends StatefulWidget {
     required this.number,
     required this.userType,
     required this.size,
-    required this.navigateTo,
   }) : super(key: key);
 
   final String number;
   final String userType;
   final Size size;
-  final String navigateTo;
 
   @override
   _OtpBottomSheetState createState() => _OtpBottomSheetState();
@@ -235,17 +236,55 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _controllers = List.generate(4, (index) => TextEditingController());
-    _focusNodes = List.generate(4, (index) => FocusNode());
+    _controllers = List.generate(6, (index) => TextEditingController());
+    _focusNodes = List.generate(6, (index) => FocusNode());
   }
 
   @override
   void dispose() {
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 6; i++) {
       _controllers[i].dispose();
       _focusNodes[i].dispose();
     }
     super.dispose();
+  }
+
+  Future<void> _login() async {
+    final password = _controllers.map((controller) => controller.text).join();
+    final response = await http.post(
+      Uri.parse(Config.login),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'mobile': widget.number,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      Navigator.of(context).pop();
+      GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
+      print(response.body);
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Login Failed'),
+            content: Text('Invalid credentials. Please try again.'),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -274,7 +313,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
             SizedBox(height: widget.size.height / 80),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(4, (index) {
+              children: List.generate(6, (index) {
                 return SizedBox(
                   width: 50,
                   child: TextField(
@@ -288,7 +327,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                       border: OutlineInputBorder(),
                     ),
                     onChanged: (value) {
-                      if (value.length == 1 && index < 3) {
+                      if (value.length == 1 && index < 5) {
                         _focusNodes[index].unfocus();
                         FocusScope.of(context)
                             .requestFocus(_focusNodes[index + 1]);
@@ -302,10 +341,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
             NormalButton(
               size: widget.size,
               title: 'Login',
-              onPressed: () {
-                GoRouter.of(context).pop();
-                GoRouter.of(context).pushNamed(widget.navigateTo);
-              },
+              onPressed: _login,
             ),
             SizedBox(height: widget.size.height / 20),
           ],

@@ -25,6 +25,7 @@ class Config {
       'https://api-innovitegra.online/merchant/get_industry_type';
   static const String get_business_type =
       'https://api-innovitegra.online/merchant/get_business_type';
+  static const login = 'https://api-innovitegra.online/login/Login';
   static const String upload_image =
       'https://api-innovitegra.online/uploads/image';
   static const String upload_document =
