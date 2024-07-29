@@ -1,3 +1,4 @@
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -79,6 +80,52 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Please Sign up'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              child: Text('Sign Up'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                GoRouter.of(context).pushNamed(AppRouteConst.verifyNumberRoute);
+              },
+            ),
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text('Loading...'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void _onLoginButtonPressed() {
     if (_phoneController.text.isNotEmpty) {
       _loginBloc.add(CheckMobileEvent(mobile: _phoneNumber.phoneNumber ?? ''));
@@ -135,25 +182,26 @@ class _LoginScreenState extends State<LoginScreen> {
               bloc: _loginBloc,
               listener: (context, state) {
                 if (state is LoginSuccess) {
+                  Navigator.of(context).pop();
                   _showOtpBottomSheet(context);
                 } else if (state is LoginError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.message),
-                    ),
-                  );
+                  Navigator.of(context).pop();
+                  _showErrorDialog(context, state.message);
+                } else if (state is LoginLoading) {
+                  _showLoadingDialog(context);
                 }
               },
               builder: (context, state) {
                 if (state is LoginLoading) {
-                  return const CircularProgressIndicator();
+                  return const Spacer();
                 }
-                return NormalButton(
-                  title: AppLocalizations.of(context)?.login ?? '',
-                  onPressed: _isButtonEnabled ? _onLoginButtonPressed : null,
-                  size: size,
-                );
+                return const Spacer();
               },
+            ),
+            NormalButton(
+              title: 'Continue',
+              onPressed: _isButtonEnabled ? _onLoginButtonPressed : null,
+              size: size,
             ),
           ],
         ),
