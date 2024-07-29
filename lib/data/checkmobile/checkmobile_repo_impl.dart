@@ -2,10 +2,10 @@ import '../../domain/checkmobile/checkmobile_entity.dart';
 import '../../domain/checkmobile/checkmobile_repo.dart';
 import 'checkmobile_datasource.dart';
 
-class LoginRepositoryImpl implements LoginRepository {
-  final LoginDataSource dataSource;
+class CheckMobileRepositoryImpl implements CheckMobileRepository {
+  final CheckMobileDataSource dataSource;
 
-  LoginRepositoryImpl({required this.dataSource});
+  CheckMobileRepositoryImpl({required this.dataSource});
 
   @override
   Future<CheckMobileResponseEntity> checkMobile(String mobile) async {

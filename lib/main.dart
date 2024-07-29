@@ -99,8 +99,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<LoginBloc>(
           create: (context) => LoginBloc(
               checkMobileUseCase: CheckMobileUseCase(
-                  checkMobileRepository:
-                      LoginRepositoryImpl(dataSource: LoginDataSourceImpl()))),
+                  checkMobileRepository: CheckMobileRepositoryImpl(
+                      dataSource: CheckMobileDataSourceImpl()))),
         )
       ],
       child: const MyAppView(),

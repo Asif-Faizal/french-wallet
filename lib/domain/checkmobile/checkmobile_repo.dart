@@ -1,5 +1,5 @@
 import 'checkmobile_entity.dart';
 
-abstract class LoginRepository {
+abstract class CheckMobileRepository {
   Future<CheckMobileResponseEntity> checkMobile(String mobile);
 }

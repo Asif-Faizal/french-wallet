@@ -4,11 +4,11 @@ import 'package:ewallet2/shared/config/api_config.dart';
 
 import 'checkmobile_model.dart';
 
-abstract class LoginDataSource {
+abstract class CheckMobileDataSource {
   Future<CheckMobileResponseModel> checkMobile(String mobile);
 }
 
-class LoginDataSourceImpl implements LoginDataSource {
+class CheckMobileDataSourceImpl implements CheckMobileDataSource {
   @override
   Future<CheckMobileResponseModel> checkMobile(String mobile) async {
     final Map<String, String> headers = {

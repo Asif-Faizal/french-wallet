@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
-import 'package:ewallet2/presentation/widgets/shared/otp_bottom_sheet.dart';
 
 import '../../../data/checkmobile/checkmobile_datasource.dart';
 import '../../../data/checkmobile/checkmobile_repo_impl.dart';
@@ -35,8 +35,8 @@ class _LoginScreenState extends State<LoginScreen> {
     _phoneController.addListener(_validatePhoneNumber);
     _loginBloc = LoginBloc(
         checkMobileUseCase: CheckMobileUseCase(
-            checkMobileRepository:
-                LoginRepositoryImpl(dataSource: LoginDataSourceImpl())));
+            checkMobileRepository: CheckMobileRepositoryImpl(
+                dataSource: CheckMobileDataSourceImpl())));
   }
 
   @override
@@ -91,16 +91,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: NormalAppBar(
-        text: '',
+        text: AppLocalizations.of(context)?.login ?? '',
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-            Text(
-              AppLocalizations.of(context)?.login ?? '',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -159,6 +155,111 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
               },
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class OtpBottomSheet extends StatefulWidget {
+  const OtpBottomSheet({
+    Key? key,
+    required this.number,
+    required this.userType,
+    required this.size,
+    required this.navigateTo,
+  }) : super(key: key);
+
+  final String number;
+  final String userType;
+  final Size size;
+  final String navigateTo;
+
+  @override
+  _OtpBottomSheetState createState() => _OtpBottomSheetState();
+}
+
+class _OtpBottomSheetState extends State<OtpBottomSheet> {
+  late List<TextEditingController> _controllers;
+  late List<FocusNode> _focusNodes;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = List.generate(4, (index) => TextEditingController());
+    _focusNodes = List.generate(4, (index) => FocusNode());
+  }
+
+  @override
+  void dispose() {
+    for (int i = 0; i < 4; i++) {
+      _controllers[i].dispose();
+      _focusNodes[i].dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          left: 16.0,
+          right: 16.0,
+          top: 16.0,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Enter Passcode for ${widget.number}',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            SizedBox(height: widget.size.height / 30),
+            Text(
+              'Passcode',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            SizedBox(height: widget.size.height / 80),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(4, (index) {
+                return SizedBox(
+                  width: 50,
+                  child: TextField(
+                    controller: _controllers[index],
+                    focusNode: _focusNodes[index],
+                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.number,
+                    maxLength: 1,
+                    decoration: InputDecoration(
+                      counter: Offstage(),
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      if (value.length == 1 && index < 3) {
+                        _focusNodes[index].unfocus();
+                        FocusScope.of(context)
+                            .requestFocus(_focusNodes[index + 1]);
+                      }
+                    },
+                  ),
+                );
+              }),
+            ),
+            SizedBox(height: widget.size.height / 20),
+            NormalButton(
+              size: widget.size,
+              title: 'Login',
+              onPressed: () {
+                GoRouter.of(context).pop();
+                GoRouter.of(context).pushNamed(widget.navigateTo);
+              },
+            ),
+            SizedBox(height: widget.size.height / 20),
           ],
         ),
       ),

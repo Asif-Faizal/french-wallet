@@ -4,7 +4,7 @@ import 'package:ewallet2/domain/checkmobile/checkmobile_entity.dart';
 import '../../data/checkmobile/checkmobile_model.dart';
 
 class CheckMobileUseCase {
-  final LoginRepository checkMobileRepository;
+  final CheckMobileRepository checkMobileRepository;
 
   CheckMobileUseCase({required this.checkMobileRepository});
 
