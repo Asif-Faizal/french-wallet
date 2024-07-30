@@ -38,5 +38,5 @@ class Config {
   static const String deviceId =
       '986t534666587645342345243273485345331343576895001';
   static const String token =
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoidGVzdHVkaWQiLCJDdXN0b21lcklEIjoiMjYxIiwiZXhwIjoxNzIyMzI1Mzg5LCJpc3MiOiJBWmVXYWxsZXQifQ.CSXwxlueGAjakMAY_ne4hCFF7-_vhOgittXefpuVo5g';
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyNjEiLCJleHAiOjE3MjIzMzU5NzUsImlzcyI6IkFaZVdhbGxldCJ9.co0otb3YVqCUS6OLNGpbVzAwIXhgGMMezwpFjE7VNFU';
 }

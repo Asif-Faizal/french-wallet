@@ -344,22 +344,25 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                     scrollDirection: Axis.horizontal,
                     children: [
                       buildServiceListItem(
-                        'International Recharge',
+                        'Mobile Recharge',
                         IconButton(
                           icon: Icon(
-                            Icons.abc,
+                            Icons.call,
                           ),
                           onPressed: () {},
                         ),
                         size,
                       ),
                       buildServiceListItem(
-                        'Playstation',
+                        'Electricity Bill',
                         IconButton(
                           icon: Icon(
-                            Icons.abc,
+                            Icons.electric_bolt_rounded,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            GoRouter.of(context)
+                                .pushNamed(AppRouteConst.electricityBillRoute);
+                          },
                         ),
                         size,
                       ),

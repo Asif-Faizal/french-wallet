@@ -34,4 +34,5 @@ class AppRouteConst {
   static const transactionListRoute = 'transactionList';
   static const setTransactionPinRoute = 'setTransactionPin';
   static const accountInfoRoute = 'accountInfo';
+  static const electricityBillRoute = 'electricityBill';
 }
