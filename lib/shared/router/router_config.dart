@@ -207,7 +207,7 @@ class AppRouter {
       GoRoute(
         path: '/transactionList',
         name: 'transactionList',
-        builder: (context, state) => TransactionListScreen(),
+        builder: (context, state) => TransactionHistoryPage(),
       ),
       GoRoute(
         path: '/setTransactionPin',
