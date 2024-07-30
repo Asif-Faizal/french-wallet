@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ewallet2/presentation/screens/services/shared/transaction_details.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -80,7 +81,7 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
       try {
         jsonObjects.add(jsonDecode(match.group(0)!));
       } catch (e) {
-        // Handle JSON parsing error if needed
+        _showSnackBar('Failed to fetch transactions.', Colors.red);
       }
     }
 
@@ -130,6 +131,13 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
               itemBuilder: (context, index) {
                 final transaction = transactions[index];
                 return ListTile(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TransactionDetailsPage(
+                                transactionId: transaction['transaction_id'])));
+                  },
                   title:
                       Text('${transaction['type']} - ${transaction['status']}'),
                   subtitle: Text(

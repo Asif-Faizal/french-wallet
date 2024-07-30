@@ -15,6 +15,7 @@ import 'package:ewallet2/presentation/screens/services/shared/completed_screen.d
 import 'package:ewallet2/presentation/screens/services/shared/enter_amount_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/error_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/show_qr_screen.dart';
+import 'package:ewallet2/presentation/screens/services/shared/transaction_details.dart';
 import 'package:ewallet2/presentation/screens/services/shared/transaction_list_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/add_email_screen.dart';
 import 'package:ewallet2/presentation/screens/signup_screen/address_screen.dart';
@@ -228,7 +229,8 @@ class AppRouter {
         path: '/mobileRecharge',
         name: 'mobileRecharge',
         builder: (context, state) => MobileRecharge(),
-      )
+      ),
+      // GoRoute(path: '/transactionDetails',name: 'transactionDetails',builder: (context, state) => TransactionDetailsPage(transactionId: transactionId),)
     ],
   );
 }
