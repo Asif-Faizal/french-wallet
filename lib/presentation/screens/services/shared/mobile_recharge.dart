@@ -2,11 +2,15 @@ import 'dart:convert';
 
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../shared/config/api_config.dart';
 import '../../../../shared/country_code.dart';
+import '../../../../shared/router/router_const.dart';
 import '../../../widgets/shared/normal_appbar.dart';
 import '../../../widgets/shared/normal_button.dart';
 
@@ -19,6 +23,7 @@ class MobileRecharge extends StatefulWidget {
 
 class _MobileRechargeState extends State<MobileRecharge> {
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _amount = TextEditingController();
   bool _isButtonEnabled = false;
   Iterable<Contact> _contacts = [];
   bool _contactsLoaded = false;
@@ -225,46 +230,6 @@ class _MobileRechargeState extends State<MobileRecharge> {
     }
   }
 
-  Future<void> _submitMobileRecharge(
-      BuildContext context, String accountNumber, String amount) async {
-    final url = Uri.parse(
-        'https://api-innovitegra.online/Billers/service/process_service');
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Deviceid': Config.deviceId,
-        'Authorization': Config.token
-      },
-      body: jsonEncode({
-        'amount': amount,
-        'service_id': billPaymentCode,
-        'account': accountNumber,
-        'app_ref_id': appRefId,
-      }),
-    );
-
-    final responseBody = jsonDecode(response.body);
-    print(responseBody);
-
-    if (responseBody['status'] == 'Success') {
-      _showSnackBar(context, 'Transaction Successful', Colors.green);
-    } else {
-      _showSnackBar(context, 'Transaction Failed', Colors.red);
-    }
-  }
-
-  void _showSnackBar(
-      BuildContext context, String message, Color backgroundColor) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(message),
-        backgroundColor: backgroundColor,
-      ),
-    );
-  }
-
   void _showContactPicker() async {
     showDialog(
       context: context,
@@ -385,6 +350,17 @@ class _MobileRechargeState extends State<MobileRecharge> {
                     onPressed: null,
                   ),
               ],
+            ),
+            SizedBox(
+              height: size.height / 60,
+            ),
+            TextField(
+              controller: _amount,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  label: Text('Enter Amount')),
             )
           ],
         ),
@@ -393,10 +369,119 @@ class _MobileRechargeState extends State<MobileRecharge> {
         padding: EdgeInsets.all(15),
         child: NormalButton(
           size: size,
-          title: 'Check',
+          title: 'Recharge',
           onPressed: _isButtonEnabled ? _submit : null,
         ),
       ),
     );
+  }
+
+  void _showSnackBar(
+      BuildContext context, String message, Color backgroundColor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(message),
+        backgroundColor: backgroundColor,
+      ),
+    );
+  }
+
+  Future<void> _submitMobileRecharge(
+      BuildContext context, String accountNumber, String amount) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? jwtToken = prefs.getString('jwt_token');
+
+    String? refreshToken = prefs.getString('refresh_token');
+    print('JWT Token: $jwtToken');
+    print('Refresh Token: $refreshToken');
+    if (jwtToken == null || refreshToken == null) {
+      _showSnackBar(
+          context, 'Session expired. Please log in again.', Colors.red);
+      return;
+    }
+
+    if (JwtDecoder.isExpired(jwtToken)) {
+      jwtToken = await _refreshToken(refreshToken, context);
+      if (jwtToken == null) {
+        _showSnackBar(
+            context, 'Session expired. Please log in again.', Colors.red);
+        return;
+      }
+    }
+
+    final response = await _makeApiRequest(jwtToken, accountNumber, amount);
+
+    if (response['status_code'] == 5) {
+      jwtToken = await _refreshToken(refreshToken, context);
+      if (jwtToken != null) {
+        final retryResponse =
+            await _makeApiRequest(jwtToken, accountNumber, amount);
+        _handleApiResponse(context, retryResponse);
+      } else {
+        _showSnackBar(
+            context, 'Session expired. Please log in again.', Colors.red);
+      }
+    } else {
+      _handleApiResponse(context, response);
+    }
+  }
+
+  Future<Map<String, dynamic>> _makeApiRequest(
+      String jwtToken, String accountNumber, String amount) async {
+    final url = Uri.parse(Config.billing);
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Deviceid': Config.deviceId,
+        'Authorization': 'Bearer $jwtToken'
+      },
+      body: jsonEncode({
+        'amount': amount,
+        'service_id': billPaymentCode,
+        'account': accountNumber,
+        'app_ref_id': appRefId,
+      }),
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  void _handleApiResponse(
+      BuildContext context, Map<String, dynamic> responseBody) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userType = prefs.getString('userType');
+    print(userType);
+    print(responseBody);
+    final String snackbarMessage =
+        '${responseBody["message"]} ID:${responseBody["d_id"]}';
+    if (responseBody['status'] == 'Success') {
+      _showSnackBar(context, snackbarMessage, Colors.green);
+      GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
+    } else {
+      _showSnackBar(context, 'Transaction Failed', Colors.red);
+    }
+  }
+
+  Future<String?> _refreshToken(
+      String refreshToken, BuildContext context) async {
+    final url = Uri.parse(Config.refresh_token);
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $refreshToken'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('jwt_token', responseBody['jwt_token']);
+      return responseBody['jwt_token'];
+    } else {
+      return null;
+    }
   }
 }

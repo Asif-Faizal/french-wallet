@@ -97,11 +97,9 @@ class ElectricityBillPage extends StatelessWidget {
       BuildContext context, String accountNumber, String amount) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? jwtToken =
-        // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyNjEiLCJleHAiOjE3MjIzNDM0MzMsImlzcyI6IkFaZVdhbGxldCJ9.omAMwvWbylp95mFz3pr15ksCjnLF_k6rNW5Nq_DfJ_g';
         prefs.getString('jwt_token');
 
     String? refreshToken =
-        // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyNjEiLCJleHAiOjE3MjI0MjY4MzMsImlzcyI6IkFaZVdhbGxldCJ9.CDPNCI6SeMOZcjd0uTZkQhQJp4hNniYZ08mZmFI7kjc';
         prefs.getString('refresh_token');
     print('JWT Token: $jwtToken');
     print('Refresh Token: $refreshToken');
@@ -163,7 +161,7 @@ class ElectricityBillPage extends StatelessWidget {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userType = prefs.getString('userType');
     print(userType);
-    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@$responseBody');
+    print(responseBody);
     final String snackbarMessage =
         '${responseBody["message"]} ID:${responseBody["d_id"]}';
     if (responseBody['status'] == 'Success') {
@@ -179,8 +177,10 @@ class ElectricityBillPage extends StatelessWidget {
     final url = Uri.parse(Config.refresh_token);
     final response = await http.post(
       url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'refresh_token': refreshToken}),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $refreshToken'
+      },
     );
 
     if (response.statusCode == 200) {

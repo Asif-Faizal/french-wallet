@@ -195,10 +195,28 @@ class _SetTransactionPinScreenState extends State<SetTransactionPinScreen> {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(15),
-        child: NormalButton(
-          onPressed: _checkPin,
-          title: 'Set PIN',
-          size: size,
+        child: Container(
+          height: size.height / 6,
+          child: Column(
+            children: [
+              NormalButton(
+                onPressed: _checkPin,
+                title: 'Set PIN',
+                size: size,
+              ),
+              SizedBox(
+                height: size.height / 60,
+              ),
+              NormalButton(
+                onPressed: () {
+                  GoRouter.of(context)
+                      .pushNamed(AppRouteConst.completedAnimationRoute);
+                },
+                title: 'Skip',
+                size: size,
+              ),
+            ],
+          ),
         ),
       ),
     );

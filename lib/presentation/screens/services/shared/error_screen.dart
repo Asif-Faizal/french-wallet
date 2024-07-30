@@ -43,14 +43,14 @@ class _ErrorAnimationScreenState extends State<ErrorAnimationScreen>
   }
 
   void _navigateToNextScreen(String? userType) {
-    if (userType == 'retail') {
+    if (userType == 'RETAIL' || userType == 'retail') {
       GoRouter.of(context).pushNamed(AppRouteConst.retailHomeRoute);
-    } else if (userType == 'agent') {
+    } else if (userType == 'AGENT' || userType == 'agent') {
       GoRouter.of(context).pushNamed(AppRouteConst.agentHomeRoute);
-    } else if (userType == 'merchant') {
+    } else if (userType == 'MERCHANT' || userType == 'merchant') {
       // Uncomment and add route if needed
       // GoRouter.of(context).pushNamed(AppRouteConst.merchantHomeRoute);
-    } else if (userType == 'coorporate') {
+    } else if (userType == 'COORPORATE' || userType == 'coorporate') {
       GoRouter.of(context).pushNamed(AppRouteConst.coorporateHomeRoute);
     } else {
       GoRouter.of(context).pushNamed(AppRouteConst.promptRoute);

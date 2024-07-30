@@ -40,7 +40,7 @@ class Config {
       'https://api-innovitegra.online/login/refresh_token';
   static const String appVersion = '4.0.4';
   static const String deviceId =
-      '986t534666587645342345243273485345331343576895002';
+      '986t534666587645342345243273485345331343576895003';
   static const String token =
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyNjEiLCJleHAiOjE3MjIzNDU4NDIsImlzcyI6IkFaZVdhbGxldCJ9.1haCs-YLp_X2Q_3Ur86bqci5i_K6fKmLRtAcqKflCyI';
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyNjEiLCJleHAiOjE3MjIzNTE5NDIsImlzcyI6IkFaZVdhbGxldCJ9.QXEG4X7TMx8nDrIWvX9PErLtL_ey_0K_y6qYdRi6G-k';
 }

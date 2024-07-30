@@ -22,18 +22,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'data/signup/business_type/business_info_datasource.dart';
 import 'data/signup/business_type/business_info_repo_impl.dart';
-import 'data/statement/transaction_data_source.dart';
-import 'data/statement/transaction_repo_impl.dart';
 import 'domain/signup/business_type/get_business_type.dart';
 import 'domain/signup/industry_sector/get_industry_sector.dart';
-import 'domain/statement/fetch_transaction.dart';
 import 'l10n/l10n.dart';
 import 'presentation/bloc/business info/business_info_bloc.dart';
 import 'presentation/bloc/checkmobile/checkmobile_bloc.dart';
 import 'presentation/bloc/industry sector/industry_sector_bloc.dart';
 import 'presentation/bloc/language/localization_bloc.dart';
-import 'presentation/bloc/statement/transaction_bloc.dart';
-import 'presentation/bloc/statement/transaction_event.dart';
 import 'shared/theme/theme.dart';
 import 'shared/router/router_config.dart';
 import 'package:http/http.dart' as http;
@@ -58,15 +53,6 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<LocalizationBloc>(
           create: (_) => LocalizationBloc(),
-        ),
-        BlocProvider<TransactionBloc>(
-          create: (_) => TransactionBloc(
-            fetchTransactions: FetchTransactions(
-              repository: TransactionRepositoryImpl(
-                dataSource: TransactionDataSource(),
-              ),
-            ),
-          )..add(LoadTransactions()),
         ),
         BlocProvider<BusinessTypeBloc>(
           create: (context) => BusinessTypeBloc(
