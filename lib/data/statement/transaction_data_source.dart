@@ -21,21 +21,24 @@ class TransactionDataSource {
       body: body,
     );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      if (responseData.containsKey('data') && responseData['data'] != null) {
-        List<TransactionModel> transactions = (responseData['data'] as List)
-            .map((data) => TransactionModel.fromJson(data))
-            .toList();
-        return transactions;
+    try {
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('data') && responseData['data'] != null) {
+          List<TransactionModel> transactions = (responseData['data'] as List)
+              .map((data) => TransactionModel.fromJson(data))
+              .toList();
+          return transactions;
+        } else {
+          throw Exception('No data found in the response');
+        }
       } else {
-        print('Response body: ${response.body}');
-        throw Exception('No data found in the response');
+        throw Exception(
+            'Failed to load transactions. Status code: ${response.statusCode}');
       }
-    } else {
-      print('Response status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
-      throw Exception('Failed to load transactions');
+    } catch (e) {
+      print('Error: ${e.toString()}');
+      throw Exception('Failed to parse transactions. Error: ${e.toString()}');
     }
   }
 }

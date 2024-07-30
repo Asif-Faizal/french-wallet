@@ -1,11 +1,12 @@
 import 'dart:ui';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ewallet2/presentation/screens/dashboard/account_info.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import Shared Preferences
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CoorporateHomeScreen extends StatefulWidget {
   const CoorporateHomeScreen({super.key});
@@ -90,7 +91,6 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                 title: Text('Block or Unblock'),
                 onTap: () {
                   Navigator.pop(context);
-                  // Handle action here
                 },
               ),
               ListTile(
@@ -98,7 +98,6 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                 title: Text('Transfer from Child'),
                 onTap: () {
                   Navigator.pop(context);
-                  // Handle action here
                 },
               ),
               ListTile(
@@ -106,7 +105,6 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                 title: Text('Transfer to Child'),
                 onTap: () {
                   Navigator.pop(context);
-                  // Handle action here
                 },
               ),
             ],
@@ -146,6 +144,27 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
       ),
       drawer: Drawer(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            SizedBox(
+              height: 40,
+            ),
+            ListTile(
+              leading: Icon(Icons.account_circle),
+              title: Text('Account Info'),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => UserProfilePage()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Logout'),
+              onTap: () {},
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -204,7 +223,7 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                             onPressed: () {
                               _onListItemSelected('Send');
                               GoRouter.of(context)
-                                  .pushNamed(AppRouteConst.searchUserRoute);
+                                  .pushNamed(AppRouteConst.retailSendRoute);
                             },
                           ),
                         ),
@@ -224,7 +243,7 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                             onPressed: () {
                               _onListItemSelected('Receive');
                               GoRouter.of(context)
-                                  .pushNamed(AppRouteConst.searchUserRoute);
+                                  .pushNamed(AppRouteConst.retailReceiveRoute);
                             },
                           ),
                         ),

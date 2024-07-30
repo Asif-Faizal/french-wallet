@@ -273,8 +273,6 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
         );
       },
     );
-
-    // Fetch contacts
     await _requestContactPermission();
     Navigator.of(context).pop();
 
@@ -322,7 +320,7 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: NormalAppBar(text: 'Receive Money'),
+      appBar: NormalAppBar(text: 'Send Money'),
       body: Padding(
         padding: EdgeInsets.symmetric(
           vertical: size.height / 60,

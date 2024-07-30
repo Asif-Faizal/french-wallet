@@ -10,7 +10,6 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       : super(TransactionInitial()) {
     on<LoadTransactions>(_onLoadTransactions);
   }
-
   void _onLoadTransactions(
       LoadTransactions event, Emitter<TransactionState> emit) async {
     emit(TransactionLoading());
@@ -18,7 +17,8 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       final transactions = await fetchTransactions();
       emit(TransactionLoaded(transactions));
     } catch (e) {
-      emit(TransactionError(e.toString()));
+      emit(TransactionError(
+          'Failed to load transactions. Error: ${e.toString()}'));
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart'; // Import for date formatting
+import 'package:intl/intl.dart';
 import '../../../../data/statement/transaction_data_source.dart';
 import '../../../../data/statement/transaction_repo_impl.dart';
 import '../../../../domain/statement/fetch_transaction.dart';
@@ -65,9 +65,7 @@ class TransactionListScreen extends StatelessWidget {
                                 ),
                                 Text(
                                   'Transaction ID: ${transaction.transactionId}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall, // Subheading style
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               ],
                             ),
