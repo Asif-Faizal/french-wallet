@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../shared/config/api_config.dart';
 import 'login_model.dart';
 
@@ -27,9 +28,17 @@ class LoginDataSourceImpl implements LoginDataSource {
       final responseData = jsonDecode(response.body);
       final status = responseData["status"];
       final message = responseData["message"];
+      final jwt_token = responseData["jwt_token"];
+      final refresh_token = responseData["refresh_token"];
+      final user_type = responseData["user_type"];
+      print(response.body);
       if (status == 'Fail') {
-        throw Exception(responseData["message"]);
+        throw Exception(message);
       } else if (status == 'Success') {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('jwt_token', jwt_token);
+        await prefs.setString('refresh_token', refresh_token);
+        await prefs.setString('userType', user_type);
         return LoginResponse.fromJson(responseData);
       }
       return LoginResponse.fromJson(responseData);

@@ -1,6 +1,6 @@
 import '../../data/login/login_datasource.dart';
-import '../../domain/login/login_repo.dart';
-import 'login_model.dart';
+import '../../data/login/login_repo.dart';
+import '../../data/login/login_model.dart';
 
 class LoginRepositoryImpl implements LoginRepository {
   final LoginDataSource dataSource;

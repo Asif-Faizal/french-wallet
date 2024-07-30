@@ -16,6 +16,8 @@ class _CompletedAnimationScreenState extends State<CompletedAnimationScreen>
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late AnimationController _controller;
   String? _userType;
+  String? _jwt_token;
+  String? _refresh_token;
 
   @override
   void initState() {
@@ -44,9 +46,15 @@ class _CompletedAnimationScreenState extends State<CompletedAnimationScreen>
     final SharedPreferences prefs = await _prefs;
     setState(() {
       _userType = prefs.getString('userType');
+      _jwt_token = prefs.getString('jwt_token');
+      _refresh_token = prefs.getString('refresh_token');
     });
     print(
         '############################################$_userType#######################################');
+    print(
+        '############################################$_jwt_token#######################################');
+    print(
+        '############################################$_refresh_token#######################################');
   }
 
   @override
@@ -56,14 +64,14 @@ class _CompletedAnimationScreenState extends State<CompletedAnimationScreen>
   }
 
   void _navigateToNextScreen(String? userType) {
-    if (userType == 'retail') {
+    if (userType == 'RETAIL') {
       GoRouter.of(context).pushNamed(AppRouteConst.retailHomeRoute);
-    } else if (userType == 'agent') {
+    } else if (userType == 'AGENT') {
       GoRouter.of(context).pushNamed(AppRouteConst.agentHomeRoute);
-    } else if (userType == 'merchant') {
+    } else if (userType == 'MERCHANT') {
       // Uncomment and add route if needed
       // GoRouter.of(context).pushNamed(AppRouteConst.merchantHomeRoute);
-    } else if (userType == 'coorporate') {
+    } else if (userType == 'COORPORATE') {
       GoRouter.of(context).pushNamed(AppRouteConst.coorporateHomeRoute);
     } else {
       GoRouter.of(context).pushNamed(AppRouteConst.promptRoute);

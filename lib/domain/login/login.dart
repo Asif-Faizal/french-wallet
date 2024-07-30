@@ -1,5 +1,5 @@
 import '../../domain/login/login_entity.dart';
-import 'login_repo.dart';
+import '../../data/login/login_repo.dart';
 
 class LoginUseCase {
   final LoginRepository repository;

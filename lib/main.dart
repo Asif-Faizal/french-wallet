@@ -5,7 +5,7 @@ import 'package:ewallet2/data/documents/doc_repo.dart';
 import 'package:ewallet2/data/image/image_datasource.dart';
 import 'package:ewallet2/data/image/image_repo.dart';
 import 'package:ewallet2/data/login/login_datasource.dart';
-import 'package:ewallet2/data/login/login_repo_impl.dart';
+import 'package:ewallet2/domain/login/login_repo_impl.dart';
 import 'package:ewallet2/data/signup/industry_sector/industry_sector_datasource.dart';
 import 'package:ewallet2/data/signup/industry_sector/industry_sector_repo_impl.dart';
 import 'package:ewallet2/domain/checkmobile/checkmobile.dart';
