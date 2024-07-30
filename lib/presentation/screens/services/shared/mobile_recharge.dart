@@ -25,6 +25,8 @@ class _MobileRechargeState extends State<MobileRecharge> {
 
   final List<Map<String, String>> _countryCodes = CountryCode.countryCodes;
   String _selectedCountryDialCode = '+91';
+  final billPaymentCode = '1001';
+  static const appRefId = '123456789012';
 
   @override
   void initState() {
@@ -223,6 +225,46 @@ class _MobileRechargeState extends State<MobileRecharge> {
     }
   }
 
+  Future<void> _submitMobileRecharge(
+      BuildContext context, String accountNumber, String amount) async {
+    final url = Uri.parse(
+        'https://api-innovitegra.online/Billers/service/process_service');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Deviceid': Config.deviceId,
+        'Authorization': Config.token
+      },
+      body: jsonEncode({
+        'amount': amount,
+        'service_id': billPaymentCode,
+        'account': accountNumber,
+        'app_ref_id': appRefId,
+      }),
+    );
+
+    final responseBody = jsonDecode(response.body);
+    print(responseBody);
+
+    if (responseBody['status'] == 'Success') {
+      _showSnackBar(context, 'Transaction Successful', Colors.green);
+    } else {
+      _showSnackBar(context, 'Transaction Failed', Colors.red);
+    }
+  }
+
+  void _showSnackBar(
+      BuildContext context, String message, Color backgroundColor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(message),
+        backgroundColor: backgroundColor,
+      ),
+    );
+  }
+
   void _showContactPicker() async {
     showDialog(
       context: context,
@@ -272,7 +314,9 @@ class _MobileRechargeState extends State<MobileRecharge> {
     return {'dialCode': '', 'phone': phoneNumber};
   }
 
-  void _submit() {}
+  void _submit() {
+    _submitMobileRecharge(context, _phoneController.text, '1');
+  }
 
   @override
   Widget build(BuildContext context) {

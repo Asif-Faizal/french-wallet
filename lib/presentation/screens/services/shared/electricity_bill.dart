@@ -10,7 +10,7 @@ class ElectricityBillPage extends StatelessWidget {
   final _accountNumberController = TextEditingController();
   final _amountController = TextEditingController();
   final billPaymentCode = '1002';
-  static const appRefId = '123456789012'; // Make this constant as required
+  static const appRefId = '123456789012';
 
   @override
   Widget build(BuildContext context) {
