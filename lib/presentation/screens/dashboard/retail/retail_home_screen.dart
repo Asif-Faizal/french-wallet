@@ -156,6 +156,27 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
         ),
         drawer: Drawer(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              SizedBox(
+                height: 40,
+              ),
+              ListTile(
+                leading: Icon(Icons.account_circle),
+                title: Text('Account Info'),
+                onTap: () {
+                  GoRouter.of(context)
+                      .pushNamed(AppRouteConst.accountInfoRoute);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.logout),
+                title: Text('Logout'),
+                onTap: () {},
+              ),
+            ],
+          ),
         ),
         body: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),

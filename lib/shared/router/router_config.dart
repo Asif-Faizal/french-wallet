@@ -1,3 +1,4 @@
+import 'package:ewallet2/presentation/screens/dashboard/account_info.dart';
 import 'package:ewallet2/presentation/screens/dashboard/agent/agent_home_screen.dart';
 import 'package:ewallet2/presentation/screens/dashboard/coorporate/coorporate_home_screen.dart';
 import 'package:ewallet2/presentation/screens/dashboard/retail/retail_home_screen.dart';
@@ -210,6 +211,11 @@ class AppRouter {
         path: '/setTransactionPin',
         name: 'setTransactionPin',
         builder: (context, state) => SetTransactionPinScreen(),
+      ),
+      GoRoute(
+        path: '/accountInfo',
+        name: 'accountInfo',
+        builder: (context, state) => UserProfilePage(),
       )
     ],
   );

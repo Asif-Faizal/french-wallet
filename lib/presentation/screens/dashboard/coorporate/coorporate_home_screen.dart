@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:ewallet2/presentation/screens/dashboard/account_info.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
@@ -154,8 +153,7 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
               leading: Icon(Icons.account_circle),
               title: Text('Account Info'),
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => UserProfilePage()));
+                GoRouter.of(context).pushNamed(AppRouteConst.accountInfoRoute);
               },
             ),
             ListTile(

@@ -2,8 +2,11 @@ import 'dart:ui';
 
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:go_router/go_router.dart';
 
 class AgentHomeScreen extends StatefulWidget {
   const AgentHomeScreen({super.key});
@@ -79,6 +82,26 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
       ),
       drawer: Drawer(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            SizedBox(
+              height: 40,
+            ),
+            ListTile(
+              leading: Icon(Icons.account_circle),
+              title: Text('Account Info'),
+              onTap: () {
+                GoRouter.of(context).pushNamed(AppRouteConst.accountInfoRoute);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Logout'),
+              onTap: () {},
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
