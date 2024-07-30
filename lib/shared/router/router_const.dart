@@ -35,4 +35,5 @@ class AppRouteConst {
   static const setTransactionPinRoute = 'setTransactionPin';
   static const accountInfoRoute = 'accountInfo';
   static const electricityBillRoute = 'electricityBill';
+  static const mobileRechargeRoute = 'mobileRecharge';
 }

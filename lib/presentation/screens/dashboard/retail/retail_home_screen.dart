@@ -349,7 +349,10 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                           icon: Icon(
                             Icons.call,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            GoRouter.of(context)
+                                .pushNamed(AppRouteConst.mobileRechargeRoute);
+                          },
                         ),
                         size,
                       ),
