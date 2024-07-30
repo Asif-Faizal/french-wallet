@@ -64,14 +64,14 @@ class _CompletedAnimationScreenState extends State<CompletedAnimationScreen>
   }
 
   void _navigateToNextScreen(String? userType) {
-    if (userType == 'RETAIL') {
+    if (userType == 'RETAIL' || userType == 'retail') {
       GoRouter.of(context).pushNamed(AppRouteConst.retailHomeRoute);
-    } else if (userType == 'AGENT') {
+    } else if (userType == 'AGENT' || userType == 'agent') {
       GoRouter.of(context).pushNamed(AppRouteConst.agentHomeRoute);
-    } else if (userType == 'MERCHANT') {
+    } else if (userType == 'MERCHANT' || userType == 'merchant') {
       // Uncomment and add route if needed
       // GoRouter.of(context).pushNamed(AppRouteConst.merchantHomeRoute);
-    } else if (userType == 'COORPORATE') {
+    } else if (userType == 'COORPORATE' || userType == 'coorporate') {
       GoRouter.of(context).pushNamed(AppRouteConst.coorporateHomeRoute);
     } else {
       GoRouter.of(context).pushNamed(AppRouteConst.promptRoute);
