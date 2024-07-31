@@ -1,12 +1,11 @@
-import 'package:ewallet2/shared/config/api_config.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
-import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EnterAmountPage extends StatefulWidget {
   const EnterAmountPage({super.key, required this.phoneNumber});
@@ -58,141 +57,105 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
     }
   }
 
-  Future<void> _makeSendRequest(String pin) async {
-    final url = Config.sent_money;
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': Config.token,
-    };
+  Future<void> _handleSubmit() async {
+    final String apiUrl =
+        "https://api-innovitegra.online/bank_accounts/Send_money/send_money_to_user";
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String jwtToken = prefs.getString('jwt_token') ?? '';
+    final String refreshToken = prefs.getString('refresh_token') ?? '';
 
-    final body = jsonEncode({
-      'mobile': widget.phoneNumber,
-      'currency': 'KWD',
-      'amount': double.tryParse(_amountController.text) ?? 0.0,
-      'user_pin': pin,
-      'remark': 'Test transaction',
-    });
+    final response = await _sendMoney(apiUrl, jwtToken);
+    final Map<String, dynamic> responseData = json.decode(response.body);
 
-    try {
-      final response =
-          await http.post(Uri.parse(url), headers: headers, body: body);
-      final responseData = jsonDecode(response.body);
-      print(body);
-      print(
-          '==================================SENDING MONEY==============================');
-      print(responseData);
-      final remark = responseData['remark'];
-      final status = responseData['status'];
-      print('Status: $status');
+    final status = responseData['status'];
+    final message = responseData['message'];
+    final statusCode = responseData['status_code'];
 
-      if (response.statusCode == 200) {
-        if (status == 'Fail') {
-          GoRouter.of(context).pushNamed(AppRouteConst.errorAnimationRoute);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(remark),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ));
-        } else if (status == 'Success') {
-          GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
-        } else {}
-      } else {
+    if (response.statusCode == 200) {
+      if (status == 'Fail') {
         GoRouter.of(context).pushNamed(AppRouteConst.errorAnimationRoute);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Request failed: ${response.statusCode}'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ));
+      } else if (status == 'Success') {
+        GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: $e'),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-      ));
-    }
-  }
 
-  Future<void> _makeReceiveRequest(String pin) async {
-    final url = Config.add_request;
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': Config.token,
-    };
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    } else if (statusCode == 5) {
+      final tokenResponse = await _refreshToken(refreshToken);
 
-    final body = jsonEncode({
-      "mobile_no": widget.phoneNumber,
-      "currency": "KWD",
-      "amount": double.tryParse(_amountController.text) ?? 0.0,
-      "user_pin": pin
-    });
+      if (tokenResponse != null) {
+        final newJwtToken = tokenResponse['jwt_token'];
+        final newRefreshToken = tokenResponse['refresh_token'];
 
-    try {
-      final response =
-          await http.post(Uri.parse(url), headers: headers, body: body);
-      final responseData = jsonDecode(response.body);
-      print(body);
-      print(
-          '==================================REQUESTING MONEY==============================');
-      print(responseData);
-      final remark = responseData['remark'];
-      final status = responseData['status'];
-      print('Status: $status');
+        await prefs.setString('jwt_token', newJwtToken);
+        await prefs.setString('refresh_token', newRefreshToken);
 
-      if (response.statusCode == 200) {
-        if (status == 'Fail') {
+        final retryResponse = await _sendMoney(apiUrl, newJwtToken);
+        final retryData = json.decode(retryResponse.body);
+
+        print(response.body);
+        final retryStatus = retryData['status'];
+        final retryMessage = retryData['message'];
+
+        if (retryStatus == 'Fail') {
           GoRouter.of(context).pushNamed(AppRouteConst.errorAnimationRoute);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(remark),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ));
-        } else if (status == 'Success') {
+        } else if (retryStatus == 'Success') {
           GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(remark),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ));
         }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(retryMessage)),
+        );
       } else {
-        GoRouter.of(context).pushNamed(AppRouteConst.errorAnimationRoute);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Request failed: ${response.statusCode}'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Failed to refresh token. Please log in again.')),
+        );
+        GoRouter.of(context)
+            .pushNamed(AppRouteConst.loginRoute); // Redirect to login
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: $e'),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An unexpected error occurred.')),
+      );
     }
   }
 
-  void _handleSubmit() {
-    showModalBottomSheet(
-      context: context,
-      isDismissible: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
-      ),
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return TransactionPinBottomSheet(
-          onPinEntered: (String pin) {
-            if (_selectedItems == 'Send') {
-              _makeSendRequest(pin);
-            } else if (_selectedItems == 'Receive') {
-              _makeReceiveRequest(pin);
-            }
-          },
-          buttonTitle: _getButtonTitle(),
-        );
+  Future<http.Response> _sendMoney(String apiUrl, String token) async {
+    return await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode({
+        'mobile': widget.phoneNumber,
+        'currency': 'KWD',
+        'amount': double.parse(_amountController.text),
+        'user_pin': '1111',
+        'remark': 'Test transaction',
+      }),
+    );
+  }
+
+  Future<Map<String, dynamic>?> _refreshToken(String refreshToken) async {
+    final String refreshTokenUrl =
+        "https://api-innovitegra.online/login/refresh_token";
+
+    final response = await http.post(
+      Uri.parse(refreshTokenUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $refreshToken',
       },
     );
+    print(response.body);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      return null;
+    }
   }
 
   @override
@@ -215,149 +178,24 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
               textAlign: TextAlign.center,
               controller: _amountController,
               keyboardType: TextInputType.number,
-              style: TextStyle(fontSize: 32),
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                border: InputBorder.none,
+                hintText: '0.00',
+                hintStyle: TextStyle(
+                  fontSize: 32,
+                  color: Theme.of(context).primaryColor.withOpacity(0.4),
                 ),
-                prefix: Icon(Icons.attach_money),
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: size.height / 60,
-                  horizontal: size.width / 40,
+                contentPadding: EdgeInsets.only(
+                  bottom: size.height / 60,
                 ),
               ),
             ),
-            Spacer(),
+            SizedBox(height: size.height / 30),
             NormalButton(
-              size: size,
-              title: _getButtonTitle(),
               onPressed: _isButtonEnabled ? _handleSubmit : null,
-            ),
-            SizedBox(height: size.height / 80),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class TransactionPinBottomSheet extends StatefulWidget {
-  final Function(String) onPinEntered;
-  final String buttonTitle;
-
-  TransactionPinBottomSheet(
-      {required this.onPinEntered, required this.buttonTitle});
-
-  @override
-  _TransactionPinBottomSheetState createState() =>
-      _TransactionPinBottomSheetState();
-}
-
-class _TransactionPinBottomSheetState extends State<TransactionPinBottomSheet> {
-  final List<TextEditingController> _pinControllers =
-      List.generate(4, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
-  String _enteredPin = '';
-  bool _isButtonEnabled = false;
-  String? _selectedItems;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPreferences();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).requestFocus(_focusNodes[0]);
-    });
-  }
-
-  Future<void> _loadPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _selectedItems = prefs.getString('selected_value');
-      print(
-          '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@$_selectedItems@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-    });
-  }
-
-  void _handlePinInput() {
-    _enteredPin = _pinControllers.map((controller) => controller.text).join();
-    setState(() {
-      _isButtonEnabled = _enteredPin.length == 4;
-    });
-  }
-
-  @override
-  void dispose() {
-    _pinControllers.forEach((controller) => controller.dispose());
-    _focusNodes.forEach((focusNode) => focusNode.dispose());
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return SingleChildScrollView(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Enter Transaction PIN',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            SizedBox(height: size.height / 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(4, (index) {
-                return Container(
-                  width: size.width / 10,
-                  height: size.height / 10,
-                  child: TextField(
-                    controller: _pinControllers[index],
-                    focusNode: _focusNodes[index],
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.center,
-                    textAlignVertical: TextAlignVertical.center,
-                    maxLength: 1,
-                    obscureText: true,
-                    style: TextStyle(fontSize: 24),
-                    onChanged: (value) {
-                      if (value.isNotEmpty) {
-                        if (index < 3) {
-                          FocusScope.of(context)
-                              .requestFocus(_focusNodes[index + 1]);
-                        }
-                      } else if (value.isEmpty) {
-                        if (index > 0) {
-                          FocusScope.of(context)
-                              .requestFocus(_focusNodes[index - 1]);
-                        }
-                      }
-                      _handlePinInput();
-                    },
-                    decoration: InputDecoration(
-                      counterText: '',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ),
-            SizedBox(height: size.height / 15),
-            NormalButton(
-              size: MediaQuery.of(context).size,
-              title: widget.buttonTitle,
-              onPressed: _isButtonEnabled
-                  ? () {
-                      widget.onPinEntered(_enteredPin);
-                      Navigator.of(context).pop();
-                    }
-                  : null,
+              title: _getButtonTitle(),
+              size: size,
             ),
           ],
         ),

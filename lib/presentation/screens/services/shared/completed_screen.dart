@@ -69,8 +69,7 @@ class _CompletedAnimationScreenState extends State<CompletedAnimationScreen>
     } else if (userType == 'AGENT' || userType == 'agent') {
       GoRouter.of(context).pushNamed(AppRouteConst.agentHomeRoute);
     } else if (userType == 'MERCHANT' || userType == 'merchant') {
-      // Uncomment and add route if needed
-      // GoRouter.of(context).pushNamed(AppRouteConst.merchantHomeRoute);
+      GoRouter.of(context).pushNamed(AppRouteConst.merchantHomeRoute);
     } else if (userType == 'COORPORATE' || userType == 'coorporate') {
       GoRouter.of(context).pushNamed(AppRouteConst.coorporateHomeRoute);
     } else {

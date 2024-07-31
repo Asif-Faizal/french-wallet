@@ -36,11 +36,12 @@ class Config {
       'https://api-innovitegra.online/bank_accounts/Transaction_pin/set_transaction_pin';
   static const String billing =
       'https://api-innovitegra.online/Billers/service/process_service';
+  static const accountView = 'https://api-innovitegra.online/user/Profile/view';
   static const refresh_token =
       'https://api-innovitegra.online/login/refresh_token';
   static const String appVersion = '4.0.4';
   static const String deviceId =
       '986t534666587645342345243273485345331343576895003';
-  static const String token =
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyNjEiLCJleHAiOjE3MjIzNTE5NDIsImlzcyI6IkFaZVdhbGxldCJ9.QXEG4X7TMx8nDrIWvX9PErLtL_ey_0K_y6qYdRi6G-k';
+  static String token =
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTAwMyIsIkN1c3RvbWVySUQiOiIyNjEiLCJleHAiOjE3MjI0MTQwMDksImlzcyI6IkFaZVdhbGxldCJ9.KmInhJ_XjVPBRJqbHbWcmlkFrCZiQEJHjeC-PJf0t3E';
 }

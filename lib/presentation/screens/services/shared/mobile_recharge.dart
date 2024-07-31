@@ -107,6 +107,28 @@ class _MobileRechargeState extends State<MobileRecharge> {
   }
 
   Future<void> _sendContactsRequest(List<String> phoneNumbers) async {
+    // Fetch JWT token and refresh token from SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? jwtToken = prefs.getString('jwt_token');
+    String? refreshToken = prefs.getString('refresh_token');
+
+    // If tokens are not available, show an error message and return
+    if (jwtToken == null || refreshToken == null) {
+      _showSnackBar(
+          context, 'Session expired. Please log in again.', Colors.red);
+      return;
+    }
+
+    // Check if JWT token is expired
+    if (JwtDecoder.isExpired(jwtToken)) {
+      jwtToken = await _refreshToken(refreshToken, context);
+      if (jwtToken == null) {
+        _showSnackBar(
+            context, 'Session expired. Please log in again.', Colors.red);
+        return;
+      }
+    }
+
     final url = Config.check_benificiary;
 
     final requestPayload = [
@@ -119,17 +141,21 @@ class _MobileRechargeState extends State<MobileRecharge> {
 
     final requestBody = jsonEncode(requestPayload);
     print(requestBody);
+
     final response = await http.post(
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
         'Deviceid': Config.deviceId,
-        'Authorization': Config.token
+        'Authorization':
+            'Bearer $jwtToken' // Use the (possibly refreshed) JWT token
       },
       body: requestBody,
     );
+
     print(response.body);
 
+    // Handle response
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
       if (responseData['status'] == 'Success' && responseData['data'] != null) {
@@ -215,18 +241,10 @@ class _MobileRechargeState extends State<MobileRecharge> {
           },
         );
       } else if (responseData['status'] == 'Fail') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Error: ${responseData['message']}'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ));
+        _showSnackBar(context, 'Error: ${responseData['message']}', Colors.red);
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${response.statusCode}'),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-      ));
+      _showSnackBar(context, 'Error: ${response.statusCode}', Colors.red);
     }
   }
 
@@ -404,6 +422,7 @@ class _MobileRechargeState extends State<MobileRecharge> {
     if (JwtDecoder.isExpired(jwtToken)) {
       jwtToken = await _refreshToken(refreshToken, context);
       if (jwtToken == null) {
+        jwtToken = await _refreshToken(refreshToken, context);
         _showSnackBar(
             context, 'Session expired. Please log in again.', Colors.red);
         return;
@@ -419,6 +438,7 @@ class _MobileRechargeState extends State<MobileRecharge> {
             await _makeApiRequest(jwtToken, accountNumber, amount);
         _handleApiResponse(context, retryResponse);
       } else {
+        jwtToken = await _refreshToken(refreshToken, context);
         _showSnackBar(
             context, 'Session expired. Please log in again.', Colors.red);
       }

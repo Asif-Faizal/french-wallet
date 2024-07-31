@@ -1,10 +1,12 @@
 import 'package:ewallet2/presentation/screens/dashboard/account_info.dart';
 import 'package:ewallet2/presentation/screens/dashboard/agent/agent_home_screen.dart';
 import 'package:ewallet2/presentation/screens/dashboard/coorporate/coorporate_home_screen.dart';
+import 'package:ewallet2/presentation/screens/dashboard/merchant/merchant_home_screen.dart';
 import 'package:ewallet2/presentation/screens/dashboard/retail/retail_home_screen.dart';
 import 'package:ewallet2/presentation/screens/initial/corporate_promot_screen.dart';
 import 'package:ewallet2/presentation/screens/login/executive_login_screen.dart';
 import 'package:ewallet2/presentation/screens/services/coorporate/view_child_card_screen.dart';
+import 'package:ewallet2/presentation/screens/services/merchant/store_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/electricity_bill.dart';
 import 'package:ewallet2/presentation/screens/services/shared/mobile_recharge.dart';
 import 'package:ewallet2/presentation/screens/services/shared/receive_screen.dart';
@@ -230,6 +232,16 @@ class AppRouter {
         name: 'mobileRecharge',
         builder: (context, state) => MobileRecharge(),
       ),
+      GoRoute(
+        path: '/merchantHome',
+        name: 'merchantHome',
+        builder: (context, state) => MerchantHomeScreen(),
+      ),
+      GoRoute(
+        path: '/merchantStore',
+        name: 'merchantStore',
+        builder: (context, state) => StorePage(),
+      )
       // GoRoute(path: '/transactionDetails',name: 'transactionDetails',builder: (context, state) => TransactionDetailsPage(transactionId: transactionId),)
     ],
   );

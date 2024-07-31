@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class RetailHomeScreen extends StatefulWidget {
-  const RetailHomeScreen({super.key});
+class MerchantHomeScreen extends StatefulWidget {
+  const MerchantHomeScreen({super.key});
 
   @override
-  State<RetailHomeScreen> createState() => _RetailHomeScreenState();
+  State<MerchantHomeScreen> createState() => _MerchantHomeScreenState();
 }
 
-class _RetailHomeScreenState extends State<RetailHomeScreen>
+class _MerchantHomeScreenState extends State<MerchantHomeScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -273,6 +273,25 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                         size,
                       ),
                       buildListItem(
+                        'Store',
+                        Card(
+                          color: Colors.amber.shade200,
+                          child: Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.store,
+                              ),
+                              onPressed: () {
+                                GoRouter.of(context).pushNamed(
+                                    AppRouteConst.merchantStoreRoute);
+                              },
+                            ),
+                          ),
+                        ),
+                        size,
+                      ),
+                      buildListItem(
                         'Top Up',
                         Card(
                           color: Colors.amber.shade200,
@@ -281,22 +300,6 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                             child: IconButton(
                               icon: Icon(
                                 Icons.upload_file_outlined,
-                              ),
-                              onPressed: () {},
-                            ),
-                          ),
-                        ),
-                        size,
-                      ),
-                      buildListItem(
-                        'Card',
-                        Card(
-                          color: Colors.amber.shade200,
-                          child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.payment_outlined,
                               ),
                               onPressed: () {},
                             ),

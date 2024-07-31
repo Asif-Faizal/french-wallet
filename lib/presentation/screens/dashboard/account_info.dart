@@ -36,7 +36,7 @@ class UserProfileView extends StatelessWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Failed to load user profile: ${state.message}'),
+                content: Text('Session TimedOut Login again'),
                 backgroundColor: Colors.red,
               ),
             );

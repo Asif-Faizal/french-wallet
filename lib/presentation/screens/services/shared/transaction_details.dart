@@ -106,7 +106,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
           ? Center(child: CircularProgressIndicator())
           : transactionDetails != null && transactionDetails!['data'] != null
               ? ListView(
-                  padding: EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(10),
                   children: [
                     ListTile(
                       title: Text('Transaction ID'),
@@ -157,9 +157,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                       title: Text('Receipt'),
                       subtitle: transactionDetails!['receipt_url'] != null
                           ? GestureDetector(
-                              onTap: () {
-                                // Implement the logic to view the receipt
-                              },
+                              onTap: () {},
                               child: Text(
                                 'View Receipt',
                                 style: TextStyle(color: Colors.blue),

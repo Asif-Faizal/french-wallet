@@ -37,4 +37,6 @@ class AppRouteConst {
   static const electricityBillRoute = 'electricityBill';
   static const mobileRechargeRoute = 'mobileRecharge';
   static const transactionDetailsRoute = 'transactionDetails';
+  static const merchantHomeRoute = 'merchantHome';
+  static const merchantStoreRoute = 'merchantStore';
 }

@@ -38,7 +38,9 @@ class LoginDataSourceImpl implements LoginDataSource {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', jwt_token);
         await prefs.setString('refresh_token', refresh_token);
-        await prefs.setString('userType', user_type);
+        // await prefs.setString('userType', user_type);
+        print('qwertyui');
+        print(user_type);
         return LoginResponse.fromJson(responseData);
       }
       return LoginResponse.fromJson(responseData);

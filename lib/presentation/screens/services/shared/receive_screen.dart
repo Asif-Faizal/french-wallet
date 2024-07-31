@@ -7,6 +7,8 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../shared/config/api_config.dart';
 
 class RetailReceiveScreen extends StatefulWidget {
@@ -99,6 +101,23 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
   }
 
   Future<void> _sendContactsRequest(List<String> phoneNumbers) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? jwtToken = prefs.getString('jwt_token');
+    String? refreshToken = prefs.getString('refresh_token');
+
+    if (jwtToken == null || refreshToken == null) {
+      _showSnackBar('Session expired. Please log in again.', Colors.red);
+      return;
+    }
+
+    if (JwtDecoder.isExpired(jwtToken)) {
+      jwtToken = await _refreshToken(refreshToken);
+      if (jwtToken == null) {
+        _showSnackBar('Session expired. Please log in again.', Colors.red);
+        return;
+      }
+    }
+
     final url = Config.check_benificiary;
 
     final requestPayload = [
@@ -116,7 +135,7 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
       headers: {
         'Content-Type': 'application/json',
         'Deviceid': Config.deviceId,
-        'Authorization': Config.token
+        'Authorization': 'Bearer $jwtToken'
       },
       body: requestBody,
     );
@@ -196,9 +215,7 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
                         subtitle: Text(phoneNumber ?? ''),
                         trailing: TextButton(
                           child: Text('Invite'),
-                          onPressed: () {
-                            // Logic to send invite
-                          },
+                          onPressed: () {},
                         ),
                       );
                     }).toList(),
@@ -225,6 +242,23 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
   }
 
   Future<void> _checkMobileForTransaction(String phoneNumber) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? jwtToken = prefs.getString('jwt_token');
+    String? refreshToken = prefs.getString('refresh_token');
+
+    if (jwtToken == null || refreshToken == null) {
+      _showSnackBar('Session expired. Please log in again.', Colors.red);
+      return;
+    }
+
+    if (JwtDecoder.isExpired(jwtToken)) {
+      jwtToken = await _refreshToken(refreshToken);
+      if (jwtToken == null) {
+        _showSnackBar('Session expired. Please log in again.', Colors.red);
+        return;
+      }
+    }
+
     final url = Config.check_mobile_for_transaction;
 
     final requestPayload = {"mobile_no": phoneNumber};
@@ -236,7 +270,7 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
       headers: {
         'Content-Type': 'application/json',
         'Deviceid': Config.deviceId,
-        'Authorization': Config.token
+        'Authorization': 'Bearer $jwtToken'
       },
       body: requestBody,
     );
@@ -264,111 +298,102 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
     }
   }
 
-  void _showContactPicker() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Loading Contacts'),
-          content: CircularProgressIndicator(),
-        );
+  Future<String?> _refreshToken(String refreshToken) async {
+    final url = Config.refresh_token;
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Deviceid': Config.deviceId,
       },
+      body: jsonEncode({"refresh_token": refreshToken}),
     );
 
-    // Fetch contacts
-    await _requestContactPermission();
-    Navigator.of(context).pop();
-
-    List<String> phoneNumbers = [];
-
-    for (final contact in _contacts) {
-      if (contact.phones != null && contact.phones!.isNotEmpty) {
-        for (final phone in contact.phones!) {
-          final phoneNumber = phone.value?.replaceAll(' ', '') ?? '';
-          phoneNumbers.add(phoneNumber);
-        }
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      final newJwtToken = responseData['jwt_token'];
+      if (newJwtToken != null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('jwt_token', newJwtToken);
+        return newJwtToken;
       }
     }
 
-    if (phoneNumbers.isNotEmpty) {
-      _sendContactsRequest(phoneNumbers);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Please wait for some time to fetch the Contacts'),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-      ));
-    }
+    return null;
+  }
+
+  void _showSnackBar(String message, Color backgroundColor) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: backgroundColor,
+      behavior: SnackBarBehavior.floating,
+    ));
   }
 
   Map<String, String> _separatePhoneAndDialCode(String phoneNumber) {
     for (final country in _countryCodes) {
       final dialCode = country['dialCode']!;
       if (phoneNumber.startsWith(dialCode)) {
-        return {
-          'dialCode': dialCode,
-          'phone': phoneNumber.substring(dialCode.length)
-        };
+        final phone = phoneNumber.substring(dialCode.length);
+        return {'dialCode': dialCode, 'phone': phone};
       }
     }
     return {'dialCode': '', 'phone': phoneNumber};
   }
 
-  void _submit() {
-    final fullNumber = '$_selectedCountryDialCode${_phoneController.text}';
-    _checkMobileForTransaction(fullNumber);
+  void _selectFromContacts() {
+    final List<String> selectedPhoneNumbers = _contacts
+        .where((contact) => contact.phones?.isNotEmpty == true)
+        .map((contact) => contact.phones!.first.value?.replaceAll(' ', ''))
+        .where((number) => number != null)
+        .map((number) => number!)
+        .toList();
+    _sendContactsRequest(selectedPhoneNumbers);
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: NormalAppBar(text: 'Receive Money'),
+      appBar: NormalAppBar(
+        text: 'Receive Money',
+      ),
       body: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: size.height / 60,
-          horizontal: size.width / 20,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: size.height / 20),
-            Text(
-              'Enter Phone Number',
-              style: Theme.of(context).textTheme.bodyLarge,
+            SizedBox(
+              height: size.height / 15,
             ),
-            SizedBox(height: size.height / 40),
             Row(
               children: [
-                Container(
-                  height: size.height / 15,
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    onPressed: _showCountryCodePicker,
+                GestureDetector(
+                  onTap: _showCountryCodePicker,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                      ),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                     child: Text(
                       _selectedCountryDialCode,
-                      style: TextStyle(color: Colors.black),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                SizedBox(width: 8),
                 Expanded(
-                  flex: 3,
-                  child: Container(
-                    height: size.height / 15,
-                    child: TextField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        hintText: 'Phone Number',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
+                  child: TextField(
+                    controller: _phoneController,
+                    decoration: InputDecoration(
+                      labelText: 'Phone Number',
+                      border: OutlineInputBorder(),
                     ),
+                    keyboardType: TextInputType.phone,
                   ),
                 ),
               ],
@@ -379,7 +404,7 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
                 if (_contactsLoaded)
                   TextButton(
                     child: Text('Select from Contacts'),
-                    onPressed: _showContactPicker,
+                    onPressed: _selectFromContacts,
                   )
                 else
                   TextButton(
@@ -394,9 +419,15 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(15),
         child: NormalButton(
+          title: 'Proceed',
+          onPressed: _isButtonEnabled
+              ? () {
+                  final phoneNumber =
+                      '$_selectedCountryDialCode${_phoneController.text}';
+                  _checkMobileForTransaction(phoneNumber);
+                }
+              : null,
           size: size,
-          title: 'Check',
-          onPressed: _isButtonEnabled ? _submit : null,
         ),
       ),
     );
