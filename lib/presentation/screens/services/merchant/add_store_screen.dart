@@ -1,6 +1,12 @@
+import 'package:ewallet2/shared/router/router_const.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
-import 'package:flutter/material.dart';
 
 class AddStoreScreen extends StatefulWidget {
   @override
@@ -12,6 +18,113 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
   final _locationController = TextEditingController();
   final _nameController = TextEditingController();
   final _cityController = TextEditingController();
+  late SharedPreferences _prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    _initSharedPreferences();
+  }
+
+  Future<void> _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
+  Future<void> _addStore() async {
+    final token = _prefs.getString('jwt_token');
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text('Authentication token not found')),
+      );
+      return;
+    }
+
+    final url = Uri.parse('https://api-innovitegra.online/merchant/store/Add');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'store_name': _nameController.text,
+        'store_location': _locationController.text,
+        'store_city': _cityController.text,
+      }),
+    );
+
+    final responseBody = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      if (responseBody['status'] == 'Success') {
+        GoRouter.of(context).pushNamed(AppRouteConst.merchantStoreRoute);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.green,
+              content: Text(responseBody['message'])),
+        );
+        Navigator.of(context).pop();
+      } else if (responseBody['status_code'] == 5) {
+        await _refreshToken();
+        await _addStore();
+      } else {
+        GoRouter.of(context).pushNamed(AppRouteConst.merchantStoreRoute);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.red,
+              content: Text(responseBody['message'])),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text('Failed to add store')),
+      );
+    }
+  }
+
+  Future<void> _refreshToken() async {
+    final refreshToken = _prefs.getString('refresh_token');
+    if (refreshToken == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text('Refresh token not found')),
+      );
+      return;
+    }
+
+    final url = Uri.parse('https://api-innovitegra.online/login/refresh_token');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $refreshToken',
+      },
+    );
+
+    final responseBody = jsonDecode(response.body);
+
+    if (response.statusCode == 200 && responseBody['status'] == 'Success') {
+      await _prefs.setString('jwt_token', responseBody['jwt_token']);
+      await _prefs.setString('refresh_token', responseBody['refresh_token']);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text('Failed to refresh token')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +142,9 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
               _buildTextField(controller: _nameController, label: 'Name'),
               SizedBox(height: 10),
               _buildTextField(
-                  controller: _locationController, label: 'Location'),
+                controller: _locationController,
+                label: 'Location',
+              ),
               SizedBox(height: 10),
               _buildTextField(controller: _cityController, label: 'Type'),
             ],
@@ -39,7 +154,14 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(15),
         child: NormalButton(
-            size: MediaQuery.of(context).size, title: 'Add', onPressed: () {}),
+          size: MediaQuery.of(context).size,
+          title: 'Add',
+          onPressed: () {
+            if (_formKey.currentState?.validate() ?? false) {
+              _addStore();
+            }
+          },
+        ),
       ),
     );
   }
