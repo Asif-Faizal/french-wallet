@@ -198,11 +198,17 @@ class _PromptScreenState extends State<PromptScreen> {
                     if (selectedUserType == 'retail') {
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.setString('userType', selectedUserType!);
+                    } else if (selectedUserType == 'merchant') {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('userType', selectedUserType!);
+                    } else if (selectedUserType == 'agent') {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('userType', selectedUserType!);
                     }
                     GoRouter.of(context)
                         // .pushNamed(AppRouteConst.loginRoute);
                         // .pushNamed(AppRouteConst.coorporateHomeRoute);
-                        .pushNamed(AppRouteConst.merchantHomeRoute);
+                        .pushNamed(AppRouteConst.loginRoute);
                   }
                 }
               : null,

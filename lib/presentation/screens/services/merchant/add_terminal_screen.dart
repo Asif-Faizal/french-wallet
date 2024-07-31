@@ -1,6 +1,13 @@
+import 'dart:convert';
+
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../shared/router/router_const.dart';
 
 class AddTerminalScreen extends StatefulWidget {
   final int storeId;
@@ -19,6 +26,118 @@ class _AddTerminalScreenState extends State<AddTerminalScreen> {
   final _modelController = TextEditingController();
   final _idController = TextEditingController();
   final _serialController = TextEditingController();
+  late SharedPreferences _prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    _initSharedPreferences();
+  }
+
+  Future<void> _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
+  Future<void> _addTerminal() async {
+    final token = _prefs.getString('jwt_token');
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text('Authentication token not found')),
+      );
+      return;
+    }
+
+    final url =
+        Uri.parse('https://api-innovitegra.online/merchant/terminal/Add');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        "termainal_loc": _locationController.text,
+        "terminal_name": _nameController.text,
+        "terminal_type": _typeController.text,
+        "terminal_model": _modelController.text,
+        "terminal_id": _idController.text,
+        "terminal_serial": _serialController.text,
+        "store_id": widget.storeId
+      }),
+    );
+
+    final responseBody = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      if (responseBody['status'] == 'Success') {
+        GoRouter.of(context).pushNamed(AppRouteConst.merchantStoreRoute);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.green,
+              content: Text(responseBody['message'])),
+        );
+        Navigator.of(context).pop();
+      } else if (responseBody['status_code'] == 5) {
+        await _refreshToken();
+        await _addTerminal();
+      } else {
+        GoRouter.of(context).pushNamed(AppRouteConst.merchantStoreRoute);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.red,
+              content: Text(responseBody['message'])),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text('Failed to add store')),
+      );
+    }
+  }
+
+  Future<void> _refreshToken() async {
+    final refreshToken = _prefs.getString('refresh_token');
+    if (refreshToken == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text('Refresh token not found')),
+      );
+      return;
+    }
+
+    final url = Uri.parse('https://api-innovitegra.online/login/refresh_token');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $refreshToken',
+      },
+    );
+
+    final responseBody = jsonDecode(response.body);
+
+    if (response.statusCode == 200 && responseBody['status'] == 'Success') {
+      await _prefs.setString('jwt_token', responseBody['jwt_token']);
+      await _prefs.setString('refresh_token', responseBody['refresh_token']);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text('Failed to refresh token')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +175,7 @@ class _AddTerminalScreenState extends State<AddTerminalScreen> {
           title: 'Add',
           onPressed: () {
             if (_formKey.currentState?.validate() ?? false) {
-              Navigator.of(context).pop();
+              _addTerminal();
             }
           },
         ),
