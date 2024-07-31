@@ -1,8 +1,12 @@
+import 'package:ewallet2/presentation/screens/services/merchant/add_store_screen.dart';
+import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
+import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../data/store/store_model.dart';
+import '../../../widgets/merchant/store_card.dart';
 
 class StorePage extends StatefulWidget {
   @override
@@ -27,7 +31,7 @@ class _StorePageState extends State<StorePage> {
     refreshToken = prefs.getString('refresh_token');
     if (jwtToken != null) {
       setState(() {
-        stores = fetchStores(); // Update stores with actual data
+        stores = fetchStores();
       });
     }
   }
@@ -82,7 +86,7 @@ class _StorePageState extends State<StorePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Stores and Terminals')),
+      appBar: NormalAppBar(text: 'Stores'),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: FutureBuilder<List<Store>>(
@@ -96,6 +100,7 @@ class _StorePageState extends State<StorePage> {
               return Center(child: Text('No stores available'));
             } else {
               return ListView.builder(
+                physics: BouncingScrollPhysics(),
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   Store store = snapshot.data![index];
@@ -106,47 +111,15 @@ class _StorePageState extends State<StorePage> {
           },
         ),
       ),
-    );
-  }
-}
-
-class StoreCard extends StatelessWidget {
-  final Store store;
-
-  StoreCard({required this.store});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(10),
-      child: Padding(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              store.storeName,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Text(store.storeLocation),
-            if (store.terminalArray != null)
-              ...store.terminalArray!.map((terminal) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Terminal Name: ${terminal.terminalName}'),
-                      Text('Type: ${terminal.terminalType}'),
-                      Text('Model: ${terminal.terminalModel}'),
-                      Text('ID: ${terminal.terminalId}'),
-                      Text('Serial: ${terminal.terminalSerialnum}'),
-                    ],
-                  ),
-                );
-              }).toList(),
-          ],
-        ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(15),
+        child: NormalButton(
+            size: MediaQuery.of(context).size,
+            title: 'Add Store',
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AddStoreScreen()));
+            }),
       ),
     );
   }
