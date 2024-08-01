@@ -143,28 +143,30 @@ class _AddTerminalScreenState extends State<AddTerminalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: NormalAppBar(text: 'Add Terminal'),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Store ID: ${widget.storeId}',
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 16),
-              _buildTextField(
-                  controller: _locationController, label: 'Location'),
-              _buildTextField(controller: _nameController, label: 'Name'),
-              _buildTextField(controller: _typeController, label: 'Type'),
-              _buildTextField(controller: _modelController, label: 'Model'),
-              _buildTextField(controller: _idController, label: 'ID'),
-              _buildTextField(controller: _serialController, label: 'Serial'),
-              SizedBox(height: 16),
-            ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Store ID: ${widget.storeId}',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(height: 16),
+                _buildTextField(
+                    controller: _locationController, label: 'Location'),
+                _buildTextField(controller: _nameController, label: 'Name'),
+                _buildTextField(controller: _typeController, label: 'Type'),
+                _buildTextField(controller: _modelController, label: 'Model'),
+                _buildTextField(controller: _idController, label: 'ID'),
+                _buildTextField(controller: _serialController, label: 'Serial'),
+                SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),

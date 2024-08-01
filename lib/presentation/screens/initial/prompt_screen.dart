@@ -205,10 +205,9 @@ class _PromptScreenState extends State<PromptScreen> {
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.setString('userType', selectedUserType!);
                     }
-                    GoRouter.of(context)
-                        // .pushNamed(AppRouteConst.loginRoute);
-                        // .pushNamed(AppRouteConst.coorporateHomeRoute);
-                        .pushNamed(AppRouteConst.sentOtpSignInRoute);
+                    GoRouter.of(context).pushNamed(AppRouteConst.loginRoute);
+                    // .pushNamed(AppRouteConst.coorporateHomeRoute);
+                    // .pushNamed(AppRouteConst.sentOtpSignInRoute);
                   }
                 }
               : null,
