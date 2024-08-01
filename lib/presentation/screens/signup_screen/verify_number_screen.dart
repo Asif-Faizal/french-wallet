@@ -42,7 +42,7 @@ class VerifyNumber extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              SizedBox(height: size.height / 3.1),
+              Spacer(),
               Center(
                 child: Text(
                   AppLocalizations.of(context)!.sms_charges,
@@ -57,28 +57,26 @@ class VerifyNumber extends StatelessWidget {
                   textAlign: TextAlign.start,
                 ),
               ),
-              const Spacer(),
+              SizedBox(
+                height: size.height / 60,
+              ),
               Text(
                 AppLocalizations.of(context)!.click_to_verify,
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
-              SizedBox(
-                height: size.height / 80,
-              ),
-              Center(
-                child: NormalButton(
-                  size: size,
-                  title: AppLocalizations.of(context)!.continue_text,
-                  onPressed: () {
-                    GoRouter.of(context)
-                        .pushNamed(AppRouteConst.sentOtpSignInRoute);
-                  },
-                ),
-              ),
-              SizedBox(height: size.height * 0.05),
             ],
           ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(bottom: 20, left: 15, right: 15),
+        child: NormalButton(
+          size: size,
+          title: AppLocalizations.of(context)!.continue_text,
+          onPressed: () {
+            GoRouter.of(context).pushNamed(AppRouteConst.sentOtpSignInRoute);
+          },
         ),
       ),
     );

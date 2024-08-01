@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:http/http.dart' as http;
+import '../../../shared/config/api_config.dart';
+import '../../../shared/country_code.dart';
 import '../../widgets/shared/normal_appbar.dart';
 import '../../widgets/shared/otp_bottom_sheet.dart';
 
@@ -21,6 +24,8 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
   String _userType = '';
   bool _isButtonEnabled = false;
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  final List<Map<String, String>> _countryCodes = CountryCode.countryCodes;
+  String _selectedCountryDialCode = '+91';
 
   @override
   void initState() {
@@ -44,8 +49,13 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
   }
 
   void _validatePhoneNumber() {
+    final isValid = _phoneController.text.isNotEmpty;
     setState(() {
-      _isButtonEnabled = _phoneController.text.length >= 1;
+      _isButtonEnabled = isValid;
+      _phoneNumber = PhoneNumber(
+        phoneNumber: _phoneController.text,
+        isoCode: _selectedCountryDialCode,
+      );
     });
   }
 
@@ -54,7 +64,6 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
     showModalBottomSheet(
       useSafeArea: false,
       enableDrag: true,
-      scrollControlDisabledMaxHeightRatio: size.height,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       context: context,
       builder: (BuildContext context) {
@@ -63,6 +72,38 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
           userType: _userType,
           size: size,
           navigateTo: AppRouteConst.identityVerifyRoute,
+        );
+      },
+    );
+  }
+
+  void _showCountryCodePicker() async {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Select Country Code'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: _countryCodes.map((country) {
+                return ListTile(
+                  leading: Text(
+                    country['flag']!,
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  title: Text('${country['name']} (${country['dialCode']})'),
+                  onTap: () {
+                    setState(() {
+                      _selectedCountryDialCode = country['dialCode']!;
+                    });
+                    Navigator.pop(context);
+                  },
+                );
+              }).toList(),
+            ),
+          ),
         );
       },
     );
@@ -89,28 +130,45 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             SizedBox(height: size.height / 40),
-            InternationalPhoneNumberInput(
-              onInputChanged: (PhoneNumber number) {
-                setState(() {
-                  _phoneNumber = number;
-                });
-              },
-              selectorConfig: const SelectorConfig(
-                selectorType: PhoneInputSelectorType.DROPDOWN,
-              ),
-              ignoreBlank: false,
-              autoValidateMode: AutovalidateMode.disabled,
-              initialValue: _phoneNumber,
-              textFieldController: _phoneController,
-              formatInput: false,
-              keyboardType: const TextInputType.numberWithOptions(
-                  signed: true, decimal: true),
-              inputDecoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(7),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: _showCountryCodePicker,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                      ),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(
+                      _selectedCountryDialCode,
+                      style:
+                          TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                    ),
+                  ),
                 ),
-                hintText: AppLocalizations.of(context)!.mobile_number,
-              ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: TextField(
+                    controller: _phoneController,
+                    decoration: InputDecoration(
+                      labelText: 'Phone Number',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.phone,
+                    onChanged: (value) {
+                      setState(() {
+                        _phoneNumber = PhoneNumber(
+                          phoneNumber: value,
+                          isoCode: _selectedCountryDialCode,
+                        );
+                      });
+                    },
+                  ),
+                ),
+              ],
             ),
             const Spacer(),
             NormalButton(
@@ -118,12 +176,15 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
               title: AppLocalizations.of(context)!.validate_num,
               onPressed: _isButtonEnabled
                   ? () async {
-                      _showOtpBottomSheet(context);
-                      print(_phoneNumber);
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      await prefs.setString(
-                          'phoneNumber', _phoneNumber.toString());
+                      final mobile =
+                          _selectedCountryDialCode + _phoneController.text;
+                      final status = await sentOtpMobile(mobile);
+                      if (status == 'Success') {
+                        _showOtpBottomSheet(context);
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        await prefs.setString('phoneNumber', mobile);
+                      }
                     }
                   : null,
             ),
@@ -133,106 +194,55 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
       ),
     );
   }
+
+  Future<String> sentOtpMobile(String mobile) async {
+    final Map<String, String> headers = {
+      'X-Password': Config.password,
+      'X-Username': Config.username,
+      'Appversion': Config.appVersion,
+      'Content-Type': 'application/json',
+      'Deviceid': Config.deviceId,
+    };
+    final Map<String, String> body = {
+      'mobile': mobile,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(Config.sent_mobile_otp_url),
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      final responseData = jsonDecode(response.body);
+      final message = responseData["message"];
+      print(response.body);
+      if (response.statusCode == 200) {
+        final status = responseData["status"];
+        if (status == 'Success') {
+          return status;
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(message),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+          ));
+          return 'Fail';
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Failed with status code: ${response.statusCode}'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.red,
+        ));
+        return 'Error';
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.red,
+      ));
+      return 'Error';
+    }
+  }
 }
-
-  // Future<String> sentOtpMobile(String mobile) async {
-  //   final Map<String, String> headers = {
-  //     'X-Password': Config.password,
-  //     'X-Username': Config.username,
-  //     'Appversion': Config.appVersion,
-  //     'Content-Type': 'application/json',
-  //     'Deviceid': Config.deviceId,
-  //   };
-
-  //   final Map<String, String> body = {
-  //     'mobile': mobile,
-  //   };
-
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(Config.sent_mobile_otp_url),
-  //       headers: headers,
-  //       body: jsonEncode(body),
-  //     );
-  //     final responseData = jsonDecode(response.body);
-  //     final message = responseData["message"];
-  //     print(message);
-
-  //     if (response.statusCode == 200) {
-  //       final responseData = jsonDecode(response.body);
-  //       final status = responseData["status"];
-  //       if (kDebugMode) {
-  //         print('Response body: ${responseData}');
-  //         print(
-  //             '??????????????????????????????????????????????????????????????????');
-  //         print(status);
-  //       }
-  //       return status;
-  //     } else {
-  //       if (kDebugMode) {
-  //         print('Failed with status code: ${response.statusCode}');
-  //         print('Response body: ${response.body}');
-  //       }
-  //       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-  //         content: Text('Error fetching data'),
-  //         behavior: SnackBarBehavior.floating,
-  //         backgroundColor: Colors.red,
-  //       ));
-  //       return 'Error';
-  //     }
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //       content: Text(e.toString()),
-  //       behavior: SnackBarBehavior.floating,
-  //       backgroundColor: Colors.red,
-  //     ));
-  //     return 'Error';
-  //   }
-  // }
-
-  // Future<void> verifyOtpMobile(String mobile, String otp) async {
-  //   final Map<String, String> headers = {
-  //     'X-Password': Config.password,
-  //     'X-Username': Config.username,
-  //     'Appversion': Config.appVersion,
-  //     'Content-Type': 'application/json',
-  //     'Deviceid': Config.deviceId,
-  //   };
-
-  //   final Map<String, String> body = {
-  //     'mobile': mobile,
-  //     'otp': otp,
-  //   };
-
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(Config.verify_mobile_otp_url),
-  //       headers: headers,
-  //       body: jsonEncode(body),
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       final responseData = jsonDecode(response.body);
-
-  //       if (kDebugMode) {
-  //         print('Response body: ${responseData}');
-  //       }
-  //     } else {
-  //       if (kDebugMode) {
-  //         print('Failed with status code: ${response.statusCode}');
-  //         print('Response body: ${response.body}');
-  //       }
-  //       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-  //         content: Text('Error fetching data'),
-  //         behavior: SnackBarBehavior.floating,
-  //         backgroundColor: Colors.red,
-  //       ));
-  //     }
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //       content: Text(e.toString()),
-  //       behavior: SnackBarBehavior.floating,
-  //       backgroundColor: Colors.red,
-  //     ));
-  //   }
-  // }

@@ -1,5 +1,8 @@
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
+import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QRCodeScanScreen extends StatefulWidget {
@@ -79,6 +82,15 @@ class _QRCodeScanScreenState extends State<QRCodeScanScreen> {
               ),
             ),
         ],
+      ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.all(15),
+        child: NormalButton(
+            size: MediaQuery.of(context).size,
+            title: 'Show my QR',
+            onPressed: () {
+              GoRouter.of(context).pushNamed(AppRouteConst.qrCodeRoute);
+            }),
       ),
     );
   }

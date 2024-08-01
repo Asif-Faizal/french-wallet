@@ -1,3 +1,8 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:ewallet2/shared/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
@@ -98,6 +103,10 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
               onPressed: () {
                 GoRouter.of(context).pop();
                 GoRouter.of(context).pushNamed(widget.navigateTo);
+                print(
+                    '??????????????????????????????????????????????????????????????????');
+                print(widget.number);
+                verifyOtpMobile(widget.number, _controllers.join());
               },
             ),
             SizedBox(height: widget.size.height / 20),
@@ -105,5 +114,53 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
         ),
       ),
     );
+  }
+
+  Future<void> verifyOtpMobile(String mobile, String otp) async {
+    final Map<String, String> headers = {
+      'X-Password': Config.password,
+      'X-Username': Config.username,
+      'Appversion': Config.appVersion,
+      'Content-Type': 'application/json',
+      'Deviceid': Config.deviceId,
+    };
+    print('///////////////////////////////////////////////');
+    print(mobile);
+    final Map<String, String> body = {
+      'mobile': mobile.toString(),
+      'otp': '7062',
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(Config.verify_mobile_otp_url),
+        headers: headers,
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+
+        if (kDebugMode) {
+          print('Response body: ${responseData}');
+        }
+      } else {
+        if (kDebugMode) {
+          print('Failed with status code: ${response.statusCode}');
+          print('Response body: ${response.body}');
+        }
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Error fetching data'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.red,
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 }
