@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:ewallet2/shared/config/api_config.dart';
@@ -101,12 +100,9 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
               size: widget.size,
               title: AppLocalizations.of(context)!.verify_otp,
               onPressed: () {
-                GoRouter.of(context).pop();
-                GoRouter.of(context).pushNamed(widget.navigateTo);
-                print(
-                    '??????????????????????????????????????????????????????????????????');
-                print(widget.number);
-                verifyOtpMobile(widget.number, _controllers.join());
+                String otp =
+                    _controllers.map((controller) => controller.text).join();
+                verifyOtpMobile(widget.number, otp);
               },
             ),
             SizedBox(height: widget.size.height / 20),
@@ -124,12 +120,8 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
       'Content-Type': 'application/json',
       'Deviceid': Config.deviceId,
     };
-    print('///////////////////////////////////////////////');
-    print(mobile);
-    final Map<String, String> body = {
-      'mobile': mobile.toString(),
-      'otp': '7062',
-    };
+
+    final Map<String, String> body = {'mobile': mobile, 'otp': otp};
 
     try {
       final response = await http.post(
@@ -140,9 +132,22 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        final status = responseData["status"];
+        final message = responseData["message"];
 
         if (kDebugMode) {
-          print('Response body: ${responseData}');
+          print('Response body: $responseData');
+        }
+
+        if (status == 'Success') {
+          GoRouter.of(context).pushNamed(widget.navigateTo);
+        } else {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(message),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+          ));
         }
       } else {
         if (kDebugMode) {

@@ -59,7 +59,7 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
     });
   }
 
-  void _showOtpBottomSheet(BuildContext context) {
+  void _showOtpBottomSheet(BuildContext context, String mobile) {
     final size = MediaQuery.of(context).size;
     showModalBottomSheet(
       useSafeArea: false,
@@ -68,7 +68,7 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
       context: context,
       builder: (BuildContext context) {
         return OtpBottomSheet(
-          number: _phoneNumber.phoneNumber ?? '',
+          number: mobile,
           userType: _userType,
           size: size,
           navigateTo: AppRouteConst.identityVerifyRoute,
@@ -180,7 +180,7 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
                           _selectedCountryDialCode + _phoneController.text;
                       final status = await sentOtpMobile(mobile);
                       if (status == 'Success') {
-                        _showOtpBottomSheet(context);
+                        _showOtpBottomSheet(context, mobile);
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
                         await prefs.setString('phoneNumber', mobile);
