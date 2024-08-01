@@ -4,7 +4,7 @@ import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../shared/router/router_const.dart';
-import '../../widgets/shared/otp_bottom_sheet.dart';
+import '../../widgets/shared/mail_otp_sheet.dart';
 
 class EmailDetailsScreen extends StatefulWidget {
   const EmailDetailsScreen({super.key});
@@ -119,7 +119,7 @@ class _EmailDetailsScreenState extends State<EmailDetailsScreen> {
         borderRadius: BorderRadius.circular(10),
       ),
       builder: (BuildContext context) {
-        return OtpBottomSheet(
+        return MailOtpSheet(
           number: _emailController.text,
           userType: _userType,
           size: size,
