@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -99,59 +100,100 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Transaction Details'),
-      ),
+      appBar: NormalAppBar(text: ''),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : transactionDetails != null && transactionDetails!['data'] != null
               ? ListView(
-                  padding: EdgeInsets.all(10),
+                  physics: BouncingScrollPhysics(),
+                  padding: EdgeInsets.all(20),
                   children: [
+                    Text(
+                      'Transaction Details',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 10),
                     ListTile(
                       title: Text('Transaction ID'),
                       subtitle:
                           Text(transactionDetails!['data']['tr_id'] ?? 'N/A'),
+                    ),
+                    Divider(
+                      thickness: 0.8,
+                      color: Colors.blue.shade100,
                     ),
                     ListTile(
                       title: Text('Amount'),
                       subtitle: Text(
                           '${transactionDetails!['data']['amount']} ${transactionDetails!['data']['currency']}'),
                     ),
+                    Divider(
+                      thickness: 0.8,
+                      color: Colors.blue.shade100,
+                    ),
                     ListTile(
                       title: Text('Status'),
                       subtitle:
                           Text(transactionDetails!['data']['status'] ?? 'N/A'),
+                    ),
+                    Divider(
+                      thickness: 0.8,
+                      color: Colors.blue.shade100,
                     ),
                     ListTile(
                       title: Text('Category'),
                       subtitle: Text(
                           transactionDetails!['data']['category'] ?? 'N/A'),
                     ),
+                    Divider(
+                      thickness: 0.8,
+                      color: Colors.blue.shade100,
+                    ),
                     ListTile(
                       title: Text('Date'),
                       subtitle: Text(
                           _formatDate(transactionDetails!['data']['date'])),
+                    ),
+                    Divider(
+                      thickness: 0.8,
+                      color: Colors.blue.shade100,
                     ),
                     ListTile(
                       title: Text('Time'),
                       subtitle:
                           Text(transactionDetails!['data']['time'] ?? 'N/A'),
                     ),
+                    Divider(
+                      thickness: 0.8,
+                      color: Colors.blue.shade100,
+                    ),
                     ListTile(
                       title: Text('Remark'),
                       subtitle:
                           Text(transactionDetails!['data']['remark'] ?? 'N/A'),
+                    ),
+                    Divider(
+                      thickness: 0.8,
+                      color: Colors.blue.shade100,
                     ),
                     ListTile(
                       title: Text('Mobile'),
                       subtitle:
                           Text(transactionDetails!['data']['mobile'] ?? 'N/A'),
                     ),
+                    Divider(
+                      thickness: 0.8,
+                      color: Colors.blue.shade100,
+                    ),
                     ListTile(
                       title: Text('User Name'),
                       subtitle: Text(
                           transactionDetails!['data']['user_name'] ?? 'N/A'),
+                    ),
+                    Divider(
+                      thickness: 0.8,
+                      color: Colors.blue.shade100,
                     ),
                     ListTile(
                       title: Text('Receipt'),

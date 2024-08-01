@@ -39,14 +39,14 @@ class _QRCodeScanScreenState extends State<QRCodeScanScreen> {
                 ClipPath(
                   clipper: CutoutClipper(),
                   child: Container(
-                    color: Colors.amber.shade100.withOpacity(0.9),
+                    color: Colors.white.withOpacity(0.99),
                   ),
                 ),
                 Container(
                   width: 250,
                   height: 250,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 4.0),
+                    border: Border.all(color: Colors.blue.shade200, width: 4.0),
                     borderRadius: BorderRadius.circular(16.0),
                   ),
                 ),

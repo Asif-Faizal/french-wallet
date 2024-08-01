@@ -74,28 +74,25 @@ class UserProfileDisplay extends StatelessWidget {
           SizedBox(height: 30),
           Text(
             '${userProfile.fullName}',
-            style: Theme.of(context).textTheme.headlineMedium,
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 20),
-          Text(
-            'Mobile No: ${userProfile.mobileNo}',
-            style: Theme.of(context).textTheme.bodyMedium,
+          ListTile(
+            title: Text('Mobile No'),
+            subtitle: Text('${userProfile.mobileNo}'),
           ),
-          SizedBox(height: 8),
-          Text(
-            'Customer ID: ${userProfile.customerId}',
-            style: Theme.of(context).textTheme.bodyMedium,
+          ListTile(
+            title: Text('Customer ID'),
+            subtitle: Text('${userProfile.customerId}'),
           ),
-          SizedBox(height: 8),
-          Text(
-            'Status: ${userProfile.approved}',
-            style: Theme.of(context).textTheme.bodyMedium,
+          ListTile(
+            title: Text('Status'),
+            subtitle: Text('${userProfile.approved}'),
           ),
-          SizedBox(height: 8),
-          Text(
-            'Nationality: ${userProfile.nationality}',
-            style: Theme.of(context).textTheme.bodyMedium,
+          ListTile(
+            title: Text('Nationality'),
+            subtitle: Text('${userProfile.nationality}'),
           ),
         ],
       ),

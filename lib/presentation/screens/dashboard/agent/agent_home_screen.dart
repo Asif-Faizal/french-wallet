@@ -58,7 +58,7 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: size.height / 12,
-        foregroundColor: Colors.white,
+        foregroundColor: Colors.indigo.shade800,
         actions: [
           IconButton(
               onPressed: () {},
@@ -70,7 +70,10 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
             width: size.width / 40,
           ),
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                GoRouter.of(context)
+                    .pushNamed(AppRouteConst.transactionListRoute);
+              },
               icon: Icon(
                 Icons.message,
                 size: 30,
@@ -126,24 +129,19 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
               children: [
                 TextButton(
                   onPressed: _flipCard,
-                  child: Row(
-                    children: [
-                      Text(
-                        'Flip card',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Colors.amber.shade800),
-                      ),
-                      SizedBox(
-                        width: size.width / 40,
-                      ),
-                      Icon(Icons.rotate_90_degrees_ccw,
-                          color: Colors.amber.shade800)
-                    ],
-                  ),
+                  child: Icon(Icons.rotate_90_degrees_ccw,
+                      color: Colors.blue.shade500),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Icon(Icons.visibility_off_outlined,
+                      color: Colors.blue.shade500),
                 )
               ],
+            ),
+            Divider(
+              color: Colors.blue.shade100,
+              thickness: 1,
             ),
             SizedBox(
               height: size.height / 7,
@@ -153,32 +151,40 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
                   scrollDirection: Axis.horizontal,
                   children: [
                     buildListItem(
-                      'Withdraw',
+                      'Send',
                       Card(
-                        color: Colors.amber.shade200,
+                        color: Colors.blue.shade300,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: IconButton(
                             icon: Icon(
-                              Icons.print,
+                              Icons.send,
+                              color: Colors.white,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              GoRouter.of(context)
+                                  .pushNamed(AppRouteConst.retailSendRoute);
+                            },
                           ),
                         ),
                       ),
                       size,
                     ),
                     buildListItem(
-                      'Balance',
+                      'Receive',
                       Card(
-                        color: Colors.amber.shade200,
+                        color: Colors.blue.shade300,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: IconButton(
                             icon: Icon(
-                              Icons.money,
+                              Icons.download,
+                              color: Colors.white,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              GoRouter.of(context)
+                                  .pushNamed(AppRouteConst.retailReceiveRoute);
+                            },
                           ),
                         ),
                       ),
@@ -187,12 +193,13 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
                     buildListItem(
                       'Top Up',
                       Card(
-                        color: Colors.amber.shade200,
+                        color: Colors.blue.shade300,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: IconButton(
                             icon: Icon(
                               Icons.upload_file_outlined,
+                              color: Colors.white,
                             ),
                             onPressed: () {},
                           ),
@@ -203,12 +210,13 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
                     buildListItem(
                       'Statement',
                       Card(
-                        color: Colors.amber.shade200,
+                        color: Colors.blue.shade300,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: IconButton(
                             icon: Icon(
                               Icons.note,
+                              color: Colors.white,
                             ),
                             onPressed: () {},
                           ),
@@ -224,7 +232,7 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
               height: size.height / 40,
             ),
             Divider(
-              color: Colors.amber.shade300,
+              color: Colors.blue.shade100,
               thickness: 1,
             ),
             SizedBox(
@@ -293,7 +301,7 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
 
   Widget _buildFront(Size size) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Stack(
@@ -302,7 +310,7 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
               height: size.height / 4.2,
               width: double.infinity,
               child: Image.network(
-                'https://img.freepik.com/premium-photo/abstract-amber-color-background-wallpaper-with-random-patterns-waves-curves_989263-7059.jpg',
+                'https://cdn.prod.website-files.com/5a9ee6416e90d20001b20038/64cfd57c347c14534e2dc618_%20-%201.png',
                 fit: BoxFit.cover,
               ),
             ),
@@ -339,19 +347,21 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
                       SizedBox(
                         width: size.width / 2,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text('Balance:',
                                 style: TextStyle(
                                     fontSize: size.height / 40,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white)),
-                            Text('*****',
+                            SizedBox(
+                              width: size.width / 40,
+                            ),
+                            Text('**********',
                                 style: TextStyle(
                                     fontSize: size.height / 40,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white)),
-                            Icon(Icons.visibility, color: Colors.white),
                           ],
                         ),
                       ),
@@ -359,7 +369,7 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('1234 4567 7890 1234',
+                          Text('1234 **** **** 1234',
                               style: TextStyle(
                                   fontSize: size.height / 40,
                                   fontWeight: FontWeight.bold,
@@ -396,16 +406,16 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
 
   Widget _buildBack(Size size) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(10),
         child: Stack(
           children: [
             SizedBox(
               height: size.height / 4.2,
               width: double.infinity,
               child: Image.network(
-                'https://img.freepik.com/premium-photo/abstract-amber-color-background-wallpaper-with-random-patterns-waves-curves_989263-7059.jpg',
+                'https://cdn.prod.website-files.com/5a9ee6416e90d20001b20038/64cfd57c347c14534e2dc618_%20-%201.png',
                 fit: BoxFit.cover,
               ),
             ),
@@ -433,26 +443,21 @@ class _AgentHomeScreenState extends State<AgentHomeScreen>
                             children: [
                               Container(
                                 height: size.height / 25,
-                                width: size.width / 1.8,
+                                width: size.width / 1.6,
                                 color: Colors.grey.shade300,
                                 margin: const EdgeInsets.symmetric(vertical: 7),
                               ),
                               Container(
                                 height: size.height / 25,
-                                width: size.width / 5.7,
+                                width: size.width / 10,
                                 color: Colors.white,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Text('123',
+                                    Text('***',
                                         style: TextStyle(
                                             fontStyle: FontStyle.italic)),
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(Icons.visibility),
-                                      iconSize: 14,
-                                    )
                                   ],
                                 ),
                               ),

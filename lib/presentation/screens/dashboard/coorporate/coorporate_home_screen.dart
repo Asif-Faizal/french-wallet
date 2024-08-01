@@ -119,7 +119,7 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: size.height / 12,
-        foregroundColor: Colors.white,
+        foregroundColor: Colors.blue.shade300,
         actions: [
           IconButton(
               onPressed: () {},
@@ -191,17 +191,17 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                 TextButton(
                   onPressed: _flipCard,
                   child: Icon(Icons.rotate_90_degrees_ccw,
-                      color: Colors.amber.shade900),
+                      color: Colors.blue.shade500),
                 ),
                 TextButton(
                   onPressed: () {},
                   child: Icon(Icons.visibility_off_outlined,
-                      color: Colors.amber.shade900),
+                      color: Colors.blue.shade500),
                 )
               ],
             ),
             Divider(
-              color: Colors.amber.shade300,
+              color: Colors.blue.shade100,
               thickness: 1,
             ),
             SizedBox(
@@ -214,12 +214,13 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                     buildListItem(
                       'Send\nMoney',
                       Card(
-                        color: Colors.amber.shade200,
+                        color: Colors.blue.shade300,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: IconButton(
                             icon: Icon(
                               Icons.upload,
+                              color: Colors.white,
                             ),
                             onPressed: () {
                               _onListItemSelected('Send');
@@ -234,12 +235,13 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                     buildListItem(
                       'Receive\nMoney',
                       Card(
-                        color: Colors.amber.shade200,
+                        color: Colors.blue.shade300,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: IconButton(
                             icon: Icon(
                               Icons.money,
+                              color: Colors.white,
                             ),
                             onPressed: () {
                               _onListItemSelected('Receive');
@@ -254,12 +256,13 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                     buildListItem(
                       'Manage\nChild Card',
                       Card(
-                        color: Colors.amber.shade200,
+                        color: Colors.blue.shade300,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: IconButton(
                             icon: Icon(
                               Icons.credit_card,
+                              color: Colors.white,
                             ),
                             onPressed: _showManageChildCardOptions,
                           ),
@@ -272,7 +275,7 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
               ),
             ),
             Divider(
-              color: Colors.amber.shade300,
+              color: Colors.blue.shade100,
               thickness: 1,
             ),
             SizedBox(
@@ -355,7 +358,7 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
               height: size.height / 4.2,
               width: double.infinity,
               child: Image.network(
-                'https://img.freepik.com/premium-photo/abstract-amber-color-background-wallpaper-with-random-patterns-waves-curves_989263-7059.jpg',
+                'https://cdn.prod.website-files.com/5a9ee6416e90d20001b20038/64cfd57c347c14534e2dc618_%20-%201.png',
                 fit: BoxFit.cover,
               ),
             ),
@@ -460,7 +463,7 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
               height: size.height / 4.2,
               width: double.infinity,
               child: Image.network(
-                'https://img.freepik.com/premium-photo/abstract-amber-color-background-wallpaper-with-random-patterns-waves-curves_989263-7059.jpg',
+                'https://cdn.prod.website-files.com/5a9ee6416e90d20001b20038/64cfd57c347c14534e2dc618_%20-%201.png',
                 fit: BoxFit.cover,
               ),
             ),

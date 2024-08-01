@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:ewallet2/presentation/screens/services/shared/transaction_details.dart';
+import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -121,33 +122,41 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Transaction History'),
-      ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: transactions.length,
-              itemBuilder: (context, index) {
-                final transaction = transactions[index];
-                return ListTile(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => TransactionDetailsPage(
-                                transactionId: transaction['transaction_id'])));
-                  },
-                  title:
-                      Text('${transaction['type']} - ${transaction['status']}'),
-                  subtitle: Text(
-                      '${transaction['description']} - ${_formatDate(transaction['date'])}'),
-                  trailing: Text(
-                      '${transaction['amount']} ${transaction['currency']}'),
-                );
-              },
-            ),
-    );
+        appBar: NormalAppBar(text: 'Transaction History'),
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : ListView.builder(
+                physics: BouncingScrollPhysics(),
+                itemCount: transactions.length,
+                itemBuilder: (context, index) {
+                  final transaction = transactions[index];
+                  return Column(
+                    children: [
+                      ListTile(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TransactionDetailsPage(
+                                      transactionId:
+                                          transaction['transaction_id'])));
+                        },
+                        title: Text(
+                            '${transaction['type']} - ${transaction['status']}'),
+                        subtitle: Text(
+                            '${transaction['description']} - ${_formatDate(transaction['date'])}'),
+                        trailing: Text(
+                            '${transaction['amount']} ${transaction['currency']}'),
+                      ),
+                      if (index < transactions.length - 1)
+                        Divider(
+                          thickness: 0.8,
+                          color: Colors.blue.shade100,
+                        ),
+                    ],
+                  );
+                },
+              ));
   }
 
   String _formatDate(String date) {

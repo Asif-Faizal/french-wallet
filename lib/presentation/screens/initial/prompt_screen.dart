@@ -2,6 +2,7 @@ import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../l10n/l10n.dart';
 import '../../bloc/language/localization_bloc.dart';
@@ -33,20 +34,23 @@ class _PromptScreenState extends State<PromptScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: Colors.blue.shade500,
+        foregroundColor: Colors.white,
         elevation: 0,
         actions: [
           Text(
             AppLocalizations.of(context)!.select_language,
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
           ),
           SizedBox(width: size.width / 40),
           DropdownButton<Locale>(
+            iconDisabledColor: Colors.white,
+            iconEnabledColor: Colors.white,
             elevation: 10,
-            dropdownColor: Theme.of(context).colorScheme.surface,
+            dropdownColor: Colors.blue.shade300,
             underline: Container(),
             value: context.read<LocalizationBloc>().state.locale,
             onChanged: (Locale? newLocale) {
@@ -66,7 +70,9 @@ class _PromptScreenState extends State<PromptScreen> {
                       : languageCode == 'ar'
                           ? 'Arabic'
                           : 'French',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: TextStyle(
+                    color: Colors.grey.shade100,
+                  ),
                 ),
               );
             }).toList(),
@@ -82,13 +88,16 @@ class _PromptScreenState extends State<PromptScreen> {
               vertical: size.height / 30, horizontal: size.width / 20),
           child: Column(
             children: [
+              SizedBox(
+                height: size.height / 8,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.wallet_membership_rounded,
-                    size: size.height / 10,
+                    size: size.height / 20,
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
                   SizedBox(width: size.width / 20),
@@ -96,19 +105,10 @@ class _PromptScreenState extends State<PromptScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'INNOVITEGRA',
+                        'ePurse',
                         style: Theme.of(context)
                             .textTheme
-                            .headlineMedium!
-                            .copyWith(
-                              color: Theme.of(context).colorScheme.onBackground,
-                            ),
-                      ),
-                      Text(
-                        'WALLET',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium!
+                            .headlineLarge!
                             .copyWith(
                               color: Theme.of(context).colorScheme.onBackground,
                             ),
@@ -117,22 +117,19 @@ class _PromptScreenState extends State<PromptScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: size.height / 10),
+              SizedBox(height: size.height / 8),
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.select_type_of_user_heading,
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.onBackground,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
+                        AppLocalizations.of(context)!
+                            .select_type_of_user_heading,
+                        style: GoogleFonts.manrope()),
                   ],
                 ),
               ),
-              SizedBox(height: size.height / 10),
+              SizedBox(height: size.height / 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -174,7 +171,6 @@ class _PromptScreenState extends State<PromptScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: size.height / 5),
             ],
           ),
         ),
@@ -205,8 +201,9 @@ class _PromptScreenState extends State<PromptScreen> {
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.setString('userType', selectedUserType!);
                     }
-                    GoRouter.of(context).pushNamed(AppRouteConst.loginRoute);
-                    // .pushNamed(AppRouteConst.coorporateHomeRoute);
+                    GoRouter.of(context)
+                        // .pushNamed(AppRouteConst.loginRoute);
+                        .pushNamed(AppRouteConst.merchantHomeRoute);
                     // .pushNamed(AppRouteConst.sentOtpSignInRoute);
                   }
                 }

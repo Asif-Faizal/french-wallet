@@ -18,6 +18,7 @@ class _StoreCardState extends State<StoreCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.blue.shade50,
       margin: EdgeInsets.all(10),
       child: Padding(
         padding: EdgeInsets.all(20),

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import '../font/text_styles.dart'; // Import the text styles
 
 class AppColors {
-  static const Color amber = Colors.amber;
+  static Color amber = Colors.blue;
 
   static const Color lightPrimary = Colors.white;
-  static const Color lightBackground = Color(0xFFFFF8E1);
+  static Color lightBackground = Colors.blue.shade50;
   static const Color lightSurface = Color.fromARGB(255, 255, 228, 147);
   static const Color lightOnPrimary = Colors.black;
   static const Color lightOnBackground = Colors.black;
@@ -21,12 +21,12 @@ class AppColors {
 
 class AppThemes {
   static final ThemeData lightTheme = ThemeData(
-    colorScheme: const ColorScheme.light(
-      primary: AppColors.amber,
-      primaryContainer: AppColors.amber,
-      secondary: AppColors.amber,
-      background: AppColors.lightBackground,
-      surface: AppColors.lightSurface,
+    colorScheme: ColorScheme.light(
+      primary: Colors.blue,
+      primaryContainer: Colors.blue.shade100,
+      secondary: Colors.grey,
+      background: Colors.white,
+      surface: Colors.white,
       onPrimary: AppColors.lightOnPrimary,
       onBackground: AppColors.lightOnBackground,
       onSurface: AppColors.lightOnSurface,
@@ -43,8 +43,8 @@ class AppThemes {
   static final ThemeData darkTheme = ThemeData(
     colorScheme: const ColorScheme.dark(
       primary: AppColors.darkPrimary,
-      primaryContainer: AppColors.amber,
-      secondary: AppColors.amber,
+      primaryContainer: AppColors.darkOnPrimary,
+      secondary: AppColors.darkOnPrimary,
       background: AppColors.darkBackground,
       surface: AppColors.darkSurface,
       onPrimary: AppColors.darkOnPrimary,

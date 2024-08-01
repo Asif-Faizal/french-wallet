@@ -49,10 +49,10 @@ class CircleCorporateSelector extends StatelessWidget {
             child: CircleAvatar(
               radius: size.width / 12,
               backgroundColor:
-                  isSelected ? Colors.amber.shade300 : Colors.white,
+                  isSelected ? Colors.blue.shade600 : Colors.blue.shade50,
               child: Icon(
                 iconData,
-                color: isSelected ? Colors.grey.shade900 : Colors.grey.shade700,
+                color: isSelected ? Colors.white : Colors.grey.shade900,
               ),
             ),
           ),

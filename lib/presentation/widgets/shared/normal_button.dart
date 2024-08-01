@@ -22,13 +22,13 @@ class NormalButton extends StatelessWidget {
             elevation: 5,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.grey.shade800),
+            backgroundColor: Colors.blue.shade300,
+            foregroundColor: Colors.white),
         onPressed: onPressed,
         child: Text(
           title!,
-          style: const TextStyle(
-              color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
     );

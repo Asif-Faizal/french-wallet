@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RetailHomeScreen extends StatefulWidget {
@@ -81,7 +82,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.amber.shade800,
+                  color: Colors.blue.shade800,
                 ),
               ),
               SizedBox(height: 20),
@@ -129,7 +130,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: size.height / 12,
-          foregroundColor: Colors.white,
+          foregroundColor: Colors.blue.shade300,
           actions: [
             IconButton(
                 onPressed: () {},
@@ -207,17 +208,17 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                   TextButton(
                     onPressed: _flipCard,
                     child: Icon(Icons.rotate_90_degrees_ccw,
-                        color: Colors.amber.shade900),
+                        color: Colors.blue.shade500),
                   ),
                   TextButton(
                     onPressed: () {},
                     child: Icon(Icons.visibility_off_outlined,
-                        color: Colors.amber.shade900),
+                        color: Colors.blue.shade500),
                   )
                 ],
               ),
               Divider(
-                color: Colors.amber.shade300,
+                color: Colors.blue.shade100,
                 thickness: 1,
               ),
               SizedBox(
@@ -230,13 +231,12 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                       buildListItem(
                         'Send',
                         Card(
-                          color: Colors.amber.shade200,
+                          color: Colors.blue.shade300,
                           child: Padding(
                             padding: const EdgeInsets.all(5),
                             child: IconButton(
-                              icon: Icon(
-                                Icons.send_outlined,
-                              ),
+                              icon: Icon(Icons.send_outlined,
+                                  color: Colors.white),
                               onPressed: () async {
                                 final prefs =
                                     await SharedPreferences.getInstance();
@@ -252,13 +252,12 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                       buildListItem(
                         'Receive',
                         Card(
-                          color: Colors.amber.shade200,
+                          color: Colors.blue.shade300,
                           child: Padding(
                             padding: const EdgeInsets.all(5),
                             child: IconButton(
-                              icon: Icon(
-                                Icons.download_outlined,
-                              ),
+                              icon: Icon(Icons.download_outlined,
+                                  color: Colors.white),
                               onPressed: () async {
                                 final prefs =
                                     await SharedPreferences.getInstance();
@@ -275,13 +274,12 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                       buildListItem(
                         'Top Up',
                         Card(
-                          color: Colors.amber.shade200,
+                          color: Colors.blue.shade300,
                           child: Padding(
                             padding: const EdgeInsets.all(5),
                             child: IconButton(
-                              icon: Icon(
-                                Icons.upload_file_outlined,
-                              ),
+                              icon: Icon(Icons.upload_file_outlined,
+                                  color: Colors.white),
                               onPressed: () {},
                             ),
                           ),
@@ -291,13 +289,12 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                       buildListItem(
                         'Card',
                         Card(
-                          color: Colors.amber.shade200,
+                          color: Colors.blue.shade300,
                           child: Padding(
                             padding: const EdgeInsets.all(5),
                             child: IconButton(
-                              icon: Icon(
-                                Icons.payment_outlined,
-                              ),
+                              icon: Icon(Icons.payment_outlined,
+                                  color: Colors.white),
                               onPressed: () {},
                             ),
                           ),
@@ -312,7 +309,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                 height: size.height / 80,
               ),
               Divider(
-                color: Colors.amber.shade300,
+                color: Colors.blue.shade100,
                 thickness: 1,
               ),
               Row(
@@ -322,14 +319,14 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                       style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.amber.shade800)),
+                          color: Colors.blue.shade500)),
                   TextButton(
                     onPressed: _showServiceListBottomSheet,
                     child: Text('View all',
                         style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Colors.amber.shade800)),
+                            color: Colors.blue.shade500)),
                   ),
                 ],
               ),
@@ -407,7 +404,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                 height: size.height / 40,
               ),
               Divider(
-                color: Colors.amber.shade300,
+                color: Colors.blue.shade100,
                 thickness: 1,
               ),
               SizedBox(
@@ -458,8 +455,8 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                 elevation: 20,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50)),
-                foregroundColor: Colors.black,
-                backgroundColor: Colors.white),
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue.shade500),
             onPressed: () {
               GoRouter.of(context).pushNamed(AppRouteConst.qrCodeScanRoute);
             },
@@ -476,7 +473,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
 
   Widget _buildFront(Size size) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Stack(
@@ -485,7 +482,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
               height: size.height / 4.2,
               width: double.infinity,
               child: Image.network(
-                'https://img.freepik.com/premium-photo/abstract-amber-color-background-wallpaper-with-random-patterns-waves-curves_989263-7059.jpg',
+                'https://cdn.prod.website-files.com/5a9ee6416e90d20001b20038/64cfd57c347c14534e2dc618_%20-%201.png',
                 fit: BoxFit.cover,
               ),
             ),
@@ -508,10 +505,10 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('VISA',
-                              style: TextStyle(
-                                  fontSize: size.height / 25,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white)),
+                              style: GoogleFonts.rowdies(
+                                  color: Colors.white,
+                                  fontSize: 34,
+                                  fontWeight: FontWeight.bold)),
                           Icon(
                             Icons.wallet,
                             size: size.height / 15,
@@ -581,16 +578,16 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
 
   Widget _buildBack(Size size) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(10),
         child: Stack(
           children: [
             SizedBox(
               height: size.height / 4.2,
               width: double.infinity,
               child: Image.network(
-                'https://img.freepik.com/premium-photo/abstract-amber-color-background-wallpaper-with-random-patterns-waves-curves_989263-7059.jpg',
+                'https://cdn.prod.website-files.com/5a9ee6416e90d20001b20038/64cfd57c347c14534e2dc618_%20-%201.png',
                 fit: BoxFit.cover,
               ),
             ),
@@ -682,7 +679,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
     return Container(
       width: size.width / 4,
       child: Card(
-        color: Colors.amber.shade200,
+        color: Colors.blue.shade50,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

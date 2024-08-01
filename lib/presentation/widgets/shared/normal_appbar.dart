@@ -16,13 +16,14 @@ class NormalAppBar extends StatelessWidget implements PreferredSizeWidget {
         },
         icon: Icon(
           Icons.arrow_back_ios_new_rounded,
-          color: Theme.of(context).colorScheme.onPrimary,
+          color: Colors.white,
         ),
       ),
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Colors.blue.shade400,
       title: Text(
         text,
-        style: Theme.of(context).textTheme.bodyLarge,
+        style: TextStyle(
+            color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }

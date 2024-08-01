@@ -42,13 +42,16 @@ class _CorporatePromptScreenState extends State<CorporatePromptScreen> {
               vertical: size.height / 30, horizontal: size.width / 20),
           child: Column(
             children: [
+              SizedBox(
+                height: size.height / 8,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.wallet_membership_rounded,
-                    size: size.height / 10,
+                    size: size.height / 20,
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
                   SizedBox(width: size.width / 20),
@@ -56,19 +59,10 @@ class _CorporatePromptScreenState extends State<CorporatePromptScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'INNOVITEGRA',
+                        'ePurse',
                         style: Theme.of(context)
                             .textTheme
-                            .headlineMedium!
-                            .copyWith(
-                              color: Theme.of(context).colorScheme.onBackground,
-                            ),
-                      ),
-                      Text(
-                        'WALLET',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium!
+                            .headlineLarge!
                             .copyWith(
                               color: Theme.of(context).colorScheme.onBackground,
                             ),
@@ -77,7 +71,9 @@ class _CorporatePromptScreenState extends State<CorporatePromptScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: size.height / 10),
+              SizedBox(
+                height: size.height / 8,
+              ),
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -92,7 +88,7 @@ class _CorporatePromptScreenState extends State<CorporatePromptScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: size.height / 10),
+              SizedBox(height: size.height / 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -125,26 +121,28 @@ class _CorporatePromptScreenState extends State<CorporatePromptScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: size.height / 5),
-              NormalButton(
-                size: size,
-                title: AppLocalizations.of(context)!.proceed,
-                onPressed: selectedCorporate != null
-                    ? () async {
-                        print(selectedCorporate);
-                        _storeData();
-                        if (selectedCorporate == 'business-owner') {
-                          GoRouter.of(context)
-                              .pushNamed(AppRouteConst.loginOrSignUpRoute);
-                        } else {
-                          GoRouter.of(context)
-                              .pushNamed(AppRouteConst.executiveLoginRoute);
-                        }
-                      }
-                    : null,
-              ),
             ],
           ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.all(15),
+        child: NormalButton(
+          size: size,
+          title: AppLocalizations.of(context)!.proceed,
+          onPressed: selectedCorporate != null
+              ? () async {
+                  print(selectedCorporate);
+                  _storeData();
+                  if (selectedCorporate == 'business-owner') {
+                    GoRouter.of(context)
+                        .pushNamed(AppRouteConst.loginOrSignUpRoute);
+                  } else {
+                    GoRouter.of(context)
+                        .pushNamed(AppRouteConst.executiveLoginRoute);
+                  }
+                }
+              : null,
         ),
       ),
     );
