@@ -25,10 +25,14 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _isFront = true;
+  String? balance;
+  String? card_num;
+  String? card_id;
 
   @override
   void initState() {
     super.initState();
+    _fetchCardDetails();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -44,9 +48,10 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
   void dispose() {
     _controller.dispose();
     super.dispose();
+    _fetchCardDetails();
   }
 
-  Future<void> _fetcthCardDetails() async {
+  Future<void> _fetchCardDetails() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? jwtToken = prefs.getString('jwt_token');
     String? refreshToken = prefs.getString('refresh_token');
@@ -64,7 +69,8 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
       }
     }
 
-    final url = Uri.parse("https://api-innovitegra.online/transfer/wallet/wallet_list");
+    final url =
+        Uri.parse("https://api-innovitegra.online/transfer/wallet/wallet_list");
     final response = await http.post(
       url,
       headers: {
@@ -73,14 +79,23 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
         'Authorization': 'Bearer $jwtToken'
       },
     );
-
+    print(response.body);
     if (response.statusCode == 200) {
-      final responseData = response.body;
+      final responseData = jsonDecode(response.body);
       final status = responseData["status"];
-      final statusCode= responseData["code"]
-      if (status == "Success") {
-
-      }else if (status == "Success"){}
+      final statusCode = responseData["code"];
+      if (status == "success") {
+        setState(() {
+          balance = responseData["balance"];
+          card_id = responseData["card_udid"];
+          card_num = responseData["card_num"];
+          print("$balance $card_id");
+        });
+      } else if (status == "Fail") {
+        if (statusCode == 5) {
+          _showSnackBar('Session TimedOut please Login again', Colors.red);
+        }
+      }
     } else {
       _showSnackBar('Failed to fetch transactions.', Colors.red);
     }
@@ -90,8 +105,10 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
     final url = Uri.parse(Config.refresh_token);
     final response = await http.post(
       url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'refresh_token': refreshToken}),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $refreshToken'
+      },
     );
 
     if (response.statusCode == 200) {
@@ -604,7 +621,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                             SizedBox(
                               width: size.width / 40,
                             ),
-                            Text('**********',
+                            Text(balance ?? '',
                                 style: TextStyle(
                                     fontSize: size.height / 40,
                                     fontWeight: FontWeight.bold,
@@ -616,7 +633,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('1234 **** **** 1234',
+                          Text(card_num!,
                               style: TextStyle(
                                   fontSize: size.height / 40,
                                   fontWeight: FontWeight.bold,

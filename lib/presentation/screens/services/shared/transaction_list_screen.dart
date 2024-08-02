@@ -93,8 +93,10 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
     final url = Uri.parse(Config.refresh_token);
     final response = await http.post(
       url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'refresh_token': refreshToken}),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $refreshToken'
+      },
     );
 
     if (response.statusCode == 200) {

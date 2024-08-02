@@ -63,6 +63,7 @@ dependencies:
   onesignal_flutter: ^5.2.2
   jwt_decoder: ^2.0.1
   google_fonts: ^6.2.1
+  local_auth: ^2.2.0
 
 dev_dependencies:
   flutter_test:
