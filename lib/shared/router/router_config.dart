@@ -47,7 +47,7 @@ class AppRouter {
     routes: [
       GoRoute(
         name: 'prompt',
-        path: '/',
+        path: '/prompt',
         builder: (context, state) => const PromptScreen(),
       ),
       GoRoute(
@@ -57,7 +57,7 @@ class AppRouter {
       ),
       GoRoute(
         name: 'loginOrSignup',
-        path: '/login_or_signup',
+        path: '/',
         builder: (context, state) => const LoginOrSignupScreen(),
       ),
       GoRoute(

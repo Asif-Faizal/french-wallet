@@ -3,6 +3,7 @@ import 'package:ewallet2/shared/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class QRCodeScreen extends StatefulWidget {
   @override
@@ -23,8 +24,8 @@ class _QRCodeScreenState extends State<QRCodeScreen> {
   Future<void> _fetchQRCode() async {
     const String url = Config.get_user_qr;
     const String deviceId = Config.deviceId;
-    const String bearerToken =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyNjEiLCJleHAiOjE3MjE3MzMwMTksImlzcyI6IkFaZVdhbGxldCJ9.RefqkNJyGkRpLGHWejowJfQvZtG_vy0M4x1eznid2h0';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? bearerToken = prefs.getString('jwt_token');
 
     try {
       final response = await http.get(
@@ -36,12 +37,27 @@ class _QRCodeScreenState extends State<QRCodeScreen> {
         },
       );
 
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
       if (response.statusCode == 200) {
+        if (response.body.isEmpty) {
+          throw Exception('Empty response body');
+        }
+
         final Map<String, dynamic> responseData = json.decode(response.body);
-        setState(() {
-          qrCodeUrl = responseData['qr_code'];
-          isLoading = false;
-        });
+        if (responseData['status'] == 'Fail' &&
+            responseData['status_code'] == 5) {
+          // Token expired, refresh token
+          await _refreshToken();
+          // Retry fetching the QR code
+          await _fetchQRCode();
+        } else {
+          setState(() {
+            qrCodeUrl = responseData['qr_code'];
+            isLoading = false;
+          });
+        }
       } else {
         throw Exception('Failed to load QR code');
       }
@@ -54,37 +70,52 @@ class _QRCodeScreenState extends State<QRCodeScreen> {
     }
   }
 
-  void _confirmTransaction() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Confirm Transaction'),
-          content: Text('Do you want to proceed with this transaction?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // Proceed with the transaction logic
-              },
-              child: Text('Confirm'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-          ],
-        );
-      },
-    );
+  Future<void> _refreshToken() async {
+    const String refreshUrl = Config.refresh_token;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? refreshToken = prefs.getString('refresh_token');
+
+    try {
+      final response = await http.post(
+        Uri.parse(refreshUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'refresh_token': refreshToken,
+        }),
+      );
+
+      print('Refresh token response status: ${response.statusCode}');
+      print('Refresh token response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        if (response.body.isEmpty) {
+          throw Exception('Empty refresh token response body');
+        }
+
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final String newAccessToken = responseData['jwt_token'];
+        final String newRefreshToken = responseData['refresh_token'];
+
+        await prefs.setString('jwt_token', newAccessToken);
+        await prefs.setString('refresh_token', newRefreshToken);
+      } else {
+        throw Exception('Failed to refresh token');
+      }
+    } catch (error) {
+      print('Error refreshing token: $error');
+      setState(() {
+        errorMessage = error.toString();
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: NormalAppBar(text: 'QR Code Payment'),
+      appBar: NormalAppBar(text: ''),
       body: Center(
         child: isLoading
             ? CircularProgressIndicator()
@@ -93,7 +124,7 @@ class _QRCodeScreenState extends State<QRCodeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Scan the QR code for payment',
+                        'Scan the QR code to Pay',
                         style: TextStyle(fontSize: 16),
                       ),
                       SizedBox(height: 20),

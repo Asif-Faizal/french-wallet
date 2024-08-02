@@ -1,12 +1,14 @@
-import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
+import '../../../l10n/l10n.dart';
 import '../../../shared/router/router_const.dart';
+import '../../bloc/language/localization_bloc.dart';
 
 class LoginOrSignupScreen extends StatefulWidget {
   const LoginOrSignupScreen({super.key});
@@ -41,7 +43,53 @@ class _LoginOrSignupScreenState extends State<LoginOrSignupScreen> {
     ];
 
     return Scaffold(
-      appBar: const NormalAppBar(text: ''),
+      appBar:  AppBar(
+        backgroundColor: Colors.blue.shade500,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        actions: [
+          Text(
+            AppLocalizations.of(context)!.select_language,
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          SizedBox(width: size.width / 40),
+          DropdownButton<Locale>(
+            iconDisabledColor: Colors.white,
+            iconEnabledColor: Colors.white,
+            elevation: 10,
+            dropdownColor: Colors.blue.shade300,
+            underline: Container(),
+            value: context.read<LocalizationBloc>().state.locale,
+            onChanged: (Locale? newLocale) {
+              if (newLocale != null) {
+                context.read<LocalizationBloc>().add(
+                      LocalizationChanged(newLocale),
+                    );
+              }
+            },
+            items: L10n.all.map((locale) {
+              final languageCode = locale.languageCode;
+              return DropdownMenuItem(
+                value: locale,
+                child: Text(
+                  languageCode == 'en'
+                      ? 'English'
+                      : languageCode == 'ar'
+                          ? 'Arabic'
+                          : 'French',
+                  style: TextStyle(
+                    color: Colors.grey.shade100,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+          SizedBox(width: size.width / 20),
+        ],
+      ),
       body: SizedBox(
         width: size.width,
         height: size.height,
@@ -61,7 +109,7 @@ class _LoginOrSignupScreenState extends State<LoginOrSignupScreen> {
               ),
               SizedBox(height: size.height / 10),
               Text(
-                '${AppLocalizations.of(context)!.please_login_signup} $_userType',
+                '${AppLocalizations.of(context)!.please_login_signup}',
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               SizedBox(height: size.height / 20),
@@ -87,8 +135,7 @@ class _LoginOrSignupScreenState extends State<LoginOrSignupScreen> {
                 size: size,
                 title: AppLocalizations.of(context)!.sign_in,
                 onPressed: () {
-                  GoRouter.of(context)
-                      .pushNamed(AppRouteConst.verifyNumberRoute);
+                  GoRouter.of(context).pushNamed(AppRouteConst.promptRoute);
                 },
               ),
               SizedBox(height: size.height / 8),

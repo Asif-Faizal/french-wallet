@@ -1,3 +1,4 @@
+import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 
 import '../../../data/checkmobile/checkmobile_datasource.dart';
@@ -140,9 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: NormalAppBar(
-        text: AppLocalizations.of(context)?.login ?? '',
-      ),
+      appBar: NormalAppBar(text: ''),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(

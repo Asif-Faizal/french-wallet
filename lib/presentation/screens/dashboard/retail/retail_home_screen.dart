@@ -1,12 +1,17 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'dart:math' as math;
 
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../shared/config/api_config.dart';
 
 class RetailHomeScreen extends StatefulWidget {
   const RetailHomeScreen({super.key});
@@ -39,6 +44,76 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetcthCardDetails() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? jwtToken = prefs.getString('jwt_token');
+    String? refreshToken = prefs.getString('refresh_token');
+
+    if (jwtToken == null || refreshToken == null) {
+      _showSnackBar('Session expired. Please log in again.', Colors.red);
+      return;
+    }
+
+    if (JwtDecoder.isExpired(jwtToken)) {
+      jwtToken = await _refreshToken(refreshToken);
+      if (jwtToken == null) {
+        _showSnackBar('Session expired. Please log in again.', Colors.red);
+        return;
+      }
+    }
+
+    final url = Uri.parse("https://api-innovitegra.online/transfer/wallet/wallet_list");
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Deviceid': Config.deviceId,
+        'Authorization': 'Bearer $jwtToken'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = response.body;
+      final status = responseData["status"];
+      final statusCode= responseData["code"]
+      if (status == "Success") {
+
+      }else if (status == "Success"){}
+    } else {
+      _showSnackBar('Failed to fetch transactions.', Colors.red);
+    }
+  }
+
+  Future<String?> _refreshToken(String refreshToken) async {
+    final url = Uri.parse(Config.refresh_token);
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'refresh_token': refreshToken}),
+    );
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      final jwtToken = responseBody['jwt_token'];
+      if (jwtToken != null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('jwt_token', jwtToken);
+        return jwtToken;
+      }
+    }
+    return null;
+  }
+
+  void _showSnackBar(String message, Color backgroundColor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(message),
+        backgroundColor: backgroundColor,
+      ),
+    );
   }
 
   void _flipCard() {

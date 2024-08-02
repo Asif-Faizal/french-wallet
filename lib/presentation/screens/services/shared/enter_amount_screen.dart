@@ -18,7 +18,9 @@ class EnterAmountPage extends StatefulWidget {
 class _EnterAmountPageState extends State<EnterAmountPage> {
   final TextEditingController _amountController = TextEditingController();
   bool _isButtonEnabled = false;
+  bool _isLoading = false;
   String? _selectedItems;
+  String _userPin = '';
 
   @override
   void initState() {
@@ -58,6 +60,20 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
   }
 
   Future<void> _handleSubmit() async {
+    // Show bottom sheet for user_pin
+    await _showPinBottomSheet();
+
+    if (_userPin.length != 4) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid 4-digit PIN.')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
     final String apiUrl =
         "https://api-innovitegra.online/bank_accounts/Send_money/send_money_to_user";
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -71,16 +87,19 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
     final message = responseData['message'];
     final statusCode = responseData['status_code'];
 
+    setState(() {
+      _isLoading = false;
+    });
+
     if (response.statusCode == 200) {
       if (status == 'Fail') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
         GoRouter.of(context).pushNamed(AppRouteConst.errorAnimationRoute);
       } else if (status == 'Success') {
         GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
       }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
     } else if (statusCode == 5) {
       final tokenResponse = await _refreshToken(refreshToken);
 
@@ -94,26 +113,23 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
         final retryResponse = await _sendMoney(apiUrl, newJwtToken);
         final retryData = json.decode(retryResponse.body);
 
-        print(response.body);
         final retryStatus = retryData['status'];
         final retryMessage = retryData['message'];
 
         if (retryStatus == 'Fail') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(retryMessage)),
+          );
           GoRouter.of(context).pushNamed(AppRouteConst.errorAnimationRoute);
         } else if (retryStatus == 'Success') {
           GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
         }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(retryMessage)),
-        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text('Failed to refresh token. Please log in again.')),
         );
-        GoRouter.of(context)
-            .pushNamed(AppRouteConst.loginRoute); // Redirect to login
+        GoRouter.of(context).pushNamed(AppRouteConst.loginRoute);
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -133,7 +149,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
         'mobile': widget.phoneNumber,
         'currency': 'KWD',
         'amount': double.parse(_amountController.text),
-        'user_pin': '1111',
+        'user_pin': _userPin,
         'remark': 'Test transaction',
       }),
     );
@@ -150,7 +166,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
         'Authorization': 'Bearer $refreshToken',
       },
     );
-    print(response.body);
+
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
@@ -158,47 +174,149 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
     }
   }
 
+  Future<void> _showPinBottomSheet() async {
+    final TextEditingController pinController1 = TextEditingController();
+    final TextEditingController pinController2 = TextEditingController();
+    final TextEditingController pinController3 = TextEditingController();
+    final TextEditingController pinController4 = TextEditingController();
+
+    await showModalBottomSheet(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 16.0,
+            right: 16.0,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 20),
+              Text(
+                'Enter your 4-digit PIN',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildPinField(pinController1, (value) {
+                    if (value.isNotEmpty) {
+                      FocusScope.of(context).nextFocus();
+                    }
+                  }),
+                  _buildPinField(pinController2, (value) {
+                    if (value.isNotEmpty) {
+                      FocusScope.of(context).nextFocus();
+                    }
+                  }),
+                  _buildPinField(pinController3, (value) {
+                    if (value.isNotEmpty) {
+                      FocusScope.of(context).nextFocus();
+                    }
+                  }),
+                  _buildPinField(pinController4, (value) {
+                    if (value.isNotEmpty) {
+                      FocusScope.of(context).unfocus();
+                    }
+                  }),
+                ],
+              ),
+              SizedBox(height: 20),
+              NormalButton(
+                size: MediaQuery.of(context).size,
+                title: _getButtonTitle(),
+                onPressed: () {
+                  setState(() {
+                    _userPin = pinController1.text +
+                        pinController2.text +
+                        pinController3.text +
+                        pinController4.text;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPinField(
+    TextEditingController controller,
+    Function(String) onChanged,
+  ) {
+    return Container(
+      width: 50,
+      child: TextField(
+        controller: controller,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        maxLength: 1,
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        decoration: InputDecoration(
+          counterText: '',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        onChanged: onChanged,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: NormalAppBar(text: widget.phoneNumber),
-      body: Padding(
-        padding: EdgeInsets.all(size.width / 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: size.height / 10),
-            Text(
-              'Enter the Amount',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            SizedBox(height: size.height / 20),
-            TextField(
-              textAlign: TextAlign.center,
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: '0.00',
-                hintStyle: TextStyle(
-                  fontSize: 32,
-                  color: Theme.of(context).primaryColor.withOpacity(0.4),
+      body: Stack(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(size.width / 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: size.height / 10),
+                Text(
+                  'Enter the Amount',
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
-                contentPadding: EdgeInsets.only(
-                  bottom: size.height / 60,
+                SizedBox(height: size.height / 20),
+                TextField(
+                  textAlign: TextAlign.center,
+                  controller: _amountController,
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: '0.00',
+                    hintStyle: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[400],
+                    ),
+                  ),
                 ),
-              ),
+                Spacer(),
+                NormalButton(
+                  size: size,
+                  title: _getButtonTitle(),
+                  onPressed: _isButtonEnabled ? _handleSubmit : null,
+                ),
+              ],
             ),
-            SizedBox(height: size.height / 30),
-            NormalButton(
-              onPressed: _isButtonEnabled ? _handleSubmit : null,
-              title: _getButtonTitle(),
-              size: size,
+          ),
+          if (_isLoading)
+            Center(
+              child: CircularProgressIndicator(),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

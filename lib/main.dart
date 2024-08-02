@@ -123,7 +123,7 @@ class MyAppView extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
           ],
-          title: 'Flutter Demo',
+          title: 'ePurse',
           theme: AppThemes.lightTheme,
           darkTheme: AppThemes.darkTheme,
           themeMode: ThemeMode.system,
