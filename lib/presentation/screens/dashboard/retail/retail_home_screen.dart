@@ -9,6 +9,7 @@ import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../shared/config/api_config.dart';
@@ -28,6 +29,9 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
   String? balance;
   String? card_num;
   String? card_id;
+  bool _isAuthenticated = false;
+  bool _isLoading = true;
+  final LocalAuthentication auth = LocalAuthentication();
 
   @override
   void initState() {
@@ -58,6 +62,9 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
 
     if (jwtToken == null || refreshToken == null) {
       _showSnackBar('Session expired. Please log in again.', Colors.red);
+      setState(() {
+        _isLoading = false;
+      });
       return;
     }
 
@@ -65,6 +72,9 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
       jwtToken = await _refreshToken(refreshToken);
       if (jwtToken == null) {
         _showSnackBar('Session expired. Please log in again.', Colors.red);
+        setState(() {
+          _isLoading = false;
+        });
         return;
       }
     }
@@ -80,6 +90,9 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
       },
     );
     print(response.body);
+    setState(() {
+      _isLoading = false;
+    });
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
       final status = responseData["status"];
@@ -216,6 +229,30 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
     );
   }
 
+  void _auth() async {
+    if (!_isAuthenticated) {
+      try {
+        final bool canAuth = await auth.canCheckBiometrics;
+        print(canAuth);
+        if (canAuth) {
+          final bool didAuth = await auth.authenticate(
+              localizedReason: 'Please Authenticate to show Card Details',
+              options: AuthenticationOptions(biometricOnly: true));
+          setState(() {
+            _isAuthenticated = didAuth;
+          });
+        }
+      } catch (e) {
+        print(e);
+        _showSnackBar(e.toString(), Colors.red);
+      }
+    } else {
+      setState(() {
+        _isAuthenticated = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -303,9 +340,13 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                         color: Colors.blue.shade500),
                   ),
                   TextButton(
-                    onPressed: () {},
-                    child: Icon(Icons.visibility_off_outlined,
-                        color: Colors.blue.shade500),
+                    onPressed: () {
+                      _auth();
+                    },
+                    child: _isAuthenticated
+                        ? Icon(Icons.visibility_off_outlined,
+                            color: Colors.blue.shade500)
+                        : Icon(Icons.visibility, color: Colors.blue.shade500),
                   )
                 ],
               ),
@@ -621,11 +662,18 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                             SizedBox(
                               width: size.width / 40,
                             ),
-                            Text(balance ?? '',
-                                style: TextStyle(
-                                    fontSize: size.height / 40,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white)),
+                            if (_isAuthenticated)
+                              Text(balance ?? '',
+                                  style: TextStyle(
+                                      fontSize: size.height / 40,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white)),
+                            if (!_isAuthenticated)
+                              Text('#######',
+                                  style: TextStyle(
+                                      fontSize: size.height / 40,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white)),
                           ],
                         ),
                       ),
@@ -633,11 +681,18 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(card_num!,
-                              style: TextStyle(
-                                  fontSize: size.height / 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white)),
+                          if (_isAuthenticated)
+                            Text(card_num!,
+                                style: TextStyle(
+                                    fontSize: size.height / 40,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white)),
+                          if (!_isAuthenticated)
+                            Text('#### #### #### ####',
+                                style: TextStyle(
+                                    fontSize: size.height / 40,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white)),
                           Column(
                             children: [
                               Text('Valid Thru',
