@@ -1,3 +1,4 @@
+import 'package:ewallet2/presentation/bloc/sent_card_otp/sent_card_otp_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
@@ -175,12 +176,23 @@ class _CardInfoScreenState extends State<CardInfoScreen> {
         listener: (context, state) {
           if (state is PinVerificationLoading) {
             _showLoadingDialog(context);
-            Navigator.of(context).pop();
           } else if (state is PinVerificationSuccess) {
             _showSnackBar(state.message, Colors.green);
             Navigator.of(context).pop();
             context.read<SentCardOtpBloc>().add(SentCardOtp());
             //open another bottom sheet to change pin
+            if (state is SentCardOtpLoading) {
+              _showLoadingDialog(context);
+            } else if (state is SentCardOtpSuccess) {
+              _showSnackBar(state.message, Colors.green);
+              Navigator.of(context).pop();
+            } else if (state is SentCardOtpFailure) {
+              Navigator.of(context).pop();
+              _showSnackBar(state.message, Colors.red);
+            } else if (state is SentCardOtpSessionExpired) {
+              Navigator.of(context).pop();
+              _showSnackBar('Session expired. Please login again.', Colors.red);
+            }
           } else if (state is PinVerificationFailure) {
             Navigator.of(context).pop();
             _showSnackBar(state.message, Colors.red);
