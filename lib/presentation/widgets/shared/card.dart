@@ -27,7 +27,7 @@ class _WalletCardState extends State<WalletCard> {
     return FlipCard(
       key: widget.flipCardKey,
       direction: FlipDirection.HORIZONTAL,
-      flipOnTouch: true,
+      flipOnTouch: false,
       front: _buildWalletFront(context),
       back: _buildWalletBack(context),
     );

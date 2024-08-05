@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ewallet2/presentation/screens/dashboard/card_info_screen.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
@@ -118,12 +119,24 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
               child: Column(
                 children: [
                   SizedBox(
-                    height: 40,
+                    height: 20,
                   ),
-                  WalletCard(
-                    isAuthenticated: _isAuthenticated,
-                    isBalanceVisible: _isBalanceVisible,
-                    flipCardKey: _flipCardKey,
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CardInfoScreen(
+                                    isAuthenticated: _isAuthenticated,
+                                    isBalanceVisible: _isBalanceVisible,
+                                    flipCardKey: _flipCardKey,
+                                  )));
+                    },
+                    child: WalletCard(
+                      isAuthenticated: _isAuthenticated,
+                      isBalanceVisible: _isBalanceVisible,
+                      flipCardKey: _flipCardKey,
+                    ),
                   ),
                   SizedBox(
                     height: 10,
@@ -167,24 +180,24 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                             child: DashboardItem(
                           icon: Icons.send,
                           title: 'Send\nMoney',
-                          onTap: () {},
+                          onTap: () {
+                            GoRouter.of(context)
+                                .pushNamed(AppRouteConst.retailSendRoute);
+                          },
                         )),
                         Expanded(
                             child: DashboardItem(
                           icon: Icons.download,
                           title: 'Request\nMoney',
-                          onTap: () {},
+                          onTap: () {
+                            GoRouter.of(context)
+                                .pushNamed(AppRouteConst.retailReceiveRoute);
+                          },
                         )),
                         Expanded(
                             child: DashboardItem(
                           icon: Icons.add,
                           title: 'TopUp\n ',
-                          onTap: () {},
-                        )),
-                        Expanded(
-                            child: DashboardItem(
-                          icon: Icons.credit_card,
-                          title: 'Card\n ',
                           onTap: () {},
                         )),
                       ],
@@ -236,13 +249,19 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                             child: DashboardItem(
                           icon: Icons.phone_iphone_outlined,
                           title: 'Mobile\nRecharge',
-                          onTap: () {},
+                          onTap: () {
+                            GoRouter.of(context)
+                                .pushNamed(AppRouteConst.mobileRechargeRoute);
+                          },
                         )),
                         Expanded(
                             child: DashboardItem(
                           icon: Icons.electrical_services_outlined,
                           title: 'Electricity\nBill',
-                          onTap: () {},
+                          onTap: () {
+                            GoRouter.of(context)
+                                .pushNamed(AppRouteConst.electricityBillRoute);
+                          },
                         )),
                         Expanded(
                             child: DashboardItem(
@@ -288,6 +307,21 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                   ),
                 ],
               ),
+            ),
+          ),
+          floatingActionButton: ElevatedButton(
+            onPressed: () {
+              GoRouter.of(context).pushNamed(AppRouteConst.qrCodeScanRoute);
+            },
+            child: Icon(
+              Icons.qr_code_2,
+              size: 40,
+            ),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.blue.shade600,
+              shape: CircleBorder(),
+              padding: EdgeInsets.all(15),
             ),
           ),
         );

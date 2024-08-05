@@ -16,6 +16,7 @@ class WalletDataSource {
 
     if (JwtDecoder.isExpired(jwtToken)) {
       jwtToken = await _refreshToken(refreshToken);
+      print('New JWT Token: $jwtToken');
       if (jwtToken == null) {
         throw Exception('Session expired. Please log in again.');
       }
@@ -33,6 +34,8 @@ class WalletDataSource {
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
+      final cardId = responseData["card_udid"];
+      await prefs.setString('cardId', cardId);
       if (responseData["status"] == "success") {
         return responseData;
       } else if (responseData["status"] == "Fail" &&
@@ -59,10 +62,14 @@ class WalletDataSource {
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
       final jwtToken = responseBody['jwt_token'];
+      final newRefreshToken = responseBody['refresh_token'];
       if (jwtToken != null) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('jwt_token', jwtToken);
+        prefs.setString('refresh_token', newRefreshToken);
         return jwtToken;
+      } else {
+        throw Exception('Session TimedOut please Login again');
       }
     }
     return null;
