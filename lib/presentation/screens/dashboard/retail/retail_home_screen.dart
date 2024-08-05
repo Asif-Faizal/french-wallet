@@ -61,7 +61,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
         setState(() {
           _isAuthenticated = didAuth;
           if (_isAuthenticated) {
-            _isBalanceVisible = true; // Show balance when authenticated
+            _isBalanceVisible = true;
           }
         });
       } else {
@@ -126,11 +126,7 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => CardInfoScreen(
-                                    isAuthenticated: _isAuthenticated,
-                                    isBalanceVisible: _isBalanceVisible,
-                                    flipCardKey: _flipCardKey,
-                                  )));
+                              builder: (context) => CardInfoScreen()));
                     },
                     child: WalletCard(
                       isAuthenticated: _isAuthenticated,
