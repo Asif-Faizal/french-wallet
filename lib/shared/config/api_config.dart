@@ -39,7 +39,10 @@ class Config {
   static const accountView = 'https://api-innovitegra.online/user/Profile/view';
   static const refresh_token =
       'https://api-innovitegra.online/login/refresh_token';
-  static const verify_card_pin = 'https://api-innovitegra.online/cards/register/verify_card_pin';
+  static const verify_card_pin =
+      'https://api-innovitegra.online/cards/register/verify_card_pin';
+  static const send_card_otp =
+      'https://api-innovitegra.online/cards/register/send_otp';
   static const wallet_info =
       'https://api-innovitegra.online/transfer/wallet/wallet_list';
   static const String appVersion = '4.0.4';

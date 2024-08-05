@@ -4,6 +4,8 @@ import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:local_auth/local_auth.dart';
+import '../../bloc/sent_card_otp/sent_card_otp_bloc.dart';
+import '../../bloc/sent_card_otp/sent_card_otp_event.dart';
 import '../../bloc/verify_card_pin/verify_card_pin_bloc.dart';
 import '../../bloc/verify_card_pin/verify_card_pin_event.dart';
 import '../../bloc/verify_card_pin/verify_card_pin_state.dart';
@@ -177,6 +179,7 @@ class _CardInfoScreenState extends State<CardInfoScreen> {
           } else if (state is PinVerificationSuccess) {
             _showSnackBar(state.message, Colors.green);
             Navigator.of(context).pop();
+            context.read<SentCardOtpBloc>().add(SentCardOtp());
             //open another bottom sheet to change pin
           } else if (state is PinVerificationFailure) {
             Navigator.of(context).pop();
