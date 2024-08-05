@@ -151,103 +151,104 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
       'Deviceid': Config.deviceId,
     };
 
-    final body = {
-      "mobile": "+911234123412",
-      "email": "tes@gmail.com",
-      "first_name": "name",
-      "user_country_id": "IND",
-      "user_gender": "male",
-      "password": "loginpwd",
-      "user_civil_id": "123456789009",
-      "civil_id_expiry": "",
-      "fcm_id": "",
-      "gcm_id": "",
-      "civil_id_image": "421402112499.jpg",
-      "selfie_image": "421402112501.pdf",
-      "dob": "2019-12-02",
-      "user_type": "COORPORATE",
+    final body =
+        // {
+        //   "mobile": "+911234123412",
+        //   "email": "tes@gmail.com",
+        //   "first_name": "name",
+        //   "user_country_id": "IND",
+        //   "user_gender": "male",
+        //   "password": "loginpwd",
+        //   "user_civil_id": "123456789009",
+        //   "civil_id_expiry": "",
+        //   "fcm_id": "",
+        //   "gcm_id": "",
+        //   "civil_id_image": "421402112499.jpg",
+        //   "selfie_image": "421402112501.pdf",
+        //   "dob": "2019-12-02",
+        //   "user_type": "COORPORATE",
+        //   "ubo_info": [
+        //     {
+        //       "full_name": "ASif",
+        //       "percentage_ubo": "",
+        //       "part_of_ownership": "",
+        //       "nationality": "Indian",
+        //       "mobile": "+919876543210",
+        //       "email": "mail@gmail.com",
+        //       "alternate_email": "",
+        //       "address": "Street, City, Country"
+        //     }
+        //   ],
+        //   "fin_info": {
+        //     "annual_turnover": "1000000",
+        //     "tin_number": "TIN123456123456",
+        //     "pan_number": "PAN123456123456"
+        //   },
+        //   "business_kyc_info": {
+        //     "business_type": "Education",
+        //     "industry_type": "E-Commerce",
+        //     "official_website": "website.com",
+        //     "alternate_mobile": "+919876543211",
+        //     "building_no": "10",
+        //     "door_number": "135",
+        //     "street": "Street",
+        //     "city": "city",
+        //     "state": "state",
+        //     "country": "india",
+        //     "postal_code": "123456",
+        //     "email_address": "business@gmail.com",
+        //     "alternate_email": ""
+        //   }
+        // };
+
+        {
+      "mobile": phoneNumber,
+      "email": email,
+      "first_name": firstName,
+      "user_country_id": nationality,
+      "user_gender": gender,
+      "password": passcode,
+      "user_civil_id": idNumber,
+      "civil_id_expiry": "EXP ID IF AVAILABLE",
+      "fcm_id": "348ehweriwrew",
+      "gcm_id": "348ehweriwrew",
+      "civil_id_image": idImageFront,
+      "selfie_image": selfieImage,
+      "dob": '2006-08-03',
+      "user_type": userType,
       "ubo_info": [
         {
-          "full_name": "ASif",
-          "percentage_ubo": "",
-          "part_of_ownership": "",
-          "nationality": "Indian",
-          "mobile": "+919876543210",
-          "email": "mail@gmail.com",
-          "alternate_email": "",
-          "address": "Street, City, Country"
+          "full_name": fullName,
+          "percentage_ubo": "50%",
+          "part_of_ownership": "Owner",
+          "nationality": nationality,
+          "mobile": phoneNumber,
+          "email": email,
+          "alternate_email": "j.doe@example.com",
+          "address": address
         }
       ],
       "fin_info": {
-        "annual_turnover": "1000000",
-        "tin_number": "TIN123456123456",
-        "pan_number": "PAN123456123456"
+        "annual_turnover": turnover,
+        "tin_number": tinNumber,
+        "pan_number": panNumber
       },
       "business_kyc_info": {
-        "business_type": "Education",
-        "industry_type": "E-Commerce",
-        "official_website": "website.com",
-        "alternate_mobile": "+919876543211",
-        "building_no": "10",
-        "door_number": "135",
-        "street": "Street",
-        "city": "city",
-        "state": "state",
-        "country": "india",
-        "postal_code": "123456",
-        "email_address": "business@gmail.com",
-        "alternate_email": ""
+        "business_type": businessType,
+        "industry_type": industryType,
+        "official_website": companyWebsite,
+        "alternate_mobile": companyPhone,
+        "building_no": companyBuilding,
+        "door_number": "12A",
+        "street": "Main Street",
+        "city": companyCity,
+        "state": "StateName",
+        "country": "CountryName",
+        "postal_code": companyPincode,
+        "email_address": companyMail,
+        "alternate_email": "alt.business@example.com"
       }
     };
-
-    //     {
-    //   "mobile": phoneNumber,
-    //   "email": email,
-    //   "first_name": firstName,
-    //   "user_country_id": nationality,
-    //   "user_gender": gender,
-    //   "password": passcode,
-    //   "user_civil_id": idNumber,
-    //   "civil_id_expiry": "EXP ID IF AVAILABLE",
-    //   "fcm_id": "348ehweriwrew",
-    //   "gcm_id": "348ehweriwrew",
-    //   "civil_id_image": idImageFront,
-    //   "selfie_image": selfieImage,
-    //   "dob": '2006-08-03',
-    //   "user_type": userType,
-    //   "ubo_info": [
-    //     {
-    //       "full_name": fullName,
-    //       "percentage_ubo": "50%",
-    //       "part_of_ownership": "Owner",
-    //       "nationality": nationality,
-    //       "mobile": phoneNumber,
-    //       "email": email,
-    //       "alternate_email": "j.doe@example.com",
-    //       "address": address
-    //     }
-    //   ],
-    //   "fin_info": {
-    //     "annual_turnover": turnover,
-    //     "tin_number": tinNumber,
-    //     "pan_number": panNumber
-    //   },
-    //   "business_kyc_info": {
-    //     "business_type": businessType,
-    //     "industry_type": industryType,
-    //     "official_website": companyWebsite,
-    //     "alternate_mobile": companyPhone,
-    //     "building_no": companyBuilding,
-    //     "door_number": "12A",
-    //     "street": "Main Street",
-    //     "city": companyCity,
-    //     "state": "StateName",
-    //     "country": "CountryName",
-    //     "postal_code": companyPincode,
-    //     "email_address": companyMail,
-    //     "alternate_email": "alt.business@example.com"
-    //   }
-    // };
     try {
       final response = await http.post(
         Uri.parse(Config.register_v2),

@@ -5,6 +5,7 @@ import 'package:ewallet2/data/documents/doc_repo.dart';
 import 'package:ewallet2/data/image/image_datasource.dart';
 import 'package:ewallet2/data/image/image_repo.dart';
 import 'package:ewallet2/data/login/login_datasource.dart';
+import 'package:ewallet2/data/wallet/wallet_datasource.dart';
 import 'package:ewallet2/domain/login/login_repo_impl.dart';
 import 'package:ewallet2/data/signup/industry_sector/industry_sector_datasource.dart';
 import 'package:ewallet2/data/signup/industry_sector/industry_sector_repo_impl.dart';
@@ -12,9 +13,12 @@ import 'package:ewallet2/domain/checkmobile/checkmobile.dart';
 import 'package:ewallet2/domain/documents/upload_doc.dart';
 import 'package:ewallet2/domain/image/upload_image.dart';
 import 'package:ewallet2/domain/login/login.dart';
+import 'package:ewallet2/domain/wallet/get_wallet_details.dart';
+import 'package:ewallet2/domain/wallet/wallet_repo_impl.dart';
 import 'package:ewallet2/presentation/bloc/documents/doc_bloc.dart';
 import 'package:ewallet2/presentation/bloc/image/image_bloc.dart';
 import 'package:ewallet2/presentation/bloc/login/login_bloc.dart';
+import 'package:ewallet2/presentation/bloc/wallet/wallet_bloc.dart';
 import 'package:ewallet2/shared/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -29,24 +33,22 @@ import 'presentation/bloc/business info/business_info_bloc.dart';
 import 'presentation/bloc/checkmobile/checkmobile_bloc.dart';
 import 'presentation/bloc/industry sector/industry_sector_bloc.dart';
 import 'presentation/bloc/language/localization_bloc.dart';
+import 'presentation/bloc/wallet/wallet_event.dart';
 import 'shared/theme/theme.dart';
 import 'shared/router/router_config.dart';
 import 'package:http/http.dart' as http;
-// import 'package:onesignal_flutter/onesignal_flutter.dart';
-// import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
-  // OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  // OneSignal.initialize('APP ID');
-  // OneSignal.Notifications.requestPermission(true);
-  runApp(const MyApp());
+  final walletDataSource = WalletDataSource();
+  final walletRepository = WalletRepositoryImpl(walletDataSource);
+  final getWalletDetails = GetWalletDetails(walletRepository);
+
+  runApp(MyApp(getWalletDetails: getWalletDetails));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  final GetWalletDetails getWalletDetails;
+  MyApp({super.key, required this.getWalletDetails});
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -96,7 +98,10 @@ class MyApp extends StatelessWidget {
             create: (context) => LoginBloc(
                 loginUseCase: LoginUseCase(
                     repository: LoginRepositoryImpl(
-                        dataSource: LoginDataSourceImpl()))))
+                        dataSource: LoginDataSourceImpl())))),
+        BlocProvider<WalletBloc>(
+            create: (context) => WalletBloc(getWalletDetails: getWalletDetails)
+              ..add(FetchWalletDetails()))
       ],
       child: const MyAppView(),
     );

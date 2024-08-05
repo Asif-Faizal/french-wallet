@@ -39,6 +39,8 @@ class Config {
   static const accountView = 'https://api-innovitegra.online/user/Profile/view';
   static const refresh_token =
       'https://api-innovitegra.online/login/refresh_token';
+  static const wallet_info =
+      'https://api-innovitegra.online/transfer/wallet/wallet_list';
   static const String appVersion = '4.0.4';
   static const String deviceId =
       '986t534666587645342345243273485345331343576895005';
