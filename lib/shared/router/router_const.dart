@@ -27,6 +27,7 @@ class AppRouteConst {
   static const completedAnimationRoute = 'completedAnimation';
   static const errorAnimationRoute = 'errorAnimation';
   static const viewChildCardRoute = 'viewChildCard';
+  static const createChildUserRoute = 'createChildUser';
   static const retailReceiveRoute = 'retailReceive';
   static const retailSendRoute = 'retailSent';
   static const qrCodeRoute = 'qrCode';

@@ -11,7 +11,7 @@ import '../../../bloc/wallet/wallet_event.dart';
 import '../../../bloc/wallet/wallet_state.dart';
 import '../../../widgets/shared/card.dart';
 import '../../../widgets/shared/dashboard_item.dart';
-import '../../../widgets/shared/service_list_bottom_sheet.dart'; // Import the new file
+import '../../../widgets/shared/service_list_bottom_sheet.dart';
 
 class RetailHomeScreen extends StatefulWidget {
   const RetailHomeScreen({super.key});

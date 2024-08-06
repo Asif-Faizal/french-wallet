@@ -49,9 +49,13 @@ class Config {
       'https://api-innovitegra.online/cards/register/activate_card';
   static const change_card_status =
       'https://api-innovitegra.online/cards/register/change_card_status';
+  static const list_chil_users =
+      'https://api-innovitegra.online/corporate/register/list_user';
+  static const add_user_child =
+      'https://api-innovitegra.online/corporate/register/add_user';
   static const String appVersion = '4.0.4';
   static const String deviceId =
       '986t534666587645342345243273485345331343576895005';
   static String token =
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTAwNSIsIkN1c3RvbWVySUQiOiIyNjEiLCJleHAiOjE3MjI1MTE3MDYsImlzcyI6IkFaZVdhbGxldCJ9.FTXMLEmuIlYMm8sOkyDVuktVHdO9eJKG0k8tgT8Pwm0';
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyODEiLCJleHAiOjE3MjI5MzMyODQsImlzcyI6IkFaZVdhbGxldCJ9.TgQ_p5PltDgyMqrMVlJfIlnTX8_sxiF_R2C7jY5kqUs';
 }

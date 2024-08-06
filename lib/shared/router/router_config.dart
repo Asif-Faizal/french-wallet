@@ -5,7 +5,8 @@ import 'package:ewallet2/presentation/screens/dashboard/merchant/merchant_home_s
 import 'package:ewallet2/presentation/screens/dashboard/retail/retail_home_screen.dart';
 import 'package:ewallet2/presentation/screens/initial/corporate_promot_screen.dart';
 import 'package:ewallet2/presentation/screens/login/executive_login_screen.dart';
-import 'package:ewallet2/presentation/screens/services/coorporate/view_child_card_screen.dart';
+import 'package:ewallet2/presentation/screens/services/coorporate/add_child_user.dart';
+import 'package:ewallet2/presentation/screens/services/coorporate/view_child_screen.dart';
 import 'package:ewallet2/presentation/screens/services/merchant/store_screen.dart';
 import 'package:ewallet2/presentation/screens/services/shared/electricity_bill.dart';
 import 'package:ewallet2/presentation/screens/services/shared/mobile_recharge.dart';
@@ -186,7 +187,12 @@ class AppRouter {
       GoRoute(
         path: '/viewChildCard',
         name: 'viewChildCard',
-        builder: (context, state) => ViewChildCardScreen(),
+        builder: (context, state) => ChildUsersScreen(),
+      ),
+      GoRoute(
+        path: '/createChildUser',
+        name: 'createChildUser',
+        builder: (context, state) => CreateChildUserScreen(),
       ),
       GoRoute(
         path: '/retailReceive',
