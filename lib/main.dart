@@ -16,6 +16,7 @@ import 'package:ewallet2/domain/login/login.dart';
 import 'package:ewallet2/domain/wallet/get_wallet_details.dart';
 import 'package:ewallet2/domain/wallet/wallet_repo_impl.dart';
 import 'package:ewallet2/presentation/bloc/change_card_pin/change_card_pin_bloc.dart';
+import 'package:ewallet2/presentation/bloc/change_card_status/change_card_status_bloc.dart';
 import 'package:ewallet2/presentation/bloc/sent_card_otp/sent_card_otp_bloc.dart';
 import 'package:ewallet2/presentation/bloc/verify_card_pin/verify_card_pin_bloc.dart';
 import 'package:ewallet2/presentation/bloc/documents/doc_bloc.dart';
@@ -107,7 +108,8 @@ class MyApp extends StatelessWidget {
               ..add(FetchWalletDetails())),
         BlocProvider(create: (context) => VerifyCardPinBloc()),
         BlocProvider(create: (context) => SentCardOtpBloc()),
-        BlocProvider(create: (context) => ChangeCardPinBloc())
+        BlocProvider(create: (context) => ChangeCardPinBloc()),
+        BlocProvider(create: (context) => ChangeCardStatusBloc())
       ],
       child: const MyAppView(),
     );

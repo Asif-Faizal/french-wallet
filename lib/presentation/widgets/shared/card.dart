@@ -42,19 +42,25 @@ class _WalletCardState extends State<WalletCard> {
       if (state is WalletLoaded) {
         return Stack(
           children: [
-            Container(
-                width: size.width,
-                height: size.height / 4,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.network(
-                    'https://i.pinimg.com/736x/71/78/08/717808c6a6976c95e2f7b50dd6d485f3.jpg',
-                    fit: BoxFit.cover,
+            Card(
+              shadowColor: Colors.blue,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              elevation: 20,
+              child: Container(
+                  width: size.width,
+                  height: size.height / 4,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                )),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      'https://i.pinimg.com/736x/71/78/08/717808c6a6976c95e2f7b50dd6d485f3.jpg',
+                      fit: BoxFit.cover,
+                    ),
+                  )),
+            ),
             Container(
               width: size.width,
               height: size.height / 4,
@@ -153,19 +159,25 @@ class _WalletCardState extends State<WalletCard> {
     } else {
       return Stack(
         children: [
-          Container(
-              width: size.width,
-              height: size.height / 4,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: Image.network(
-                  'https://i.pinimg.com/736x/71/78/08/717808c6a6976c95e2f7b50dd6d485f3.jpg',
-                  fit: BoxFit.cover,
+          Card(
+            shadowColor: Colors.blue,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            elevation: 20,
+            child: Container(
+                width: size.width,
+                height: size.height / 4,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
                 ),
-              )),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(
+                    'https://i.pinimg.com/736x/71/78/08/717808c6a6976c95e2f7b50dd6d485f3.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                )),
+          ),
           Container(
             width: size.width,
             height: size.height / 4,
@@ -253,19 +265,25 @@ class _WalletCardState extends State<WalletCard> {
     final size = MediaQuery.of(context).size;
     return Stack(
       children: [
-        Container(
-            width: size.width,
-            height: size.height / 4,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.network(
-                'https://i.pinimg.com/736x/71/78/08/717808c6a6976c95e2f7b50dd6d485f3.jpg',
-                fit: BoxFit.cover,
+        Card(
+          shadowColor: Colors.blue,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          elevation: 20,
+          child: Container(
+              width: size.width,
+              height: size.height / 4,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
               ),
-            )),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.network(
+                  'https://i.pinimg.com/736x/71/78/08/717808c6a6976c95e2f7b50dd6d485f3.jpg',
+                  fit: BoxFit.cover,
+                ),
+              )),
+        ),
         Container(
             width: size.width,
             height: size.height / 4,
@@ -314,8 +332,11 @@ class _WalletCardState extends State<WalletCard> {
                     ],
                   ),
                 ),
-                Divider(
-                  thickness: 40,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Divider(
+                    thickness: 40,
+                  ),
                 )
               ],
             )),

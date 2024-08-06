@@ -1,3 +1,4 @@
+import 'package:ewallet2/presentation/bloc/change_card_status/change_card_status_bloc.dart';
 import 'package:ewallet2/presentation/bloc/sent_card_otp/sent_card_otp_state.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../bloc/sent_card_otp/sent_card_otp_bloc.dart';
 import '../../bloc/sent_card_otp/sent_card_otp_event.dart';
 import '../../bloc/verify_card_pin/verify_card_pin_bloc.dart';
@@ -28,6 +30,12 @@ class _CardInfoScreenState extends State<CardInfoScreen> {
   final GlobalKey<FlipCardState> _flipCardKey = GlobalKey<FlipCardState>();
   final List<TextEditingController> _pinControllers =
       List.generate(4, (index) => TextEditingController());
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSwitchState();
+  }
 
   void _showSnackBar(String message, Color backgroundColor) {
     print(message);
@@ -81,10 +89,13 @@ class _CardInfoScreenState extends State<CardInfoScreen> {
   }
 
   void _toggleCardFreeze(bool value) async {
-    await _showChangePinBottomSheet;
     setState(() {
       _isCardFrozen = value;
     });
+    _saveSwitchState(value);
+    _isCardFrozen
+        ? context.read<ChangeCardStatusBloc>().add(ChangeStatus(1))
+        : context.read<ChangeCardStatusBloc>().add(ChangeStatus(0));
     _showSnackBar(
       _isCardFrozen ? 'Card is Active' : 'Card is Frozen',
       _isCardFrozen ? Colors.green : Colors.red,
@@ -166,12 +177,18 @@ class _CardInfoScreenState extends State<CardInfoScreen> {
               shrinkWrap: true,
               children: [
                 ListTile(
-                  onTap: () {},
+                  onTap: () {
+                    context.read<ChangeCardStatusBloc>().add(ChangeStatus(3));
+                    Navigator.pop(context);
+                  },
                   title: Text('Stolen'),
                   leading: Icon(Icons.local_police_outlined),
                 ),
                 ListTile(
-                  onTap: () {},
+                  onTap: () {
+                    context.read<ChangeCardStatusBloc>().add(ChangeStatus(2));
+                    Navigator.pop(context);
+                  },
                   title: Text('Lost'),
                   leading: Icon(Icons.leave_bags_at_home_rounded),
                 )
@@ -202,6 +219,19 @@ class _CardInfoScreenState extends State<CardInfoScreen> {
         );
       },
     );
+  }
+
+  Future<void> _saveSwitchState(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isCardFrozen', value);
+  }
+
+  Future<void> _loadSwitchState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isCardFrozen = prefs.getBool('isCardFrozen') ?? false;
+    setState(() {
+      _isCardFrozen = isCardFrozen;
+    });
   }
 
   @override
