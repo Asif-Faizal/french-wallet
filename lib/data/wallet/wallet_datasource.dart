@@ -38,6 +38,7 @@ class WalletDataSource {
       await prefs.setString('cardId', cardId);
       print('erthgfdwdefghdhmgngfgsdhfg');
       print(cardId);
+      print(response.body);
       if (responseData["status"] == "success") {
         return responseData;
       } else if (responseData["status"] == "Fail" &&

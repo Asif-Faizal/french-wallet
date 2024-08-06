@@ -1,9 +1,11 @@
 import 'package:ewallet2/presentation/bloc/sent_card_otp/sent_card_otp_state.dart';
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:flip_card/flip_card.dart';
+import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../bloc/sent_card_otp/sent_card_otp_bloc.dart';
 import '../../bloc/sent_card_otp/sent_card_otp_event.dart';
@@ -78,13 +80,14 @@ class _CardInfoScreenState extends State<CardInfoScreen> {
     }
   }
 
-  void _toggleCardFreeze(bool value) {
+  void _toggleCardFreeze(bool value) async {
+    await _showChangePinBottomSheet;
     setState(() {
       _isCardFrozen = value;
     });
     _showSnackBar(
-      _isCardFrozen ? 'Card is frozen' : 'Card is unfrozen',
-      Colors.blue,
+      _isCardFrozen ? 'Card is Active' : 'Card is Frozen',
+      _isCardFrozen ? Colors.green : Colors.red,
     );
   }
 
@@ -147,6 +150,37 @@ class _CardInfoScreenState extends State<CardInfoScreen> {
     );
   }
 
+  void _showReportBottomSheet() {
+    showModalBottomSheet(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+            padding: EdgeInsets.only(
+              bottom: 20,
+              left: 20,
+              right: 20,
+              top: 20,
+            ),
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                ListTile(
+                  onTap: () {},
+                  title: Text('Stolen'),
+                  leading: Icon(Icons.local_police_outlined),
+                ),
+                ListTile(
+                  onTap: () {},
+                  title: Text('Lost'),
+                  leading: Icon(Icons.leave_bags_at_home_rounded),
+                )
+              ],
+            ));
+      },
+    );
+  }
+
   void _verifyPin(BuildContext context) {
     final pin = _pinControllers.map((controller) => controller.text).join();
     context.read<VerifyCardPinBloc>().add(VerifyPin(pin));
@@ -172,140 +206,146 @@ class _CardInfoScreenState extends State<CardInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<VerifyCardPinBloc, PinVerificationState>(
-        listener: (context, state) {
-          if (state is PinVerificationLoading) {
-            _showLoadingDialog(context);
-          } else if (state is PinVerificationSuccess) {
-            _showSnackBar(state.message, Colors.green);
-            Navigator.of(context).pop();
-            context.read<SentCardOtpBloc>().add(SentCardOtp());
-            //open another bottom sheet to change pin
-            if (state is SentCardOtpLoading) {
+    return BlocListener<SentCardOtpBloc, SentCardOtpState>(
+      listener: (context, state) {
+        if (state is SentCardOtpLoading) {
+          _showLoadingDialog(context);
+        } else if (state is SentCardOtpSuccess) {
+          _showSnackBar(state.message, Colors.green);
+          GoRouter.of(context).pushNamed(AppRouteConst.changeCardPinRoute);
+          Navigator.of(context).pop();
+        } else if (state is SentCardOtpFailure) {
+          Navigator.of(context).pop();
+          _showSnackBar(state.message, Colors.red);
+        } else if (state is SentCardOtpSessionExpired) {
+          Navigator.of(context).pop();
+          _showSnackBar('Session expired. Please login again.', Colors.red);
+        }
+      },
+      child: BlocListener<VerifyCardPinBloc, PinVerificationState>(
+          listener: (context, state) {
+            if (state is PinVerificationLoading) {
               _showLoadingDialog(context);
-            } else if (state is SentCardOtpSuccess) {
+            } else if (state is PinVerificationSuccess) {
               _showSnackBar(state.message, Colors.green);
               Navigator.of(context).pop();
-            } else if (state is SentCardOtpFailure) {
+              context.read<SentCardOtpBloc>().add(SentCardOtp());
+            } else if (state is PinVerificationFailure) {
               Navigator.of(context).pop();
               _showSnackBar(state.message, Colors.red);
-            } else if (state is SentCardOtpSessionExpired) {
+            } else if (state is PinVerificationSessionExpired) {
               Navigator.of(context).pop();
               _showSnackBar('Session expired. Please login again.', Colors.red);
             }
-          } else if (state is PinVerificationFailure) {
-            Navigator.of(context).pop();
-            _showSnackBar(state.message, Colors.red);
-          } else if (state is PinVerificationSessionExpired) {
-            Navigator.of(context).pop();
-            _showSnackBar('Session expired. Please login again.', Colors.red);
-          }
-        },
-        child: Scaffold(
-          appBar: NormalAppBar(
-            text: '',
-          ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  WalletCard(
-                    isAuthenticated: _isAuthenticated,
-                    isBalanceVisible: _isBalanceVisible,
-                    flipCardKey: _flipCardKey,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    height: 40,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: _showChangePinBottomSheet,
-                          child: Text(
-                            'Change PIN',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.blue.shade800,
+          },
+          child: Scaffold(
+            appBar: NormalAppBar(
+              text: '',
+            ),
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    WalletCard(
+                      isAuthenticated: _isAuthenticated,
+                      isBalanceVisible: _isBalanceVisible,
+                      flipCardKey: _flipCardKey,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      height: 40,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: _showChangePinBottomSheet,
+                            child: Text(
+                              'Change PIN',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.blue.shade800,
+                              ),
                             ),
                           ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                                color: Colors.blue.shade800,
-                                onPressed: _flipCard,
-                                icon: Icon(Icons.flip)),
-                            IconButton(
-                                color: Colors.blue.shade800,
-                                onPressed: () {
-                                  if (_isBalanceVisible) {
-                                    _toggleBalanceVisibility();
-                                  } else {
-                                    _auth();
-                                  }
-                                },
-                                icon: Icon(
-                                  _isBalanceVisible
-                                      ? Icons.visibility_off_outlined
-                                      : Icons.visibility_outlined,
-                                )),
-                          ],
-                        ),
-                      ],
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                  color: Colors.blue.shade800,
+                                  onPressed: _flipCard,
+                                  icon: Icon(Icons.flip)),
+                              IconButton(
+                                  color: Colors.blue.shade800,
+                                  onPressed: () {
+                                    if (_isBalanceVisible) {
+                                      _toggleBalanceVisibility();
+                                    } else {
+                                      _auth();
+                                    }
+                                  },
+                                  icon: Icon(
+                                    _isBalanceVisible
+                                        ? Icons.visibility_off_outlined
+                                        : Icons.visibility_outlined,
+                                  )),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Divider(
-                    thickness: 1,
-                    color: Colors.blue.shade100,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                    height: 30,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          _isCardFrozen ? 'Card is Active' : 'Card is Frozen',
-                          style: TextStyle(color: Colors.black, fontSize: 20),
-                        ),
-                        Switch(
-                          value: _isCardFrozen,
-                          onChanged: _toggleCardFreeze,
-                          trackOutlineWidth: WidgetStatePropertyAll(0),
-                          activeColor: Colors.green,
-                          activeTrackColor: Colors.green.shade200,
-                          inactiveThumbColor: Colors.red,
-                          inactiveTrackColor: Colors.red.shade200,
-                        ),
-                      ],
+                    SizedBox(
+                      height: 10,
                     ),
-                  ),
-                ],
+                    Divider(
+                      thickness: 1,
+                      color: Colors.blue.shade100,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      height: 30,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            _isCardFrozen ? 'Card is Active' : 'Card is Frozen',
+                            style: TextStyle(color: Colors.black, fontSize: 20),
+                          ),
+                          Switch(
+                            value: _isCardFrozen,
+                            onChanged: _toggleCardFreeze,
+                            trackOutlineWidth: WidgetStatePropertyAll(0),
+                            activeColor: Colors.green,
+                            activeTrackColor: Colors.green.shade200,
+                            inactiveThumbColor: Colors.red,
+                            inactiveTrackColor: Colors.red.shade200,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: TextButton(
-                onPressed: () {},
-                child: Text(
-                  'Report Card Stolen / Lost',
-                  style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                )),
-          ),
-        ));
+            bottomNavigationBar: Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: TextButton(
+                  onPressed: () {
+                    _showReportBottomSheet();
+                  },
+                  child: Text(
+                    'Report Card Stolen / Lost',
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  )),
+            ),
+          )),
+    );
   }
 }

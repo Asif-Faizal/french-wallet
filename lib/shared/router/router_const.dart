@@ -39,4 +39,5 @@ class AppRouteConst {
   static const transactionDetailsRoute = 'transactionDetails';
   static const merchantHomeRoute = 'merchantHome';
   static const merchantStoreRoute = 'merchantStore';
+  static const changeCardPinRoute = 'changeCardPin';
 }

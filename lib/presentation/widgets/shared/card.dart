@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../bloc/wallet/wallet_bloc.dart';
 import '../../bloc/wallet/wallet_state.dart';
 
@@ -39,39 +40,106 @@ class _WalletCardState extends State<WalletCard> {
 
     if (widget.isAuthenticated) {
       if (state is WalletLoaded) {
-        return Container(
-          width: size.width,
-          height: size.height / 4,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            gradient: LinearGradient(
-              colors: [Colors.blue.shade300, Colors.blue.shade800],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+        return Stack(
+          children: [
+            Container(
+                width: size.width,
+                height: size.height / 4,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(
+                    'https://i.pinimg.com/736x/71/78/08/717808c6a6976c95e2f7b50dd6d485f3.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                )),
+            Container(
+              width: size.width,
+              height: size.height / 4,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 15, left: 15, right: 15),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          height: 80,
+                          child: Image.network(
+                              'https://cdn.freebiesupply.com/logos/large/2x/visa-logo-black-and-white.png'),
+                        ),
+                        Icon(
+                          Icons.credit_card_outlined,
+                          color: Colors.white,
+                          size: 20,
+                        )
+                      ],
+                    ),
+                    Center(
+                      child: Text(
+                        widget.isBalanceVisible
+                            ? '₹ ${state.balance}'
+                            : '*****',
+                        style: TextStyle(
+                            fontSize: 40,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Card Number',
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.white),
+                            ),
+                            Text(
+                              widget.isBalanceVisible
+                                  ? state.cardNum
+                                  : '**** **** **** ****',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'Valid Thru',
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.white),
+                            ),
+                            Text(
+                              '12/28',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Wallet Balance',
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
-              Text(
-                widget.isBalanceVisible ? '₹ ${state.balance}' : '*****',
-                style: TextStyle(fontSize: 40, color: Colors.white),
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Card Number',
-                style: TextStyle(fontSize: 10, color: Colors.white),
-              ),
-              Text(
-                widget.isBalanceVisible ? state.cardNum : '**** **** **** ****',
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
-            ],
-          ),
+          ],
         );
       } else if (state is WalletError) {
         return Center(
@@ -83,38 +151,175 @@ class _WalletCardState extends State<WalletCard> {
         );
       }
     } else {
-      return Container(
-        width: size.width,
-        height: size.height / 4,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          color: Colors.grey.shade300,
-        ),
-        child: Center(
-          child: Text(
-            'Authenticate to view wallet details',
-            style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
+      return Stack(
+        children: [
+          Container(
+              width: size.width,
+              height: size.height / 4,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.network(
+                  'https://i.pinimg.com/736x/71/78/08/717808c6a6976c95e2f7b50dd6d485f3.jpg',
+                  fit: BoxFit.cover,
+                ),
+              )),
+          Container(
+            width: size.width,
+            height: size.height / 4,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 15, left: 15, right: 15),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        height: 80,
+                        child: Image.network(
+                            'https://cdn.freebiesupply.com/logos/large/2x/visa-logo-black-and-white.png'),
+                      ),
+                      Icon(
+                        Icons.credit_card_outlined,
+                        color: Colors.white,
+                        size: 20,
+                      )
+                    ],
+                  ),
+                  Center(
+                    child: Text(
+                      '*****',
+                      style: TextStyle(
+                          fontSize: 40,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Card Number',
+                            style: TextStyle(fontSize: 14, color: Colors.white),
+                          ),
+                          Text(
+                            '**** **** **** ****',
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Valid Thru',
+                            style: TextStyle(fontSize: 14, color: Colors.white),
+                          ),
+                          Text(
+                            '**/**',
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       );
     }
   }
 
   Widget _buildWalletBack(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Container(
-      width: size.width,
-      height: size.height / 4,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: Colors.grey.shade300,
-      ),
-      child: Center(
-        child: Text(
-          'Back Side - Wallet Details',
-          style: TextStyle(fontSize: 20),
-        ),
-      ),
+    return Stack(
+      children: [
+        Container(
+            width: size.width,
+            height: size.height / 4,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Image.network(
+                'https://i.pinimg.com/736x/71/78/08/717808c6a6976c95e2f7b50dd6d485f3.jpg',
+                fit: BoxFit.cover,
+              ),
+            )),
+        Container(
+            width: size.width,
+            height: size.height / 4,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        color: Colors.grey.shade400,
+                        height: 40,
+                        width: double.infinity,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              height: 40,
+                              width: 60,
+                              color: Colors.grey.shade200,
+                              child: Center(
+                                  child: Text(
+                                '123',
+                                style: GoogleFonts.merienda(fontSize: 12),
+                              )),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+                        style: TextStyle(fontSize: 10),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  ),
+                ),
+                Divider(
+                  thickness: 40,
+                )
+              ],
+            )),
+      ],
     );
   }
 }

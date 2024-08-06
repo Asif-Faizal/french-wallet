@@ -45,6 +45,8 @@ class Config {
       'https://api-innovitegra.online/cards/register/send_otp';
   static const wallet_info =
       'https://api-innovitegra.online/transfer/wallet/wallet_list';
+  static const change_card_pin =
+      'https://api-innovitegra.online/cards/register/activate_card';
   static const String appVersion = '4.0.4';
   static const String deviceId =
       '986t534666587645342345243273485345331343576895005';

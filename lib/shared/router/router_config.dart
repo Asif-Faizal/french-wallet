@@ -37,6 +37,7 @@ import 'package:ewallet2/presentation/screens/signup_screen/upload_id_screen.dar
 import 'package:ewallet2/presentation/screens/signup_screen/verify_number_screen.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../presentation/screens/dashboard/change_card_pin.dart';
 import '../../presentation/screens/initial/loginorsignup_screen.dart';
 import '../../presentation/screens/initial/prompt_screen.dart';
 import '../../presentation/screens/login/login_screen.dart';
@@ -241,8 +242,13 @@ class AppRouter {
         path: '/merchantStore',
         name: 'merchantStore',
         builder: (context, state) => StorePage(),
-      )
+      ),
       // GoRoute(path: '/transactionDetails',name: 'transactionDetails',builder: (context, state) => TransactionDetailsPage(transactionId: transactionId),)
+      GoRoute(
+        path: '/changeCardPin',
+        name: 'changeCardPin',
+        builder: (context, state) => ChangeCardPin(),
+      )
     ],
   );
 }
