@@ -23,6 +23,7 @@ import 'package:ewallet2/presentation/bloc/verify_card_pin/verify_card_pin_bloc.
 import 'package:ewallet2/presentation/bloc/documents/doc_bloc.dart';
 import 'package:ewallet2/presentation/bloc/image/image_bloc.dart';
 import 'package:ewallet2/presentation/bloc/login/login_bloc.dart';
+import 'package:ewallet2/presentation/bloc/verify_otp/verify_otp_bloc.dart';
 import 'package:ewallet2/presentation/bloc/wallet/wallet_bloc.dart';
 import 'package:ewallet2/shared/config/api_config.dart';
 import 'package:flutter/material.dart';
@@ -120,7 +121,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => SentCardOtpBloc()),
         BlocProvider(create: (context) => ChangeCardPinBloc()),
         BlocProvider(create: (context) => ChangeCardStatusBloc()),
-        BlocProvider(create: (context) => SentOtpBloc())
+        BlocProvider(create: (context) => SentOtpBloc()),
+        BlocProvider(create: (context) => VerifyOtpBloc()),
       ],
       child: MyAppView(
         isLoggedIn: isLoggedIn,
