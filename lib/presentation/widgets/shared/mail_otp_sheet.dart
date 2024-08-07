@@ -41,6 +41,23 @@ class _MailOtpSheetState extends State<MailOtpSheet> {
     super.dispose();
   }
 
+  InputDecoration _getInputDecoration() {
+    return InputDecoration(
+        counterText: '',
+        labelStyle: TextStyle(color: Colors.blue.shade300),
+        filled: true,
+        fillColor: Colors.blue.shade50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 0),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -76,10 +93,7 @@ class _MailOtpSheetState extends State<MailOtpSheet> {
                     textAlign: TextAlign.center,
                     keyboardType: TextInputType.number,
                     maxLength: 1,
-                    decoration: InputDecoration(
-                      counter: Offstage(),
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: _getInputDecoration(),
                     onChanged: (value) {
                       if (value.length == 1 && index < 3) {
                         _focusNodes[index].unfocus();

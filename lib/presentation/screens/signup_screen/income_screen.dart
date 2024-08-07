@@ -58,6 +58,24 @@ class _OccupationIncomeDetailsScreenState
     super.dispose();
   }
 
+  InputDecoration _getInputDecoration(String label) {
+    return InputDecoration(
+        labelText: label,
+        counterText: '',
+        labelStyle: TextStyle(color: Colors.blue.shade300),
+        filled: true,
+        fillColor: Colors.blue.shade50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 0),
+        ));
+  }
+
   void _retrieveData() async {
     final SharedPreferences prefs = await _prefs;
     setState(() {
@@ -97,17 +115,16 @@ class _OccupationIncomeDetailsScreenState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildDropdownRow('Occupation', _occupations, _selectedOccupation,
-                  (value) {
+              _buildDropdownRow('Occupation:', _occupations.first, _occupations,
+                  _selectedOccupation, (value) {
                 setState(() {
                   _selectedOccupation = value;
                   _updateButtonState();
                 });
               }, theme, size),
               SizedBox(height: size.height / 60),
-              _buildDropdownRow(
-                  'Annual Income', _annualIncomes, _selectedAnnualIncome,
-                  (value) {
+              _buildDropdownRow('Income:', _annualIncomes.first, _annualIncomes,
+                  _selectedAnnualIncome, (value) {
                 setState(() {
                   _selectedAnnualIncome = value;
                   _updateButtonState();
@@ -138,6 +155,7 @@ class _OccupationIncomeDetailsScreenState
   }
 
   Widget _buildDropdownRow(
+      String heading,
       String label,
       List<String> items,
       String? selectedItem,
@@ -150,23 +168,27 @@ class _OccupationIncomeDetailsScreenState
         children: [
           Expanded(
             flex: 2,
-            child: Text(label, style: theme.textTheme.bodyMedium),
+            child: Text(
+              heading,
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+            ),
           ),
           Expanded(
-            flex: 3,
+            flex: 5,
             child: DropdownButtonFormField<String>(
-              value: selectedItem,
-              onChanged: onChanged,
-              items: items.map((item) {
-                return DropdownMenuItem(
-                  value: item,
-                  child: Text(item),
-                );
-              }).toList(),
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-              ),
-            ),
+                value: selectedItem,
+                onChanged: onChanged,
+                items: items.map((item) {
+                  return DropdownMenuItem(
+                    value: item,
+                    child: Text(item),
+                  );
+                }).toList(),
+                decoration: _getInputDecoration(label)),
           ),
         ],
       ),
@@ -180,13 +202,8 @@ class _OccupationIncomeDetailsScreenState
       child: Container(
         height: size.height / 14,
         child: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            labelText: labelText,
-            labelStyle: theme.textTheme.bodyMedium,
-            border: OutlineInputBorder(),
-          ),
-        ),
+            controller: controller,
+            decoration: _getInputDecoration('Enter PAN Number')),
       ),
     );
   }

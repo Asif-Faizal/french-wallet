@@ -16,17 +16,35 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _streetAddressController =
       TextEditingController();
+  final FocusNode _streetAddressFocusNode = FocusNode();
+
   final TextEditingController _cityController = TextEditingController();
+  final FocusNode _cityFocusNode = FocusNode();
+
   final TextEditingController _stateController = TextEditingController();
+  final FocusNode _stateFocusNode = FocusNode();
+
   final TextEditingController _zipCodeController = TextEditingController();
+  final FocusNode _zipCodeFocusNode = FocusNode();
+
   final TextEditingController _countryController = TextEditingController();
+  final FocusNode _countryFocusNode = FocusNode();
 
   final TextEditingController _commStreetAddressController =
       TextEditingController();
+  final FocusNode _commStreetAddressFocusNode = FocusNode();
+
   final TextEditingController _commCityController = TextEditingController();
+  final FocusNode _commCityFocusNode = FocusNode();
+
   final TextEditingController _commStateController = TextEditingController();
+  final FocusNode _commStateFocusNode = FocusNode();
+
   final TextEditingController _commZipCodeController = TextEditingController();
+  final FocusNode _commZipCodeFocusNode = FocusNode();
+
   final TextEditingController _commCountryController = TextEditingController();
+  final FocusNode _commCountryFocusNode = FocusNode();
 
   bool _isButtonEnabled = false;
   bool _sameAsResidential = false;
@@ -112,6 +130,28 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
     });
   }
 
+  InputDecoration _getInputDecoration(String labelText, FocusNode focusNode) {
+    return InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(color: Colors.blue.shade300),
+        filled: true,
+        fillColor: Colors.blue.shade50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+        ),
+        enabledBorder: focusNode.hasFocus
+            ? OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+              )
+            : OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Colors.blue.shade300, width: 0),
+              ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -136,16 +176,20 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
                   Text('Residential address',
                       style: theme.textTheme.headlineMedium),
                   SizedBox(height: size.height / 60),
+                  _buildRow('Street Address', _streetAddressController, theme,
+                      size, _streetAddressFocusNode),
+                  SizedBox(height: size.height / 60),
                   _buildRow(
-                      'Street Address', _streetAddressController, theme, size),
+                      'City', _cityController, theme, size, _cityFocusNode),
                   SizedBox(height: size.height / 60),
-                  _buildRow('City', _cityController, theme, size),
+                  _buildRow(
+                      'State', _stateController, theme, size, _stateFocusNode),
                   SizedBox(height: size.height / 60),
-                  _buildRow('State', _stateController, theme, size),
+                  _buildPinCodeRow('Zip Code', _zipCodeController, theme, size,
+                      _zipCodeFocusNode),
                   SizedBox(height: size.height / 60),
-                  _buildPinCodeRow('Zip Code', _zipCodeController, theme, size),
-                  SizedBox(height: size.height / 60),
-                  _buildRow('Country', _countryController, theme, size),
+                  _buildRow('Country', _countryController, theme, size,
+                      _countryFocusNode),
                   SizedBox(height: size.height / 40),
                   Text('Communication address',
                       style: theme.textTheme.headlineMedium),
@@ -161,18 +205,24 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
                     ],
                   ),
                   if (!_sameAsResidential) ...[
-                    _buildRow('Comm. Street Address',
-                        _commStreetAddressController, theme, size),
-                    SizedBox(height: size.height / 60),
-                    _buildRow('Comm. City', _commCityController, theme, size),
-                    SizedBox(height: size.height / 60),
-                    _buildRow('Comm. State', _commStateController, theme, size),
-                    SizedBox(height: size.height / 60),
-                    _buildPinCodeRow(
-                        'Comm. Zip Code', _commZipCodeController, theme, size),
-                    SizedBox(height: size.height / 60),
                     _buildRow(
-                        'Comm. Country', _commCountryController, theme, size),
+                        'Comm. Street Address',
+                        _commStreetAddressController,
+                        theme,
+                        size,
+                        _commStreetAddressFocusNode),
+                    SizedBox(height: size.height / 60),
+                    _buildRow('Comm. City', _commCityController, theme, size,
+                        _commCityFocusNode),
+                    SizedBox(height: size.height / 60),
+                    _buildRow('Comm. State', _commStateController, theme, size,
+                        _commStateFocusNode),
+                    SizedBox(height: size.height / 60),
+                    _buildPinCodeRow('Comm. Zip Code', _commZipCodeController,
+                        theme, size, _commZipCodeFocusNode),
+                    SizedBox(height: size.height / 60),
+                    _buildRow('Comm. Country', _commCountryController, theme,
+                        size, _commCountryFocusNode),
                     SizedBox(height: size.height / 60),
                   ],
                   SizedBox(height: size.height / 40),
@@ -194,7 +244,7 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
   }
 
   Widget _buildRow(String label, TextEditingController controller,
-      ThemeData theme, Size size) {
+      ThemeData theme, Size size, FocusNode focusNode) {
     return SizedBox(
       height: size.height / 15,
       child: Padding(
@@ -204,14 +254,11 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
             Expanded(
                 flex: 2, child: Text(label, style: theme.textTheme.bodyMedium)),
             Expanded(
-              flex: 3,
-              child: TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
+                flex: 3,
+                child: TextField(
+                  controller: controller,
+                  decoration: _getInputDecoration(label, focusNode),
+                )),
           ],
         ),
       ),
@@ -219,7 +266,7 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
   }
 
   Widget _buildPinCodeRow(String label, TextEditingController controller,
-      ThemeData theme, Size size) {
+      ThemeData theme, Size size, FocusNode focusNode) {
     return SizedBox(
       height: size.height / 15,
       child: Padding(
@@ -235,9 +282,29 @@ class _AddressDetailsScreenState extends State<AddressDetailsScreen> {
                 keyboardType: TextInputType.number,
                 controller: controller,
                 decoration: InputDecoration(
-                  counterText: '',
-                  border: OutlineInputBorder(),
-                ),
+                    counterText: '',
+                    labelText: 'PinCode',
+                    labelStyle: TextStyle(color: Colors.blue.shade300),
+                    filled: true,
+                    fillColor: Colors.blue.shade50,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15)),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide:
+                          BorderSide(color: Colors.blue.shade300, width: 1),
+                    ),
+                    enabledBorder: focusNode.hasFocus
+                        ? OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(
+                                color: Colors.blue.shade300, width: 1),
+                          )
+                        : OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(
+                                color: Colors.blue.shade300, width: 0),
+                          )),
               ),
             ),
           ],

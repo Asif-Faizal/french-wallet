@@ -22,6 +22,24 @@ class _PoliticallyExposedScreenState extends State<PoliticallyExposedScreen> {
   final TextEditingController _nationalityController = TextEditingController();
   final TextEditingController _positionController = TextEditingController();
 
+  InputDecoration _getInputDecoration(String label) {
+    return InputDecoration(
+        labelText: label,
+        counterText: '',
+        labelStyle: TextStyle(color: Colors.blue.shade300),
+        filled: true,
+        fillColor: Colors.blue.shade50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 0),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -104,11 +122,7 @@ class _PoliticallyExposedScreenState extends State<PoliticallyExposedScreen> {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: TextField(
         controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: theme.textTheme.bodyMedium,
-          border: OutlineInputBorder(),
-        ),
+        decoration: _getInputDecoration(label),
       ),
     );
   }

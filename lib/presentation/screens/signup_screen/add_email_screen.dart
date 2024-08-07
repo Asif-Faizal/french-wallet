@@ -92,8 +92,20 @@ class _EmailDetailsScreenState extends State<EmailDetailsScreen> {
         child: TextField(
           controller: controller,
           decoration: InputDecoration(
-            border: OutlineInputBorder(),
-          ),
+              labelText: 'Enter Email',
+              labelStyle: TextStyle(color: Colors.blue.shade300),
+              filled: true,
+              fillColor: Colors.blue.shade50,
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Colors.blue.shade300, width: 0),
+              )),
         ),
       ),
     );

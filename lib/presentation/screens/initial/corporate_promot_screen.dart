@@ -136,7 +136,7 @@ class _CorporatePromptScreenState extends State<CorporatePromptScreen> {
                   _storeData();
                   if (selectedCorporate == 'business-owner') {
                     GoRouter.of(context)
-                        .pushNamed(AppRouteConst.loginOrSignUpRoute);
+                        .pushNamed(AppRouteConst.verifyNumberRoute);
                   } else {
                     GoRouter.of(context)
                         .pushNamed(AppRouteConst.executiveLoginRoute);

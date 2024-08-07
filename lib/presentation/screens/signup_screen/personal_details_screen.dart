@@ -4,7 +4,7 @@ import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Add this import for date formatting
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PersonalDetailsScreen extends StatefulWidget {
   const PersonalDetailsScreen({super.key});
@@ -20,6 +20,12 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _fathersNameController = TextEditingController();
   final TextEditingController _nationalityController = TextEditingController();
+  final FocusNode _firstName = FocusNode();
+  final FocusNode _middleName = FocusNode();
+  final FocusNode _lastName = FocusNode();
+  final FocusNode _fathersName = FocusNode();
+  final FocusNode _nationality = FocusNode();
+  final FocusNode _martialStatusNode = FocusNode();
   String _gender = 'Male';
   DateTime _selectedDate = DateTime.now().subtract(Duration(days: 6570));
   String _maritalStatus = 'Single';
@@ -50,6 +56,28 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
     super.dispose();
   }
 
+  InputDecoration _getInputDecoration(String labelText, FocusNode focusNode) {
+    return InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(color: Colors.blue.shade300),
+        filled: true,
+        fillColor: Colors.blue.shade50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+        ),
+        enabledBorder: focusNode.hasFocus
+            ? OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+              )
+            : OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Colors.blue.shade300, width: 0),
+              ));
+  }
+
   void _updateButtonState() {
     setState(() {
       _isButtonEnabled = _firstNameController.text.isNotEmpty &&
@@ -77,38 +105,65 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildRow(
-                      'First Name', _firstNameController, theme, size, true),
+                  _buildRow('First Name', _firstNameController, theme, size,
+                      true, _firstName),
                   SizedBox(
                     height: size.height / 60,
                   ),
-                  _buildRow(
-                      'Middle Name', _middleNameController, theme, size, false),
+                  _buildRow('Middle Name', _middleNameController, theme, size,
+                      false, _middleName),
                   SizedBox(
                     height: size.height / 60,
                   ),
-                  _buildRow(
-                      'Last Name', _lastNameController, theme, size, true),
+                  _buildRow('Last Name', _lastNameController, theme, size, true,
+                      _lastName),
                   SizedBox(
                     height: size.height / 60,
+                  ),
+                  _buildRow('Father\'s Name', _fathersNameController, theme,
+                      size, true, _fathersName),
+                  SizedBox(
+                    height: size.height / 60,
+                  ),
+                  _buildRow('Nationality', _nationalityController, theme, size,
+                      true, _nationality),
+                  SizedBox(
+                    height: size.height / 60,
+                  ),
+                  Text(
+                    'Date of Birth:',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: size.height / 80,
+                  ),
+                  _buildDateOfBirthRow(context, theme, size),
+                  SizedBox(
+                    height: size.height / 30,
+                  ),
+                  Text(
+                    'Gender:',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
                   ),
                   _buildGenderRow(theme, size),
                   SizedBox(
                     height: size.height / 60,
                   ),
-                  _buildDateOfBirthRow(context, theme, size),
-                  SizedBox(
-                    height: size.height / 60,
-                  ),
-                  _buildRow('Father\'s Name', _fathersNameController, theme,
-                      size, true),
-                  SizedBox(
-                    height: size.height / 60,
-                  ),
-                  _buildRow(
-                      'Nationality', _nationalityController, theme, size, true),
-                  SizedBox(
-                    height: size.height / 60,
+                  Text(
+                    'Martial Status:',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
                   ),
                   _buildMaritalStatusRow(theme, size),
                 ],
@@ -127,67 +182,45 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
   }
 
   Widget _buildRow(String label, TextEditingController controller,
-      ThemeData theme, Size size, bool isRequired) {
+      ThemeData theme, Size size, bool isRequired, FocusNode focusNode) {
     return SizedBox(
       height: size.height / 14,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
-        child: Row(
-          children: [
-            Expanded(
-                flex: 2, child: Text(label, style: theme.textTheme.bodyMedium)),
-            Expanded(
-              flex: 3,
-              child: TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-          ],
-        ),
+        child: TextField(
+            controller: controller,
+            decoration: _getInputDecoration(label, focusNode)),
       ),
     );
   }
 
   Widget _buildGenderRow(ThemeData theme, Size size) {
     return SizedBox(
-      height: size.height / 14,
+      height: size.height / 16,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
         child: Row(
           children: [
-            Expanded(
-                flex: 2,
-                child: Text('Gender', style: theme.textTheme.bodyMedium)),
-            Expanded(
-              flex: 3,
-              child: Row(
-                children: [
-                  Radio(
-                    value: 'Male',
-                    groupValue: _gender,
-                    onChanged: (value) {
-                      setState(() {
-                        _gender = value!;
-                      });
-                    },
-                  ),
-                  Text('Male'),
-                  Radio(
-                    value: 'Female',
-                    groupValue: _gender,
-                    onChanged: (value) {
-                      setState(() {
-                        _gender = value!;
-                      });
-                    },
-                  ),
-                  Text('Female'),
-                ],
-              ),
+            Radio(
+              value: 'Male',
+              groupValue: _gender,
+              onChanged: (value) {
+                setState(() {
+                  _gender = value!;
+                });
+              },
             ),
+            Text('Male'),
+            Radio(
+              value: 'Female',
+              groupValue: _gender,
+              onChanged: (value) {
+                setState(() {
+                  _gender = value!;
+                });
+              },
+            ),
+            Text('Female'),
           ],
         ),
       ),
@@ -196,49 +229,39 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
 
   Widget _buildDateOfBirthRow(
       BuildContext context, ThemeData theme, Size size) {
-    return SizedBox(
-      height: size.height / 14,
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.blue.shade50, borderRadius: BorderRadius.circular(15)),
+      height: size.height / 17,
+      width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
-        child: Row(
-          children: [
-            Expanded(
-                flex: 2,
-                child:
-                    Text('Date of Birth', style: theme.textTheme.bodyMedium)),
-            Expanded(
-              flex: 3,
-              child: GestureDetector(
-                onTap: () async {
-                  DateTime eighteenYearsAgo =
-                      DateTime.now().subtract(Duration(days: 6570));
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: _selectedDate,
-                    firstDate: DateTime(1900),
-                    lastDate: eighteenYearsAgo,
-                  );
-                  if (pickedDate != null && pickedDate != _selectedDate) {
-                    setState(() {
-                      _selectedDate = pickedDate;
-                      _updateButtonState(); // Ensure button state is updated
-                    });
-                  }
-                },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Text(
-                    DateFormat.yMMMd().format(_selectedDate),
-                  ),
-                ),
-              ),
+        child: GestureDetector(
+          onTap: () async {
+            DateTime eighteenYearsAgo =
+                DateTime.now().subtract(Duration(days: 6570));
+            DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: _selectedDate,
+              firstDate: DateTime(1900),
+              lastDate: eighteenYearsAgo,
+            );
+            if (pickedDate != null && pickedDate != _selectedDate) {
+              setState(() {
+                _selectedDate = pickedDate;
+                _updateButtonState();
+              });
+            }
+          },
+          child: Center(
+            child: Text(
+              DateFormat.yMMMd().format(_selectedDate),
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -246,35 +269,25 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
 
   Widget _buildMaritalStatusRow(ThemeData theme, Size size) {
     return SizedBox(
-      height: size.height / 14,
+      height: size.height / 10,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
-        child: Row(
-          children: [
-            Expanded(
-                flex: 2,
-                child:
-                    Text('Marital Status', style: theme.textTheme.bodyMedium)),
-            Expanded(
-              flex: 3,
-              child: DropdownButtonFormField<String>(
-                value: _maritalStatus,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _maritalStatus = newValue!;
-                  });
-                },
-                items: <String>['Single', 'Married', 'Divorced', 'Widowed']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                isExpanded: true,
-              ),
-            ),
-          ],
+        child: DropdownButtonFormField<String>(
+          decoration: _getInputDecoration('', _martialStatusNode),
+          value: _maritalStatus,
+          onChanged: (String? newValue) {
+            setState(() {
+              _maritalStatus = newValue!;
+            });
+          },
+          items: <String>['Single', 'Married', 'Divorced', 'Widowed']
+              .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          isExpanded: true,
         ),
       ),
     );
