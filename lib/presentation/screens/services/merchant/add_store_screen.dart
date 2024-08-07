@@ -1,3 +1,4 @@
+import 'package:ewallet2/shared/config/api_config.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +21,7 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
   final _cityController = TextEditingController();
   late SharedPreferences _prefs;
 
+  FocusNode _focusNode = FocusNode();
   @override
   void initState() {
     super.initState();
@@ -42,7 +44,7 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
       return;
     }
 
-    final url = Uri.parse('https://api-innovitegra.online/merchant/store/Add');
+    final url = Uri.parse(Config.add_store);
     final response = await http.post(
       url,
       headers: {
@@ -102,7 +104,7 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
       return;
     }
 
-    final url = Uri.parse('https://api-innovitegra.online/login/refresh_token');
+    final url = Uri.parse(Config.refresh_token);
     final response = await http.post(
       url,
       headers: {
@@ -131,7 +133,7 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
     return Scaffold(
       appBar: NormalAppBar(text: 'Add Store'),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(30),
         child: Form(
           key: _formKey,
           child: Column(
@@ -152,7 +154,7 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(15),
+        padding: const EdgeInsets.only(bottom: 15, left: 20, right: 20),
         child: NormalButton(
           size: MediaQuery.of(context).size,
           title: 'Add',
@@ -174,10 +176,7 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: TextFormField(
         controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(),
-        ),
+        decoration: _getInputDecoration(label, _focusNode),
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please enter $label';
@@ -186,5 +185,27 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
         },
       ),
     );
+  }
+
+  InputDecoration _getInputDecoration(String labelText, FocusNode focusNode) {
+    return InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(color: Colors.blue.shade300),
+        filled: true,
+        fillColor: Colors.blue.shade50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+        ),
+        enabledBorder: focusNode.hasFocus
+            ? OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+              )
+            : OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Colors.blue.shade300, width: 0),
+              ));
   }
 }

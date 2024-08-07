@@ -45,6 +45,7 @@ class Config {
       'https://api-innovitegra.online/cards/register/send_otp';
   static const wallet_info =
       'https://api-innovitegra.online/transfer/wallet/wallet_list';
+  static const add_store = 'https://api-innovitegra.online/merchant/store/Add';
   static const change_card_pin =
       'https://api-innovitegra.online/cards/register/activate_card';
   static const change_card_status =

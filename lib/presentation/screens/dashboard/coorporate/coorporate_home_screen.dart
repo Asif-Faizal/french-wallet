@@ -284,17 +284,17 @@ class _CoorporateHomeScreenState extends State<CoorporateHomeScreen>
                         )),
                         Expanded(
                             child: DashboardItem(
-                          icon: Icons.add,
-                          title: 'TopUp\n ',
-                          onTap: () {},
-                        )),
-                        Expanded(
-                            child: DashboardItem(
                           icon: Icons.manage_accounts,
                           title: 'Manage\nChild Users',
                           onTap: () {
                             _showManageChildCardOptions();
                           },
+                        )),
+                        Expanded(
+                            child: DashboardItem(
+                          icon: Icons.add,
+                          title: 'TopUp\n ',
+                          onTap: () {},
                         )),
                       ],
                     ),

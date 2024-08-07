@@ -34,7 +34,10 @@ class _StoreCardState extends State<StoreCard> {
             if (widget.store.terminalArray != null &&
                 widget.store.terminalArray!.isNotEmpty)
               ExpansionTile(
-                title: Text('View Terminals'),
+                title: Text(
+                  'View Terminals',
+                  style: TextStyle(color: Colors.blue.shade800),
+                ),
                 onExpansionChanged: (bool expanded) {
                   setState(() {
                     _isExpanded = expanded;
@@ -67,43 +70,51 @@ class _StoreCardState extends State<StoreCard> {
                   if (_isExpanded)
                     Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10))),
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => AddTerminalScreen(
-                                storeId: widget.store.storeId,
-                              ),
-                            ),
-                          );
-                        },
-                        child: Text('Add Terminal'),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10))),
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => AddTerminalScreen(
+                                    storeId: widget.store.storeId,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text('Add Terminal'),
+                          ),
+                        ],
                       ),
                     ),
                 ],
               )
             else
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10))),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => AddTerminalScreen(
-                          storeId: widget.store.storeId,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AddTerminalScreen(
+                            storeId: widget.store.storeId,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  child: Text('Add Terminal'),
-                ),
+                      );
+                    },
+                    child: Text('Add Terminal'),
+                  ),
+                ],
               ),
           ],
         ),

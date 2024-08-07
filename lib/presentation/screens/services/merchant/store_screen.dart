@@ -112,7 +112,7 @@ class _StorePageState extends State<StorePage> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(15),
+        padding: const EdgeInsets.only(bottom: 15, left: 20, right: 20),
         child: NormalButton(
             size: MediaQuery.of(context).size,
             title: 'Add Store',

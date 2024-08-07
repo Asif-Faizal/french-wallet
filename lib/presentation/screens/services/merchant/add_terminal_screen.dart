@@ -27,6 +27,7 @@ class _AddTerminalScreenState extends State<AddTerminalScreen> {
   final _idController = TextEditingController();
   final _serialController = TextEditingController();
   late SharedPreferences _prefs;
+  FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -145,7 +146,7 @@ class _AddTerminalScreenState extends State<AddTerminalScreen> {
       appBar: NormalAppBar(text: 'Add Terminal'),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(30),
           child: Form(
             key: _formKey,
             child: Column(
@@ -159,10 +160,15 @@ class _AddTerminalScreenState extends State<AddTerminalScreen> {
                 SizedBox(height: 16),
                 _buildTextField(
                     controller: _locationController, label: 'Location'),
+                SizedBox(height: 10),
                 _buildTextField(controller: _nameController, label: 'Name'),
+                SizedBox(height: 10),
                 _buildTextField(controller: _typeController, label: 'Type'),
+                SizedBox(height: 10),
                 _buildTextField(controller: _modelController, label: 'Model'),
+                SizedBox(height: 10),
                 _buildTextField(controller: _idController, label: 'ID'),
+                SizedBox(height: 10),
                 _buildTextField(controller: _serialController, label: 'Serial'),
                 SizedBox(height: 16),
               ],
@@ -171,7 +177,7 @@ class _AddTerminalScreenState extends State<AddTerminalScreen> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(15),
+        padding: const EdgeInsets.only(bottom: 15, left: 20, right: 20),
         child: NormalButton(
           size: MediaQuery.of(context).size,
           title: 'Add',
@@ -193,10 +199,7 @@ class _AddTerminalScreenState extends State<AddTerminalScreen> {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: TextFormField(
         controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(),
-        ),
+        decoration: _getInputDecoration(label, _focusNode),
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please enter $label';
@@ -205,5 +208,27 @@ class _AddTerminalScreenState extends State<AddTerminalScreen> {
         },
       ),
     );
+  }
+
+  InputDecoration _getInputDecoration(String labelText, FocusNode focusNode) {
+    return InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(color: Colors.blue.shade300),
+        filled: true,
+        fillColor: Colors.blue.shade50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+        ),
+        enabledBorder: focusNode.hasFocus
+            ? OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+              )
+            : OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Colors.blue.shade300, width: 0),
+              ));
   }
 }
