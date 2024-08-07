@@ -104,8 +104,8 @@ class _CreateChildUserScreenState extends State<CreateChildUserScreen> {
 
   InputDecoration _getInputDecoration(String labelText, FocusNode focusNode) {
     return InputDecoration(
-        labelText: labelText,
-        labelStyle: TextStyle(color: Colors.blue.shade300),
+        hintText: labelText,
+        hintStyle: TextStyle(color: Colors.blue.shade300),
         filled: true,
         fillColor: Colors.blue.shade50,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),

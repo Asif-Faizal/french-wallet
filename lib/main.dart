@@ -28,6 +28,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'data/signup/business_type/business_info_datasource.dart';
 import 'data/signup/business_type/business_info_repo_impl.dart';
 import 'domain/signup/business_type/get_business_type.dart';
@@ -42,17 +44,24 @@ import 'shared/theme/theme.dart';
 import 'shared/router/router_config.dart';
 import 'package:http/http.dart' as http;
 
-void main() async {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
   final walletDataSource = WalletDataSource();
   final walletRepository = WalletRepositoryImpl(walletDataSource);
   final getWalletDetails = GetWalletDetails(walletRepository);
 
-  runApp(MyApp(getWalletDetails: getWalletDetails));
+  runApp(MyApp(
+    getWalletDetails: getWalletDetails,
+    isLoggedIn: isLoggedIn,
+  ));
 }
 
 class MyApp extends StatelessWidget {
+  final bool isLoggedIn;
   final GetWalletDetails getWalletDetails;
-  MyApp({super.key, required this.getWalletDetails});
+  MyApp({super.key, required this.getWalletDetails, required this.isLoggedIn});
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -111,23 +120,28 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => ChangeCardPinBloc()),
         BlocProvider(create: (context) => ChangeCardStatusBloc())
       ],
-      child: const MyAppView(),
+      child: MyAppView(
+        isLoggedIn: isLoggedIn,
+      ),
     );
   }
 }
 
 class MyAppView extends StatelessWidget {
-  const MyAppView({super.key});
+  final bool isLoggedIn;
+  const MyAppView({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LocalizationBloc, LocalizationState>(
       builder: (context, state) {
+        final router = GoRouter(
+          initialLocation: isLoggedIn ? '/login' : '/',
+          routes: AppRouter.routes,
+        );
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
-          routerDelegate: AppRouter.router.routerDelegate,
-          routeInformationParser: AppRouter.router.routeInformationParser,
-          routeInformationProvider: AppRouter.router.routeInformationProvider,
+          routerConfig: router,
           locale: state.locale,
           supportedLocales: L10n.all,
           localizationsDelegates: const [

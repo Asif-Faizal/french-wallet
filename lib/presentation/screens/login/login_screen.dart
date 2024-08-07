@@ -247,7 +247,10 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
     super.dispose();
   }
 
-  void _login() {
+  void _login() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('number', widget.number);
+    prefs.setBool('isLoggedIn', true);
     final password = _controllers.map((controller) => controller.text).join();
     BlocProvider.of<LoginBloc>(context).add(
       LoginSubmitted(

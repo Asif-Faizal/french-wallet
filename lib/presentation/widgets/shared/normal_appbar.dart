@@ -19,7 +19,7 @@ class NormalAppBar extends StatelessWidget implements PreferredSizeWidget {
           color: Colors.white,
         ),
       ),
-      backgroundColor: Colors.blue.shade400,
+      backgroundColor: Colors.blue.shade600,
       title: Text(
         text,
         style: TextStyle(

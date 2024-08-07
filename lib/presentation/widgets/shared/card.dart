@@ -24,7 +24,6 @@ class WalletCard extends StatefulWidget {
 class _WalletCardState extends State<WalletCard> {
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return FlipCard(
       key: widget.flipCardKey,
       direction: FlipDirection.HORIZONTAL,
@@ -45,16 +44,16 @@ class _WalletCardState extends State<WalletCard> {
             Card(
               shadowColor: Colors.blue,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
+                  borderRadius: BorderRadius.circular(5)),
               elevation: 20,
               child: Container(
                   width: size.width,
                   height: size.height / 4,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(5),
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(5),
                     child: Image.network(
                       'https://i.pinimg.com/736x/71/78/08/717808c6a6976c95e2f7b50dd6d485f3.jpg',
                       fit: BoxFit.cover,
@@ -65,7 +64,7 @@ class _WalletCardState extends State<WalletCard> {
               width: size.width,
               height: size.height / 4,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(5),
               ),
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 15, left: 15, right: 15),
@@ -81,10 +80,16 @@ class _WalletCardState extends State<WalletCard> {
                           child: Image.network(
                               'https://cdn.freebiesupply.com/logos/large/2x/visa-logo-black-and-white.png'),
                         ),
-                        Icon(
-                          Icons.credit_card_outlined,
-                          color: Colors.white,
-                          size: 20,
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: RotatedBox(
+                            quarterTurns: 1,
+                            child: Icon(
+                              Icons.sim_card_sharp,
+                              color: Colors.amber,
+                              size: 40,
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -100,46 +105,49 @@ class _WalletCardState extends State<WalletCard> {
                       ),
                     ),
                     Spacer(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Card Number',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.white),
-                            ),
-                            Text(
-                              widget.isBalanceVisible
-                                  ? state.cardNum
-                                  : '**** **** **** ****',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              'Valid Thru',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.white),
-                            ),
-                            Text(
-                              '12/28',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        )
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Card Number',
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.white),
+                              ),
+                              Text(
+                                widget.isBalanceVisible
+                                    ? state.cardNum
+                                    : '**** **** **** ****',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                'Valid Thru',
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.white),
+                              ),
+                              Text(
+                                '12/28',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -162,16 +170,16 @@ class _WalletCardState extends State<WalletCard> {
           Card(
             shadowColor: Colors.blue,
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
             elevation: 20,
             child: Container(
                 width: size.width,
                 height: size.height / 4,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(5),
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(5),
                   child: Image.network(
                     'https://i.pinimg.com/736x/71/78/08/717808c6a6976c95e2f7b50dd6d485f3.jpg',
                     fit: BoxFit.cover,
@@ -182,7 +190,7 @@ class _WalletCardState extends State<WalletCard> {
             width: size.width,
             height: size.height / 4,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(5),
             ),
             child: Padding(
               padding: const EdgeInsets.only(bottom: 15, left: 15, right: 15),
@@ -198,10 +206,16 @@ class _WalletCardState extends State<WalletCard> {
                         child: Image.network(
                             'https://cdn.freebiesupply.com/logos/large/2x/visa-logo-black-and-white.png'),
                       ),
-                      Icon(
-                        Icons.credit_card_outlined,
-                        color: Colors.white,
-                        size: 20,
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: RotatedBox(
+                          quarterTurns: 1,
+                          child: Icon(
+                            Icons.sim_card_sharp,
+                            color: Colors.amber,
+                            size: 40,
+                          ),
+                        ),
                       )
                     ],
                   ),
@@ -215,42 +229,47 @@ class _WalletCardState extends State<WalletCard> {
                     ),
                   ),
                   Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Card Number',
-                            style: TextStyle(fontSize: 14, color: Colors.white),
-                          ),
-                          Text(
-                            '**** **** **** ****',
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            'Valid Thru',
-                            style: TextStyle(fontSize: 14, color: Colors.white),
-                          ),
-                          Text(
-                            '**/**',
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      )
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Card Number',
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.white),
+                            ),
+                            Text(
+                              '**** **** **** ****',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'Valid Thru',
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.white),
+                            ),
+                            Text(
+                              '**/**',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -267,17 +286,16 @@ class _WalletCardState extends State<WalletCard> {
       children: [
         Card(
           shadowColor: Colors.blue,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           elevation: 20,
           child: Container(
               width: size.width,
               height: size.height / 4,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(5),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(5),
                 child: Image.network(
                   'https://i.pinimg.com/736x/71/78/08/717808c6a6976c95e2f7b50dd6d485f3.jpg',
                   fit: BoxFit.cover,
@@ -288,7 +306,7 @@ class _WalletCardState extends State<WalletCard> {
             width: size.width,
             height: size.height / 4,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(5),
             ),
             child: Column(
               children: [

@@ -24,6 +24,8 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
   Iterable<Contact> _contacts = [];
   bool _contactsLoaded = false;
 
+  FocusNode _numberFocusNode = FocusNode();
+
   final List<Map<String, String>> _countryCodes = CountryCode.countryCodes;
   String _selectedCountryDialCode = '+91';
 
@@ -373,10 +375,8 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                     decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     child: Text(
                       _selectedCountryDialCode,
@@ -390,9 +390,28 @@ class _RetailReceiveScreenState extends State<RetailReceiveScreen> {
                   child: TextField(
                     controller: _phoneController,
                     decoration: InputDecoration(
-                      labelText: 'Phone Number',
-                      border: OutlineInputBorder(),
-                    ),
+                        hintText: 'Number',
+                        hintStyle: TextStyle(color: Colors.blue.shade300),
+                        filled: true,
+                        fillColor: Colors.blue.shade50,
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide:
+                              BorderSide(color: Colors.blue.shade300, width: 1),
+                        ),
+                        enabledBorder: _numberFocusNode.hasFocus
+                            ? OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide(
+                                    color: Colors.blue.shade300, width: 1),
+                              )
+                            : OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide(
+                                    color: Colors.blue.shade300, width: 0),
+                              )),
                     keyboardType: TextInputType.phone,
                   ),
                 ),

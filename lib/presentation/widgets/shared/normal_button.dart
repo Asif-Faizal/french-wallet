@@ -22,7 +22,7 @@ class NormalButton extends StatelessWidget {
             elevation: 5,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            backgroundColor: Colors.blue.shade300,
+            backgroundColor: Colors.blue.shade600,
             foregroundColor: Colors.white),
         onPressed: onPressed,
         child: Text(

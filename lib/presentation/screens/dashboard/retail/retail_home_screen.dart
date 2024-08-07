@@ -100,17 +100,52 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
       },
       builder: (context, state) {
         return Scaffold(
-          drawer: Drawer(),
+          drawer: Drawer(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                SizedBox(
+                  height: 40,
+                ),
+                ListTile(
+                  leading: Icon(Icons.account_circle),
+                  title: Text('Account Info'),
+                  onTap: () {
+                    GoRouter.of(context)
+                        .pushNamed(AppRouteConst.accountInfoRoute);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.logout),
+                  title: Text('Logout'),
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
           appBar: AppBar(
             foregroundColor: Colors.blue.shade800,
             actions: [
-              IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
               IconButton(
                   onPressed: () {
                     GoRouter.of(context)
                         .pushNamed(AppRouteConst.transactionListRoute);
                   },
-                  icon: Icon(Icons.list_alt))
+                  icon: Icon(
+                    Icons.note,
+                    size: 35,
+                  )),
+              IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.notifications,
+                    size: 35,
+                  )),
+              SizedBox(
+                width: 10,
+              ),
             ],
           ),
           body: SingleChildScrollView(
@@ -219,10 +254,11 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
                       TextButton(
                           onPressed: () {
                             showModalBottomSheet(
+                              isScrollControlled: false,
                               context: context,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(25.0)),
+                                    top: Radius.circular(5)),
                               ),
                               builder: (context) {
                                 return ServiceListBottomSheet();
@@ -314,8 +350,10 @@ class _RetailHomeScreenState extends State<RetailHomeScreen>
               size: 40,
             ),
             style: ElevatedButton.styleFrom(
+              elevation: 20,
+              shadowColor: Colors.blue.shade900,
               foregroundColor: Colors.white,
-              backgroundColor: Colors.blue.shade600,
+              backgroundColor: Colors.blue.shade800,
               shape: CircleBorder(),
               padding: EdgeInsets.all(15),
             ),
