@@ -141,7 +141,7 @@ class _PromptScreenState extends State<PromptScreen> {
                   await _storeData();
                   if (selectedUserType == 'corporate') {
                     GoRouter.of(context)
-                        .pushNamed(AppRouteConst.verifyNumberRoute);
+                        .pushNamed(AppRouteConst.corporatePromptRoute);
                   } else {
                     if (selectedUserType == 'retail') {
                       final prefs = await SharedPreferences.getInstance();

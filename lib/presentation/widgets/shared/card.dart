@@ -96,8 +96,8 @@ class _WalletCardState extends State<WalletCard> {
                     Center(
                       child: Text(
                         widget.isBalanceVisible
-                            ? '₹ ${state.balance}'
-                            : '*****',
+                            ? 'KWD ${state.balance}'
+                            : 'KWD *****',
                         style: TextStyle(
                             fontSize: 40,
                             color: Colors.white,
@@ -221,7 +221,7 @@ class _WalletCardState extends State<WalletCard> {
                   ),
                   Center(
                     child: Text(
-                      '*****',
+                      'KWD *****',
                       style: TextStyle(
                           fontSize: 40,
                           color: Colors.white,
@@ -330,7 +330,7 @@ class _WalletCardState extends State<WalletCard> {
                               color: Colors.grey.shade200,
                               child: Center(
                                   child: Text(
-                                '123',
+                                widget.isAuthenticated ? '123' : '###',
                                 style: GoogleFonts.merienda(fontSize: 12),
                               )),
                             )

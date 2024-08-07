@@ -136,7 +136,8 @@ class MyAppView extends StatelessWidget {
     return BlocBuilder<LocalizationBloc, LocalizationState>(
       builder: (context, state) {
         final router = GoRouter(
-          initialLocation: isLoggedIn ? '/login' : '/',
+          // initialLocation: isLoggedIn ? '/login' : '/',
+          initialLocation: '/',
           routes: AppRouter.routes,
         );
         return MaterialApp.router(

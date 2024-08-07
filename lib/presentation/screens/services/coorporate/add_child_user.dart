@@ -1,8 +1,11 @@
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:ewallet2/shared/config/api_config.dart';
+import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import '../../../../shared/country_code.dart';
@@ -24,6 +27,8 @@ class _CreateChildUserScreenState extends State<CreateChildUserScreen> {
   String _selectedCountryDialCode = '+91';
 
   Future<void> _createChildUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? jwt_token = prefs.getString('jwt_token');
     final String apiUrl = Config.add_user_child;
     final number = _selectedCountryDialCode + _numberController.text;
     print(number);
@@ -37,8 +42,7 @@ class _CreateChildUserScreenState extends State<CreateChildUserScreen> {
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyODEiLCJleHAiOjE3MjI5MzMyODQsImlzcyI6IkFaZVdhbGxldCJ9.TgQ_p5PltDgyMqrMVlJfIlnTX8_sxiF_R2C7jY5kqUs',
+          'Authorization': 'Bearer $jwt_token',
           'Content-Type': 'application/json',
         },
         body: json.encode({
@@ -49,7 +53,14 @@ class _CreateChildUserScreenState extends State<CreateChildUserScreen> {
       print(response.body);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-
+        if (responseData["status"] == 'success') {
+          GoRouter.of(context).pushNamed(AppRouteConst.viewChildCardRoute);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text(responseData["message"]),
+          ));
+        }
         setState(() {
           _successMessage = responseData['message'];
           _isLoading = false;

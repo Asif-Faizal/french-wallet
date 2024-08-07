@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class ChildUsersScreen extends StatefulWidget {
   @override
   _ChildUsersScreenState createState() => _ChildUsersScreenState();
@@ -21,29 +23,36 @@ class _ChildUsersScreenState extends State<ChildUsersScreen> {
   }
 
   Future<void> _fetchChildUsers() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? jwt_token = prefs.getString('jwt_token');
     final String apiUrl = Config.list_chil_users;
-    final String bearerToken =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyODEiLCJleHAiOjE3MjI5MzMyODQsImlzcyI6IkFaZVdhbGxldCJ9.TgQ_p5PltDgyMqrMVlJfIlnTX8_sxiF_R2C7jY5kqUs';
 
     try {
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
-          'Authorization': 'Bearer $bearerToken',
+          'Authorization': 'Bearer $jwt_token',
         },
       );
-
+      print(response.body);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
 
-        setState(() {
-          _childUsers = List<Map<String, dynamic>>.from(responseData['data']
-              .map((user) => {
-                    'message': user['message'],
-                    'mobile_no': user['mobile_no']
-                  }));
-          _isLoading = false;
-        });
+        if (responseData['data'] != null) {
+          setState(() {
+            _childUsers = List<Map<String, dynamic>>.from(responseData['data']
+                .map((user) => {
+                      'message': user['message'],
+                      'mobile_no': user['mobile_no']
+                    }));
+            _isLoading = false;
+          });
+        } else {
+          setState(() {
+            _errorMessage = 'No child users found';
+            _isLoading = false;
+          });
+        }
       } else {
         setState(() {
           _errorMessage = 'Failed to load data';
