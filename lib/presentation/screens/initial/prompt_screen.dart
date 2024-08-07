@@ -5,7 +5,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/prompt/cirlcleavatar_selector.dart';
-import '../../widgets/shared/normal_button.dart';
 import 'package:go_router/go_router.dart';
 
 class PromptScreen extends StatefulWidget {
@@ -41,7 +40,7 @@ class _PromptScreenState extends State<PromptScreen> {
           child: Column(
             children: [
               SizedBox(
-                height: size.height / 8,
+                height: size.height / 10,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -69,7 +68,7 @@ class _PromptScreenState extends State<PromptScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: size.height / 8),
+              SizedBox(height: size.height / 10),
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -82,84 +81,79 @@ class _PromptScreenState extends State<PromptScreen> {
                 ),
               ),
               SizedBox(height: size.height / 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              Column(
                 children: [
-                  CircleAvatarSelector(
-                    userType: 'retail',
-                    selectedUserType: selectedUserType,
-                    onSelect: (userType) {
-                      setState(() {
-                        selectedUserType = userType;
-                      });
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CircleAvatarSelector(
+                        userType: 'RETAIL',
+                        selectedUserType: selectedUserType,
+                        onSelect: (userType) async {
+                          setState(() {
+                            selectedUserType = userType;
+                          });
+                          await _storeData();
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('userType', selectedUserType!);
+                          GoRouter.of(context)
+                              .pushNamed(AppRouteConst.verifyNumberRoute);
+                        },
+                      ),
+                      CircleAvatarSelector(
+                        userType: 'MERCHANT',
+                        selectedUserType: selectedUserType,
+                        onSelect: (userType) async {
+                          setState(() {
+                            selectedUserType = userType;
+                          });
+                          await _storeData();
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('userType', selectedUserType!);
+                          GoRouter.of(context)
+                              .pushNamed(AppRouteConst.verifyNumberRoute);
+                        },
+                      ),
+                    ],
                   ),
-                  CircleAvatarSelector(
-                    userType: 'merchant',
-                    selectedUserType: selectedUserType,
-                    onSelect: (userType) {
-                      setState(() {
-                        selectedUserType = userType;
-                      });
-                    },
+                  SizedBox(
+                    height: size.height / 20,
                   ),
-                  CircleAvatarSelector(
-                    userType: 'agent',
-                    selectedUserType: selectedUserType,
-                    onSelect: (userType) {
-                      setState(() {
-                        selectedUserType = userType;
-                      });
-                    },
-                  ),
-                  CircleAvatarSelector(
-                    userType: 'corporate',
-                    selectedUserType: selectedUserType,
-                    onSelect: (userType) {
-                      setState(() {
-                        selectedUserType = userType;
-                      });
-                    },
-                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CircleAvatarSelector(
+                        userType: 'AGENT',
+                        selectedUserType: selectedUserType,
+                        onSelect: (userType) async {
+                          setState(() {
+                            selectedUserType = userType;
+                          });
+                          await _storeData();
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('userType', selectedUserType!);
+                          GoRouter.of(context)
+                              .pushNamed(AppRouteConst.verifyNumberRoute);
+                        },
+                      ),
+                      CircleAvatarSelector(
+                        userType: 'CORPORATE',
+                        selectedUserType: selectedUserType,
+                        onSelect: (userType) async {
+                          setState(() {
+                            selectedUserType = userType;
+                          });
+                          await _storeData();
+                          GoRouter.of(context)
+                              .pushNamed(AppRouteConst.corporatePromptRoute);
+                        },
+                      ),
+                    ],
+                  )
                 ],
               ),
             ],
           ),
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(
-            bottom: size.height / 40,
-            left: size.width / 15,
-            right: size.width / 15),
-        child: NormalButton(
-          size: size,
-          title: AppLocalizations.of(context)!.proceed,
-          onPressed: selectedUserType != null
-              ? () async {
-                  print(selectedUserType);
-                  await _storeData();
-                  if (selectedUserType == 'corporate') {
-                    GoRouter.of(context)
-                        .pushNamed(AppRouteConst.corporatePromptRoute);
-                  } else {
-                    if (selectedUserType == 'retail') {
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString('userType', selectedUserType!);
-                    } else if (selectedUserType == 'merchant') {
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString('userType', selectedUserType!);
-                    } else if (selectedUserType == 'agent') {
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString('userType', selectedUserType!);
-                    }
-                    GoRouter.of(context)
-                        // .pushNamed(AppRouteConst.loginRoute);
-                        .pushNamed(AppRouteConst.merchantHomeRoute);
-                    // .pushNamed(AppRouteConst.sentOtpSignInRoute);
-                  }
-                }
-              : null,
         ),
       ),
     );

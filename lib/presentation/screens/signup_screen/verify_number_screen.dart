@@ -3,6 +3,7 @@ import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../widgets/shared/normal_appbar.dart';
 
@@ -38,7 +39,8 @@ class VerifyNumber extends StatelessWidget {
               Center(
                 child: Text(
                   AppLocalizations.of(context)!.verify_number_heading,
-                  style: theme.textTheme.displayMedium,
+                  style: GoogleFonts.manrope(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -46,24 +48,16 @@ class VerifyNumber extends StatelessWidget {
               Center(
                 child: Text(
                   AppLocalizations.of(context)!.sms_charges,
-                  style: theme.textTheme.bodyLarge,
+                  style: GoogleFonts.manrope(),
                   textAlign: TextAlign.start,
                 ),
               ),
               Center(
                 child: Text(
                   AppLocalizations.of(context)!.thanks_for_using,
-                  style: theme.textTheme.bodyLarge,
+                  style: GoogleFonts.manrope(),
                   textAlign: TextAlign.start,
                 ),
-              ),
-              SizedBox(
-                height: size.height / 60,
-              ),
-              Text(
-                AppLocalizations.of(context)!.click_to_verify,
-                style: theme.textTheme.bodyMedium,
-                textAlign: TextAlign.center,
               ),
             ],
           ),

@@ -1,31 +1,31 @@
-import 'dart:convert';
-import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import 'package:ewallet2/presentation/bloc/sent_otp/sent_otp_bloc.dart';
+import 'package:ewallet2/presentation/bloc/sent_otp/sent_otp_state.dart';
+import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import '../../../shared/config/api_config.dart';
-import '../../../shared/country_code.dart';
-import '../../widgets/shared/normal_appbar.dart';
-import '../../widgets/shared/otp_bottom_sheet.dart';
+import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import '../../bloc/login/login_bloc.dart';
+import '../../bloc/login/login_event.dart';
+import '../../bloc/login/login_state.dart';
+import '../../bloc/sent_otp/sent_otp_event.dart';
 
 class SentOtpSignInScreen extends StatefulWidget {
   const SentOtpSignInScreen({super.key});
 
   @override
-  _SentOtpSignInState createState() => _SentOtpSignInState();
+  _SentOtpSignInScreenState createState() => _SentOtpSignInScreenState();
 }
 
-class _SentOtpSignInState extends State<SentOtpSignInScreen> {
+class _SentOtpSignInScreenState extends State<SentOtpSignInScreen> {
   final TextEditingController _phoneController = TextEditingController();
   PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'IN');
   String _userType = '';
   bool _isButtonEnabled = false;
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  final List<Map<String, String>> _countryCodes = CountryCode.countryCodes;
-  String _selectedCountryDialCode = '+91';
 
   @override
   void initState() {
@@ -42,66 +42,281 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
   }
 
   Future<void> _retrieveData() async {
-    final SharedPreferences prefs = await _prefs;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _userType = prefs.getString('userType') ?? 'default_value';
     });
   }
 
   void _validatePhoneNumber() {
-    final isValid = _phoneController.text.isNotEmpty;
     setState(() {
-      _isButtonEnabled = isValid;
-      _phoneNumber = PhoneNumber(
-        phoneNumber: _phoneController.text,
-        isoCode: _selectedCountryDialCode,
-      );
+      _isButtonEnabled = _phoneController.text.length >= 1;
     });
   }
 
-  void _showOtpBottomSheet(BuildContext context, String mobile) {
+  void _showOtpBottomSheet(BuildContext context) {
     final size = MediaQuery.of(context).size;
     showModalBottomSheet(
       useSafeArea: false,
       enableDrag: true,
+      isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       context: context,
       builder: (BuildContext context) {
         return OtpBottomSheet(
-          number: mobile,
+          number: _phoneNumber.phoneNumber ?? '',
           userType: _userType,
           size: size,
-          navigateTo: AppRouteConst.identityVerifyRoute,
         );
       },
     );
   }
 
-  void _showCountryCodePicker() async {
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Select Country Code'),
-          content: SingleChildScrollView(
+  void _showErrorDialog(BuildContext context, String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    });
+  }
+
+  void _showLoadingDialog(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return Dialog(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(width: 16),
+                  Text('Loading...'),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }
+
+  void _onLoginButtonPressed() {
+    if (_phoneController.text.isNotEmpty) {
+      BlocProvider.of<SentOtpBloc>(context).add(SendOtp(_phoneController.text));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return BlocConsumer<SentOtpBloc, SentOtpState>(
+      listener: (context, state) {
+        if (state is SentOtpSuccess) {
+          Navigator.of(context, rootNavigator: true).pop();
+          _showOtpBottomSheet(context);
+        } else if (state is SentOtpLoading) {
+          _showLoadingDialog(context);
+        } else if (state is SentOtpFailure) {
+          Navigator.of(context, rootNavigator: true).pop();
+          _showErrorDialog(context, state.message);
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          appBar: NormalAppBar(text: ''),
+          body: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InternationalPhoneNumberInput(
+                    onInputChanged: (PhoneNumber number) {
+                      setState(() {
+                        _phoneNumber = number;
+                      });
+                    },
+                    onInputValidated: (bool value) {},
+                    selectorConfig: const SelectorConfig(
+                      selectorType: PhoneInputSelectorType.DROPDOWN,
+                    ),
+                    ignoreBlank: false,
+                    selectorTextStyle: Theme.of(context).textTheme.bodyLarge,
+                    textStyle: Theme.of(context).textTheme.bodyLarge,
+                    initialValue: _phoneNumber,
+                    textFieldController: _phoneController,
+                    formatInput: true,
+                    maxLength: 10,
+                    keyboardType: TextInputType.number,
+                    inputDecoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)?.mobile_number,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide: const BorderSide(
+                          color: Colors.black,
+                          width: 2.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                NormalButton(
+                  title: 'Continue',
+                  onPressed: _isButtonEnabled ? _onLoginButtonPressed : null,
+                  size: size,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class OtpBottomSheet extends StatefulWidget {
+  const OtpBottomSheet({
+    Key? key,
+    required this.number,
+    required this.userType,
+    required this.size,
+  }) : super(key: key);
+
+  final String number;
+  final String userType;
+  final Size size;
+
+  @override
+  _OtpBottomSheetState createState() => _OtpBottomSheetState();
+}
+
+class _OtpBottomSheetState extends State<OtpBottomSheet> {
+  late List<TextEditingController> _controllers;
+  late List<FocusNode> _focusNodes;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = List.generate(6, (index) => TextEditingController());
+    _focusNodes = List.generate(6, (index) => FocusNode());
+  }
+
+  @override
+  void dispose() {
+    for (int i = 0; i < 6; i++) {
+      _controllers[i].dispose();
+      _focusNodes[i].dispose();
+    }
+    super.dispose();
+  }
+
+  void _login() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('number', widget.number);
+    prefs.setBool('isLoggedIn', true);
+    final password = _controllers.map((controller) => controller.text).join();
+    BlocProvider.of<LoginBloc>(context).add(
+      LoginSubmitted(
+        password: password,
+        mobile: widget.number,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state is LoginSuccess) {
+          Navigator.of(context).pop();
+          GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
+        } else if (state is LoginError) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text(state.message),
+          ));
+        } else if (state is LoginLoading) {
+          _showLoadingDialog(context);
+        }
+      },
+      builder: (context, state) {
+        return SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              left: 16.0,
+              right: 16.0,
+              top: 16.0,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: _countryCodes.map((country) {
-                return ListTile(
-                  leading: Text(
-                    country['flag']!,
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  title: Text('${country['name']} (${country['dialCode']})'),
-                  onTap: () {
-                    setState(() {
-                      _selectedCountryDialCode = country['dialCode']!;
-                    });
-                    Navigator.pop(context);
-                  },
-                );
-              }).toList(),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Enter Passcode for ${widget.number}',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                SizedBox(height: widget.size.height / 30),
+                Text(
+                  'Passcode',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                SizedBox(height: widget.size.height / 80),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(6, (index) {
+                    return SizedBox(
+                      width: 50,
+                      child: TextField(
+                        controller: _controllers[index],
+                        focusNode: _focusNodes[index],
+                        textAlign: TextAlign.center,
+                        keyboardType: TextInputType.number,
+                        maxLength: 1,
+                        decoration: InputDecoration(
+                          counter: Offstage(),
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          if (value.length == 1 && index < 5) {
+                            _focusNodes[index].unfocus();
+                            FocusScope.of(context)
+                                .requestFocus(_focusNodes[index + 1]);
+                          }
+                        },
+                      ),
+                    );
+                  }),
+                ),
+                SizedBox(height: widget.size.height / 20),
+                NormalButton(
+                  size: widget.size,
+                  title: 'Login',
+                  onPressed: _login,
+                ),
+                SizedBox(height: widget.size.height / 20),
+              ],
             ),
           ),
         );
@@ -109,140 +324,22 @@ class _SentOtpSignInState extends State<SentOtpSignInScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: NormalAppBar(
-        text: AppLocalizations.of(context)!.sign_in,
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: size.height / 30,
-          horizontal: size.width / 20,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: size.height / 20),
-            Text(
-              AppLocalizations.of(context)!.enter_number_to_register,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            SizedBox(height: size.height / 40),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: _showCountryCodePicker,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Text(
-                      _selectedCountryDialCode,
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: _phoneController,
-                    decoration: InputDecoration(
-                      labelText: 'Phone Number',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.phone,
-                    onChanged: (value) {
-                      setState(() {
-                        _phoneNumber = PhoneNumber(
-                          phoneNumber: value,
-                          isoCode: _selectedCountryDialCode,
-                        );
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const Spacer(),
-            NormalButton(
-              size: size,
-              title: AppLocalizations.of(context)!.validate_num,
-              onPressed: _isButtonEnabled
-                  ? () async {
-                      final mobile =
-                          _selectedCountryDialCode + _phoneController.text;
-                      final status = await sentOtpMobile(mobile);
-                      if (status == 'Success') {
-                        _showOtpBottomSheet(context, mobile);
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        await prefs.setString('phoneNumber', mobile);
-                      }
-                    }
-                  : null,
-            ),
-            SizedBox(height: size.height / 40),
-          ],
-        ),
-      ),
+  void _showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text('Loading...'),
+            ],
+          ),
+        );
+      },
     );
-  }
-
-  Future<String> sentOtpMobile(String mobile) async {
-    final Map<String, String> headers = {
-      'X-Password': Config.password,
-      'X-Username': Config.username,
-      'Appversion': Config.appVersion,
-      'Content-Type': 'application/json',
-      'Deviceid': Config.deviceId,
-    };
-    final Map<String, String> body = {
-      'mobile': mobile,
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(Config.sent_mobile_otp_url),
-        headers: headers,
-        body: jsonEncode(body),
-      );
-      final responseData = jsonDecode(response.body);
-      final message = responseData["message"];
-      print(response.body);
-      if (response.statusCode == 200) {
-        final status = responseData["status"];
-        if (status == 'Success') {
-          return status;
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(message),
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.red,
-          ));
-          return 'Fail';
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Failed with status code: ${response.statusCode}'),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.red,
-        ));
-        return 'Error';
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(e.toString()),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.red,
-      ));
-      return 'Error';
-    }
   }
 }

@@ -126,6 +126,19 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen>
           ),
           appBar: AppBar(
             foregroundColor: Colors.blue.shade800,
+            leading: Builder(
+              builder: (context) {
+                return IconButton(
+                  icon: Icon(
+                    Icons.notes_outlined,
+                    size: 35,
+                  ),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                );
+              },
+            ),
             actions: [
               IconButton(
                   onPressed: () {
@@ -133,13 +146,13 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen>
                         .pushNamed(AppRouteConst.transactionListRoute);
                   },
                   icon: Icon(
-                    Icons.note,
+                    Icons.receipt_long_rounded,
                     size: 35,
                   )),
               IconButton(
                   onPressed: () {},
                   icon: Icon(
-                    Icons.notifications,
+                    Icons.notifications_outlined,
                     size: 35,
                   )),
               SizedBox(

@@ -21,19 +21,19 @@ class CircleAvatarSelector extends StatelessWidget {
     String text;
 
     switch (userType) {
-      case 'retail':
-        iconData = Icons.person;
+      case 'RETAIL':
+        iconData = Icons.shopping_cart;
         text = AppLocalizations.of(context)!.retail;
         break;
-      case 'merchant':
-        iconData = Icons.person_4;
+      case 'MERCHANT':
+        iconData = Icons.store;
         text = AppLocalizations.of(context)!.merchant;
         break;
-      case 'agent':
-        iconData = Icons.security;
+      case 'AGENT':
+        iconData = Icons.person;
         text = AppLocalizations.of(context)!.agent;
         break;
-      case 'corporate':
+      case 'CORPORATE':
         iconData = Icons.apartment;
         text = AppLocalizations.of(context)!.corporate;
         break;
