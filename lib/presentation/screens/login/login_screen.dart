@@ -396,9 +396,8 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
         throw Exception('Failed to login');
       }
     } catch (error) {
-      Navigator.of(context)
-          .pop(); // Dismiss the loading dialog in case of error
-      rethrow; // Propagate the error
+      Navigator.of(context).pop();
+      rethrow;
     }
   }
 
