@@ -20,6 +20,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
   bool _isButtonEnabled = false;
   bool _isLoading = false;
   String? _selectedItems;
+  String? _number;
   String _userPin = '';
 
   @override
@@ -33,6 +34,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _selectedItems = prefs.getString('selected_value');
+      _number = prefs.getString('money_number');
     });
   }
 
@@ -60,7 +62,6 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
   }
 
   Future<void> _handleSubmit() async {
-    // Show bottom sheet for user_pin
     await _showPinBottomSheet();
 
     if (_userPin.length != 4) {
@@ -121,8 +122,10 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
             SnackBar(content: Text(retryMessage)),
           );
           GoRouter.of(context).pushNamed(AppRouteConst.errorAnimationRoute);
+          prefs.remove('money_number');
         } else if (retryStatus == 'Success') {
           GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
+          prefs.remove('money_number');
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -130,6 +133,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
               content: Text('Failed to refresh token. Please log in again.')),
         );
         GoRouter.of(context).pushNamed(AppRouteConst.loginRoute);
+        prefs.remove('money_number');
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -146,7 +150,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
         'Authorization': 'Bearer $token',
       },
       body: json.encode({
-        'mobile': widget.phoneNumber,
+        'mobile': _number,
         'currency': 'KWD',
         'amount': double.parse(_amountController.text),
         'user_pin': _userPin,

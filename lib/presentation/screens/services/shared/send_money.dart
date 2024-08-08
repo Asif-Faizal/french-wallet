@@ -439,9 +439,12 @@ class _RetailSentScreenState extends State<RetailSentScreen> {
         child: NormalButton(
           title: 'Proceed',
           onPressed: _isButtonEnabled
-              ? () {
+              ? () async {
                   final phoneNumber =
                       '$_selectedCountryDialCode${_phoneController.text}';
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  await prefs.setString('money_number', phoneNumber);
                   _checkMobileForTransaction(phoneNumber);
                 }
               : null,

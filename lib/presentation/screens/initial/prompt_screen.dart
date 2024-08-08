@@ -145,7 +145,7 @@ class _PromptScreenState extends State<PromptScreen> {
                           });
                           await _storeData();
                           GoRouter.of(context)
-                              .pushNamed(AppRouteConst.setPassCodeRoute);
+                              .pushNamed(AppRouteConst.retailHomeRoute);
                         },
                       ),
                     ],
