@@ -140,7 +140,7 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
             } else if (state is PasscodeSuccess) {
               _hideLoadingDialog();
               GoRouter.of(context)
-                  .pushNamed(AppRouteConst.completedAnimationRoute);
+                  .pushNamed(AppRouteConst.setTransactionPinRoute);
             } else if (state is PasscodeFailure) {
               _hideLoadingDialog();
               ScaffoldMessenger.of(context)
