@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ewallet2/shared/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
@@ -75,8 +76,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
       _isLoading = true;
     });
 
-    final String apiUrl =
-        "https://api-innovitegra.online/bank_accounts/Send_money/send_money_to_user";
+    final String apiUrl = Config.sent_money;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String jwtToken = prefs.getString('jwt_token') ?? '';
     final String refreshToken = prefs.getString('refresh_token') ?? '';
@@ -160,8 +160,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
   }
 
   Future<Map<String, dynamic>?> _refreshToken(String refreshToken) async {
-    final String refreshTokenUrl =
-        "https://api-innovitegra.online/login/refresh_token";
+    final String refreshTokenUrl = Config.refresh_token;
 
     final response = await http.post(
       Uri.parse(refreshTokenUrl),

@@ -218,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: NormalAppBar(text: ''),
+      appBar: NormalAppBar(text: 'Login'),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
