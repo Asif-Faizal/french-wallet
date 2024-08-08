@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
@@ -9,14 +11,14 @@ import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 
 import '../../../data/checkmobile/checkmobile_datasource.dart';
 import '../../../data/checkmobile/checkmobile_repo_impl.dart';
+import '../../../data/login/login_model.dart';
 import '../../../domain/checkmobile/checkmobile.dart';
+import '../../../shared/config/api_config.dart';
 import '../../../shared/country_code.dart';
 import '../../bloc/checkmobile/checkmobile_bloc.dart';
 import '../../bloc/checkmobile/checkmobile_event.dart';
 import '../../bloc/checkmobile/checkmobile_state.dart';
-import '../../bloc/login/login_bloc.dart';
-import '../../bloc/login/login_event.dart';
-import '../../bloc/login/login_state.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -205,7 +207,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void _onLoginButtonPressed() {
     final number = _selectedCountryDialCode + _phoneController.text;
     if (_phoneController.text.isNotEmpty) {
+      _phoneNumber = PhoneNumber(isoCode: 'IN', phoneNumber: number);
       _CheckMobileBloc.add(CheckMobileEvent(mobile: number));
+      print('Phone number set: ${_phoneNumber.phoneNumber}');
     }
   }
 
@@ -342,97 +346,125 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
     super.dispose();
   }
 
-  void _login() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('number', widget.number);
-    final password = _controllers.map((controller) => controller.text).join();
-    BlocProvider.of<LoginBloc>(context).add(
-      LoginSubmitted(
-        password: password,
-        mobile: widget.number,
-      ),
-    );
+  String _getPasscode() {
+    return _controllers.map((controller) => controller.text).join();
+  }
+
+  Future<LoginResponse> login(String number, String passcode) async {
+    _showLoadingDialog(context);
+
+    try {
+      final response = await http.post(
+        Uri.parse(Config.login),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'X-Password': Config.password,
+          'X-Username': Config.username,
+          'Appversion': Config.appVersion,
+          'Deviceid': Config.deviceId,
+        },
+        body: jsonEncode({"mobile": number, "password": passcode}),
+      );
+
+      Navigator.of(context).pop();
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final status = responseData["status"];
+        final message = responseData["message"];
+        final jwt_token = responseData["jwt_token"];
+        final refresh_token = responseData["refresh_token"];
+        final user_type = responseData["user_type"];
+
+        print(response.body);
+        if (status == 'Fail') {
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setBool('isLoggedIn', false);
+          throw Exception(message);
+        } else if (status == 'Success') {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isLoggedIn', true);
+          await prefs.setString('jwt_token', jwt_token);
+          await prefs.setString('refresh_token', refresh_token);
+          await prefs.setString('userType', user_type);
+          print(user_type);
+          GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
+          return LoginResponse.fromJson(responseData);
+        }
+        return LoginResponse.fromJson(responseData);
+      } else {
+        throw Exception('Failed to login');
+      }
+    } catch (error) {
+      Navigator.of(context)
+          .pop(); // Dismiss the loading dialog in case of error
+      rethrow; // Propagate the error
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LoginBloc, LoginState>(
-      listener: (context, state) {
-        if (state is LoginSuccess) {
-          Navigator.of(context).pop();
-          GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
-        } else if (state is LoginError) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.red,
-            content: Text(state.message),
-          ));
-        } else if (state is LoginLoading) {
-          _showLoadingDialog(context);
-        }
-      },
-      builder: (context, state) {
-        return SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              left: 16.0,
-              right: 16.0,
-              top: 16.0,
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          left: 16.0,
+          right: 16.0,
+          top: 16.0,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Enter Passcode for ${widget.number}',
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Enter Passcode for ${widget.number}',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                SizedBox(height: widget.size.height / 30),
-                Text(
-                  'Passcode',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                SizedBox(height: widget.size.height / 80),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(6, (index) {
-                    return SizedBox(
-                      width: 50,
-                      child: TextField(
-                        controller: _controllers[index],
-                        focusNode: _focusNodes[index],
-                        textAlign: TextAlign.center,
-                        keyboardType: TextInputType.number,
-                        maxLength: 1,
-                        decoration: InputDecoration(
-                          counter: Offstage(),
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          if (value.length == 1 && index < 5) {
-                            _focusNodes[index].unfocus();
-                            FocusScope.of(context)
-                                .requestFocus(_focusNodes[index + 1]);
-                          }
-                        },
-                      ),
-                    );
-                  }),
-                ),
-                SizedBox(height: widget.size.height / 20),
-                NormalButton(
-                  size: widget.size,
-                  title: 'Login',
-                  onPressed: _login,
-                ),
-                SizedBox(height: widget.size.height / 20),
-              ],
+            SizedBox(height: widget.size.height / 30),
+            Text(
+              'Passcode',
+              style: Theme.of(context).textTheme.bodySmall,
             ),
-          ),
-        );
-      },
+            SizedBox(height: widget.size.height / 80),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(6, (index) {
+                return SizedBox(
+                  width: 50,
+                  child: TextField(
+                    controller: _controllers[index],
+                    focusNode: _focusNodes[index],
+                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.number,
+                    maxLength: 1,
+                    decoration: InputDecoration(
+                      counter: Offstage(),
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      if (value.length == 1 && index < 5) {
+                        _focusNodes[index].unfocus();
+                        FocusScope.of(context)
+                            .requestFocus(_focusNodes[index + 1]);
+                      }
+                    },
+                  ),
+                );
+              }),
+            ),
+            SizedBox(height: widget.size.height / 20),
+            NormalButton(
+              size: widget.size,
+              title: 'Login',
+              onPressed: () {
+                final passcode = _getPasscode();
+                login(widget.number, passcode);
+              },
+            ),
+            SizedBox(height: widget.size.height / 20),
+          ],
+        ),
+      ),
     );
   }
 

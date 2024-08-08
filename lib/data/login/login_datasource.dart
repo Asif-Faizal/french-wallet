@@ -11,18 +11,19 @@ abstract class LoginDataSource {
 class LoginDataSourceImpl implements LoginDataSource {
   @override
   Future<LoginResponse> login(String mobile, String password) async {
-    final response = await http.post(
-      Uri.parse(Config.login),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'X-Password': Config.password,
-        'X-Username': Config.username,
-        'Appversion': Config.appVersion,
-        'Deviceid': Config.deviceId,
-      },
-      body:
-          jsonEncode(LoginRequest(mobile: mobile, password: password).toJson()),
-    );
+    final response =
+        await http.post(Uri.parse(Config.login), headers: <String, String>{
+      'Content-Type': 'application/json',
+      'X-Password': Config.password,
+      'X-Username': Config.username,
+      'Appversion': Config.appVersion,
+      'Deviceid': Config.deviceId,
+    }, body: {
+      "mobile": "+916666666666",
+      "password": "111111"
+      //"user_type":"MERCHANT" //RETAIL/CORPORATE,AGENT
+      // "user_type":"CORPORATE"
+    });
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
@@ -32,8 +33,7 @@ class LoginDataSourceImpl implements LoginDataSource {
       final refresh_token = responseData["refresh_token"];
       final user_type = responseData["user_type"];
 
-      print(
-          '===========================================================================================================================================$response.body');
+      print((response.body));
       if (status == 'Fail') {
         final prefs = await SharedPreferences.getInstance();
         prefs.setBool('isLoggedIn', false);
@@ -41,7 +41,7 @@ class LoginDataSourceImpl implements LoginDataSource {
         throw Exception(message);
       } else if (status == 'Success') {
         final prefs = await SharedPreferences.getInstance();
-        prefs.setBool('isLoggedIn', true);
+        await prefs.setBool('isLoggedIn', true);
         await prefs.setString('jwt_token', jwt_token);
         await prefs.setString('refresh_token', refresh_token);
         await prefs.setString('userType', user_type);
