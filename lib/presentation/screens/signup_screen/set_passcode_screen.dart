@@ -92,32 +92,28 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
       industryType = prefs.getString('industryType');
       docId = prefs.getString('docId');
     });
-    print('User Type: $userType');
-    print('Phone Number: $phoneNumber');
-    print('ID Number: $idNumber');
-    print('ID Image Front: $idImageFront');
-    print('ID Image Back: $idImageBack');
-    print('Selfie Image: $selfieImage');
-    print('First Name: $firstName');
-    print('Full Name: $fullName');
-    print('Gender: $gender');
-    print('DOB: $dob');
-    print('Nationality: $nationality');
-    print('Address: $address');
-    print('Email: $email');
-    print('PAN Number: $panNumber');
-    print('Business Name: $businessName');
-    print('TIN Number: $tinNumber');
-    print('Turnover: $turnover');
-    print('Company Building: $companyBuilding');
-    print('Company City: $companyCity');
-    print('Company PinCode: $companyPincode');
-    print('Company Website: $companyWebsite');
-    print('Company Mail: $companyMail');
-    print('Company Phone: $companyPhone');
-    print('Business Type: $businessType');
-    print('Industry Type: $industryType');
-    print('DIC ID: $docId');
+  }
+
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text('Setting Passcode...')
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _hideLoadingDialog() {
+    Navigator.of(context).pop();
   }
 
   @override
@@ -139,11 +135,14 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
         create: (context) => SetPasscodeBloc(),
         child: BlocListener<SetPasscodeBloc, SetPasscodeState>(
           listener: (context, state) {
-            if (state is PasscodeSuccess) {
+            if (state is PasscodeLoading) {
+              _showLoadingDialog();
+            } else if (state is PasscodeSuccess) {
+              _hideLoadingDialog();
               GoRouter.of(context)
                   .pushNamed(AppRouteConst.completedAnimationRoute);
             } else if (state is PasscodeFailure) {
-              // Show error message
+              _hideLoadingDialog();
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(state.message)));
             }
@@ -184,24 +183,21 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
                       }),
                     ),
                     const SizedBox(height: 40),
-                    state is PasscodeLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : NormalButton(
-                            size: MediaQuery.of(context).size,
-                            title: 'Set Passcode',
-                            onPressed: () {
-                              final passcode = _passcodeControllers
-                                  .map((controller) => controller.text)
-                                  .join('');
-                              final confirmPasscode =
-                                  _confirmPasscodeControllers
-                                      .map((controller) => controller.text)
-                                      .join('');
-                              context.read<SetPasscodeBloc>().add(PasscodeSet(
-                                  passcode: passcode,
-                                  confirmPasscode: confirmPasscode));
-                            },
-                          ),
+                    NormalButton(
+                      size: MediaQuery.of(context).size,
+                      title: 'Set Passcode',
+                      onPressed: () {
+                        final passcode = _passcodeControllers
+                            .map((controller) => controller.text)
+                            .join('');
+                        final confirmPasscode = _confirmPasscodeControllers
+                            .map((controller) => controller.text)
+                            .join('');
+                        context.read<SetPasscodeBloc>().add(PasscodeSet(
+                            passcode: passcode,
+                            confirmPasscode: confirmPasscode));
+                      },
+                    ),
                   ],
                 ),
               );
