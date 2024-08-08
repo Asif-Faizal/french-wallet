@@ -296,11 +296,15 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
   void _saveForm() async {
     if (_formKey.currentState!.validate()) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      final dobYear = _selectedDate.year;
+      final dobMonth = _selectedDate.month;
+      final dobDay = _selectedDate.day;
+      final String dob = '$dobYear-$dobMonth,$dobDay';
       await prefs.setString('firstName', _firstNameController.text);
       await prefs.setString('fullName',
           '${_firstNameController.text} ${_lastNameController.text}');
       await prefs.setString('gender', _gender);
-      await prefs.setString('dob', _selectedDate.toString());
+      await prefs.setString('dob', dob);
       await prefs.setString('nationality', _nationalityController.text);
       GoRouter.of(context).pushNamed(AppRouteConst.addressDetailsRoute);
     } else {

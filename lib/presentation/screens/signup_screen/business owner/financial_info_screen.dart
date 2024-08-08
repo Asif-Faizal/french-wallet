@@ -71,32 +71,17 @@ class _FinancialInfoScreenState extends State<FinancialInfoScreen> {
             TextField(
               controller: _tinController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'TIN Number',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              decoration: _getInputDecoration('TIN Number'),
             ),
             SizedBox(height: size.height / 40),
             TextField(
               controller: _panController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'PAN Number',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              decoration: _getInputDecoration('PAN Number'),
             ),
             SizedBox(height: size.height / 40),
             DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                labelText: 'Annual Turnover',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              decoration: _getInputDecoration('Annual Turnover'),
               value: _selectedTurnover,
               items: _turnoverOptions
                   .map((turnover) => DropdownMenuItem<String>(
@@ -118,33 +103,18 @@ class _FinancialInfoScreenState extends State<FinancialInfoScreen> {
             SizedBox(height: size.height / 40),
             TextField(
               controller: _buildingController,
-              decoration: InputDecoration(
-                labelText: 'Building',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              decoration: _getInputDecoration('Building'),
             ),
             SizedBox(height: size.height / 40),
             TextField(
               controller: _cityController,
-              decoration: InputDecoration(
-                labelText: 'City',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              decoration: _getInputDecoration('City'),
             ),
             SizedBox(height: size.height / 40),
             TextField(
               controller: _pincodeController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'Pincode',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              decoration: _getInputDecoration('PinCode'),
             ),
             SizedBox(height: size.height / 40),
           ],
@@ -173,5 +143,22 @@ class _FinancialInfoScreenState extends State<FinancialInfoScreen> {
         ),
       ),
     );
+  }
+
+  InputDecoration _getInputDecoration(String labelText) {
+    return InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(color: Colors.blue.shade300),
+        filled: true,
+        fillColor: Colors.blue.shade50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 0),
+        ));
   }
 }

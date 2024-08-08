@@ -330,7 +330,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
 
   void _login() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('number', widget.number);
+    prefs.setString('phoneNumber', widget.number);
     print(widget.number);
     prefs.setBool('isLoggedIn', true);
     final otp = _controllers.map((controller) => controller.text).join();
@@ -425,7 +425,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
                 SizedBox(height: widget.size.height / 20),
                 NormalButton(
                   size: widget.size,
-                  title: 'Login',
+                  title: 'Verify',
                   onPressed: _login,
                 ),
                 SizedBox(height: widget.size.height / 20),

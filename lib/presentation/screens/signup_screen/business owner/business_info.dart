@@ -85,52 +85,27 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
           children: [
             TextField(
               controller: _legalNameController,
-              decoration: InputDecoration(
-                labelText: 'Legal Name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              decoration: _getInputDecoration('Legal Name'),
             ),
             SizedBox(height: size.height / 40),
             TextField(
               controller: _registrationNumberController,
-              decoration: InputDecoration(
-                labelText: 'Registration Number',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              decoration: _getInputDecoration('Registration Number'),
             ),
             SizedBox(height: size.height / 40),
             TextField(
               controller: _officialWebsiteController,
-              decoration: InputDecoration(
-                labelText: 'Official Website',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              decoration: _getInputDecoration('Company Website'),
             ),
             SizedBox(height: size.height / 40),
             TextField(
               controller: _officialEmailController,
-              decoration: InputDecoration(
-                labelText: 'Official Email',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              decoration: _getInputDecoration('Company Mail'),
             ),
             SizedBox(height: size.height / 40),
             TextField(
               controller: _companyNumberController,
-              decoration: InputDecoration(
-                labelText: 'Company Number',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              decoration: _getInputDecoration('Company Number'),
             ),
             SizedBox(height: size.height / 40),
             BlocBuilder<BusinessTypeBloc, BusinessTypeState>(
@@ -138,21 +113,11 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
                 if (state is BusinessTypeLoading) {
                   return Center(
                       child: TextField(
-                    decoration: InputDecoration(
-                      labelText: 'Business Type',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
+                    decoration: _getInputDecoration('Business Type'),
                   ));
                 } else if (state is BusinessTypeLoaded) {
                   return DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      labelText: 'Business Type',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
+                    decoration: _getInputDecoration('Business Type'),
                     value: _selectedBusinessType,
                     items: state.businessTypes
                         .map((BusinessType type) => DropdownMenuItem<String>(
@@ -178,21 +143,11 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
                 if (state is IndustrySectorLoading) {
                   return Center(
                       child: TextField(
-                    decoration: InputDecoration(
-                      labelText: 'Industry Sector',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
+                    decoration: _getInputDecoration('Industry Sector'),
                   ));
                 } else if (state is IndustrySectorLoaded) {
                   return DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      labelText: 'Industry Sector',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
+                    decoration: _getInputDecoration('Industry Sector'),
                     value: _selectedIndustrySector,
                     items: state.industrySectors
                         .map(
@@ -218,15 +173,11 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
               onTap: () => _selectDate(context),
               child: AbsorbPointer(
                 child: TextField(
-                  decoration: InputDecoration(
-                    labelText: _selectedDate == null
-                        ? 'Date of Incorporation'
-                        : '${_selectedDate!.toLocal()}'.split(' ')[0],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
+                    decoration: _getInputDecoration(
+                  _selectedDate == null
+                      ? 'Date of Incorporation'
+                      : '${_selectedDate!.toLocal()}'.split(' ')[0],
+                )),
               ),
             ),
             SizedBox(height: size.height / 40),
@@ -257,5 +208,22 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
         ),
       ),
     );
+  }
+
+  InputDecoration _getInputDecoration(String labelText) {
+    return InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(color: Colors.blue.shade300),
+        filled: true,
+        fillColor: Colors.blue.shade50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 0),
+        ));
   }
 }

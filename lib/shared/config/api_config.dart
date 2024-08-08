@@ -56,7 +56,7 @@ class Config {
       'https://api-innovitegra.online/corporate/register/add_user';
   static const String appVersion = '4.0.4';
   static const String deviceId =
-      '986t534666587645342345243273485345331343576895005';
+      '986t5346665876453423452432734853453313435768950311';
   static String token =
       'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVZGlkIjoiOTg2dDUzNDY2NjU4NzY0NTM0MjM0NTI0MzI3MzQ4NTM0NTMzMTM0MzU3Njg5NTMyMyIsIkN1c3RvbWVySUQiOiIyODEiLCJleHAiOjE3MjI5MzMyODQsImlzcyI6IkFaZVdhbGxldCJ9.TgQ_p5PltDgyMqrMVlJfIlnTX8_sxiF_R2C7jY5kqUs';
 }

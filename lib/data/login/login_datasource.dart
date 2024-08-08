@@ -31,11 +31,17 @@ class LoginDataSourceImpl implements LoginDataSource {
       final jwt_token = responseData["jwt_token"];
       final refresh_token = responseData["refresh_token"];
       final user_type = responseData["user_type"];
-      print(response.body);
+
+      print(
+          '===========================================================================================================================================$response.body');
       if (status == 'Fail') {
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setBool('isLoggedIn', false);
+        print('qwertyui');
         throw Exception(message);
       } else if (status == 'Success') {
         final prefs = await SharedPreferences.getInstance();
+        prefs.setBool('isLoggedIn', true);
         await prefs.setString('jwt_token', jwt_token);
         await prefs.setString('refresh_token', refresh_token);
         await prefs.setString('userType', user_type);
@@ -45,6 +51,7 @@ class LoginDataSourceImpl implements LoginDataSource {
       }
       return LoginResponse.fromJson(responseData);
     } else {
+      print('qwertyui');
       throw Exception('Failed to login');
     }
   }

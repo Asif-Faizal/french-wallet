@@ -1,13 +1,13 @@
-import 'dart:convert';
-import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
-import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import '../../../shared/config/api_config.dart';
+import '../../bloc/set_passcode/set_passcode_bloc.dart';
+import '../../bloc/set_passcode/set_passcode_event.dart';
+import '../../bloc/set_passcode/set_passcode_state.dart';
+import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
+import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
+import 'package:go_router/go_router.dart';
 
 class SetPasscodeScreen extends StatefulWidget {
   const SetPasscodeScreen({Key? key}) : super(key: key);
@@ -53,7 +53,6 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
   String? businessType;
   String? industryType;
   String? docId;
-  String? passcode;
   String? jwt_token2;
 
   @override
@@ -92,10 +91,7 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
       businessType = prefs.getString('businessType');
       industryType = prefs.getString('industryType');
       docId = prefs.getString('docId');
-      passcode = prefs.getString('passcode');
     });
-
-    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     print('User Type: $userType');
     print('Phone Number: $phoneNumber');
     print('ID Number: $idNumber');
@@ -115,14 +111,13 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
     print('Turnover: $turnover');
     print('Company Building: $companyBuilding');
     print('Company City: $companyCity');
-    print('Company Pincode: $companyPincode');
+    print('Company PinCode: $companyPincode');
     print('Company Website: $companyWebsite');
     print('Company Mail: $companyMail');
     print('Company Phone: $companyPhone');
     print('Business Type: $businessType');
     print('Industry Type: $industryType');
     print('DIC ID: $docId');
-    print('Passcode: $passcode');
   }
 
   @override
@@ -133,262 +128,128 @@ class _SetPasscodeScreenState extends State<SetPasscodeScreen> {
     for (var controller in _confirmPasscodeControllers) {
       controller.dispose();
     }
-    for (var node in _passcodeFocusNodes) {
-      node.dispose();
-    }
-    for (var node in _confirmPasscodeFocusNodes) {
-      node.dispose();
-    }
     super.dispose();
-  }
-
-  Future<Map<String, String>> sendDetails() async {
-    final Map<String, String> headers = {
-      'X-Password': Config.password,
-      'X-Username': Config.username,
-      'Appversion': Config.appVersion,
-      'Content-Type': 'application/json',
-      'Deviceid': Config.deviceId,
-    };
-
-    final body =
-        // {
-        //   "mobile": "+911234123412",
-        //   "email": "tes@gmail.com",
-        //   "first_name": "name",
-        //   "user_country_id": "IND",
-        //   "user_gender": "male",
-        //   "password": "loginpwd",
-        //   "user_civil_id": "123456789009",
-        //   "civil_id_expiry": "",
-        //   "fcm_id": "",
-        //   "gcm_id": "",
-        //   "civil_id_image": "421402112499.jpg",
-        //   "selfie_image": "421402112501.pdf",
-        //   "dob": "2019-12-02",
-        //   "user_type": "COORPORATE",
-        //   "ubo_info": [
-        //     {
-        //       "full_name": "ASif",
-        //       "percentage_ubo": "",
-        //       "part_of_ownership": "",
-        //       "nationality": "Indian",
-        //       "mobile": "+919876543210",
-        //       "email": "mail@gmail.com",
-        //       "alternate_email": "",
-        //       "address": "Street, City, Country"
-        //     }
-        //   ],
-        //   "fin_info": {
-        //     "annual_turnover": "1000000",
-        //     "tin_number": "TIN123456123456",
-        //     "pan_number": "PAN123456123456"
-        //   },
-        //   "business_kyc_info": {
-        //     "business_type": "Education",
-        //     "industry_type": "E-Commerce",
-        //     "official_website": "website.com",
-        //     "alternate_mobile": "+919876543211",
-        //     "building_no": "10",
-        //     "door_number": "135",
-        //     "street": "Street",
-        //     "city": "city",
-        //     "state": "state",
-        //     "country": "india",
-        //     "postal_code": "123456",
-        //     "email_address": "business@gmail.com",
-        //     "alternate_email": ""
-        //   }
-        // };
-
-        {
-      "mobile": phoneNumber,
-      "email": email,
-      "first_name": firstName,
-      "user_country_id": nationality,
-      "user_gender": gender,
-      "password": passcode,
-      "user_civil_id": idNumber,
-      "civil_id_expiry": "EXP ID IF AVAILABLE",
-      "fcm_id": "348ehweriwrew",
-      "gcm_id": "348ehweriwrew",
-      "civil_id_image": idImageFront,
-      "selfie_image": selfieImage,
-      "dob": '2006-08-03',
-      "user_type": userType,
-      "ubo_info": [
-        {
-          "full_name": fullName,
-          "percentage_ubo": "50%",
-          "part_of_ownership": "Owner",
-          "nationality": nationality,
-          "mobile": phoneNumber,
-          "email": email,
-          "alternate_email": "j.doe@example.com",
-          "address": address
-        }
-      ],
-      "fin_info": {
-        "annual_turnover": turnover,
-        "tin_number": tinNumber,
-        "pan_number": panNumber
-      },
-      "business_kyc_info": {
-        "business_type": businessType,
-        "industry_type": industryType,
-        "official_website": companyWebsite,
-        "alternate_mobile": companyPhone,
-        "building_no": companyBuilding,
-        "door_number": "12A",
-        "street": "Main Street",
-        "city": companyCity,
-        "state": "StateName",
-        "country": "CountryName",
-        "postal_code": companyPincode,
-        "email_address": companyMail,
-        "alternate_email": "alt.business@example.com"
-      }
-    };
-    try {
-      final response = await http.post(
-        Uri.parse(Config.register_v2),
-        headers: headers,
-        body: jsonEncode(body),
-      );
-      print(body);
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        final status = responseData["status"];
-        final message = responseData["message"];
-        final jwt_token = responseData["jwt_token"];
-        final refresh_token = responseData["refresh_token"];
-        print(response.body);
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('jwt_token', jwt_token);
-        await prefs.setString('refresh_token', refresh_token);
-        jwt_token2 = prefs.getString('jwt_token');
-        print('JWT TOKEN: $jwt_token2');
-        return {'status': status, 'message': message};
-      } else {
-        final responseData = jsonDecode(response.body);
-        final message = responseData["message"];
-        return {'status': 'Fail', 'message': message};
-      }
-    } catch (e) {
-      return {'status': 'Fail', 'message': 'Exception: $e'};
-    }
-  }
-
-  void _setPasscode() async {
-    String passcode =
-        _passcodeControllers.map((controller) => controller.text).join();
-    String confirmPasscode =
-        _confirmPasscodeControllers.map((controller) => controller.text).join();
-
-    if (passcode.isEmpty || confirmPasscode.isEmpty) {
-      _showSnackBar('Please enter both passcodes.');
-    } else if (passcode != confirmPasscode) {
-      _showSnackBar('Passcodes do not match.');
-    } else {
-      final result = await sendDetails();
-      if (result['status'] == 'Success') {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        GoRouter.of(context).pushNamed(AppRouteConst.setTransactionPinRoute);
-        _showSnackBar('Passcode set successfully.');
-        // prefs.remove(key);
-        await prefs.setString('passcode', passcode);
-        await prefs.setString('jwt_token', jwt_token2!);
-      } else {
-        _showSnackBar('Error: ${result['message']}');
-      }
-    }
-  }
-
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-        content: Text(message)));
-  }
-
-  Widget _buildPasscodeFields(
-      List<TextEditingController> controllers, List<FocusNode> focusNodes) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: List.generate(
-        6,
-        (index) => _buildPasscodeField(controllers[index], focusNodes, index),
-      ),
-    );
-  }
-
-  Widget _buildPasscodeField(
-      TextEditingController controller, List<FocusNode> focusNodes, int index) {
-    return SizedBox(
-      width: 50,
-      child: TextField(
-        controller: controller,
-        focusNode: focusNodes[index],
-        textAlign: TextAlign.center,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        keyboardType: TextInputType.number,
-        maxLength: 1,
-        onChanged: (value) {
-          if (value.isNotEmpty) {
-            if (index < focusNodes.length - 1) {
-              FocusScope.of(context).requestFocus(focusNodes[index + 1]);
-            }
-          } else {
-            if (index > 0) {
-              FocusScope.of(context).requestFocus(focusNodes[index - 1]);
-            }
-          }
-        },
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          counterText: '',
-        ),
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: NormalAppBar(text: 'Set Passcode'),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 30),
-            const Text(
-              'Enter your 6-digit passcode:',
-              style: TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 10),
-            _buildPasscodeFields(_passcodeControllers, _passcodeFocusNodes),
-            const SizedBox(height: 50),
-            const Text(
-              'Confirm your 6-digit passcode:',
-              style: TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 10),
-            _buildPasscodeFields(
-                _confirmPasscodeControllers, _confirmPasscodeFocusNodes),
-          ],
+      body: BlocProvider(
+        create: (context) => SetPasscodeBloc(),
+        child: BlocListener<SetPasscodeBloc, SetPasscodeState>(
+          listener: (context, state) {
+            if (state is PasscodeSuccess) {
+              GoRouter.of(context)
+                  .pushNamed(AppRouteConst.completedAnimationRoute);
+            } else if (state is PasscodeFailure) {
+              // Show error message
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.message)));
+            }
+          },
+          child: BlocBuilder<SetPasscodeBloc, SetPasscodeState>(
+            builder: (context, state) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      'Enter Passcode:',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: List.generate(6, (index) {
+                        return _buildPasscodeField(_passcodeControllers[index],
+                            _passcodeFocusNodes[index], index, true);
+                      }),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Confirm Passcode:',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: List.generate(6, (index) {
+                        return _buildPasscodeField(
+                            _confirmPasscodeControllers[index],
+                            _confirmPasscodeFocusNodes[index],
+                            index,
+                            false);
+                      }),
+                    ),
+                    const SizedBox(height: 40),
+                    state is PasscodeLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : NormalButton(
+                            size: MediaQuery.of(context).size,
+                            title: 'Set Passcode',
+                            onPressed: () {
+                              final passcode = _passcodeControllers
+                                  .map((controller) => controller.text)
+                                  .join('');
+                              final confirmPasscode =
+                                  _confirmPasscodeControllers
+                                      .map((controller) => controller.text)
+                                      .join('');
+                              context.read<SetPasscodeBloc>().add(PasscodeSet(
+                                  passcode: passcode,
+                                  confirmPasscode: confirmPasscode));
+                            },
+                          ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(15),
-        child: NormalButton(
-          onPressed: _setPasscode,
-          title: 'Confirm Passcode',
-          size: size,
+    );
+  }
+
+  Widget _buildPasscodeField(TextEditingController controller,
+      FocusNode focusNode, int index, bool isPasscode) {
+    return SizedBox(
+      width: 50,
+      height: 50,
+      child: TextFormField(
+        controller: controller,
+        focusNode: focusNode,
+        keyboardType: TextInputType.number,
+        obscureText: true,
+        maxLength: 1,
+        textAlign: TextAlign.center,
+        decoration: const InputDecoration(
+          counterText: '',
+          border: OutlineInputBorder(),
         ),
+        onChanged: (value) {
+          if (value.length == 1) {
+            if (isPasscode && index < _passcodeFocusNodes.length - 1) {
+              FocusScope.of(context)
+                  .requestFocus(_passcodeFocusNodes[index + 1]);
+            } else if (!isPasscode &&
+                index < _confirmPasscodeFocusNodes.length - 1) {
+              FocusScope.of(context)
+                  .requestFocus(_confirmPasscodeFocusNodes[index + 1]);
+            } else {
+              FocusScope.of(context).unfocus();
+            }
+          } else if (value.isEmpty) {
+            if (isPasscode && index > 0) {
+              FocusScope.of(context)
+                  .requestFocus(_passcodeFocusNodes[index - 1]);
+            } else if (!isPasscode && index > 0) {
+              FocusScope.of(context)
+                  .requestFocus(_confirmPasscodeFocusNodes[index - 1]);
+            }
+          }
+        },
       ),
     );
   }

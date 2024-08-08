@@ -29,7 +29,7 @@ class CheckMobileDataSourceImpl implements CheckMobileDataSource {
         headers: headers,
         body: jsonEncode(body),
       );
-
+      print(response.body);
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         final checkMobileResponse =

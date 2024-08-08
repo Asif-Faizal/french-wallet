@@ -69,7 +69,7 @@ class _SetTransactionPinScreenState extends State<SetTransactionPinScreen> {
       'Deviceid': Config.deviceId,
       'Authorization': 'Bearer $jwt_token',
     };
-    final body = {"pin": '1111', "re_pin": '1111', "password": "111111"};
+    final body = {"pin": '1111', "re_pin": '1111', "password": 'passcode'};
     try {
       final response = await http.post(
         Uri.parse(Config.set_transaction_pin),
@@ -107,7 +107,7 @@ class _SetTransactionPinScreenState extends State<SetTransactionPinScreen> {
     } else {
       final response = await setPin();
       if (response['status'] == 'Success') {
-        _showSnackBar('PIN set successfully.');
+        _showOkSnackBar('PIN set successfully.');
         GoRouter.of(context).pushNamed(AppRouteConst.completedAnimationRoute);
       } else {
         _showSnackBar('Error creating PIN');
@@ -121,6 +121,13 @@ class _SetTransactionPinScreenState extends State<SetTransactionPinScreen> {
       behavior: SnackBarBehavior.floating,
       content: Text(message),
     ));
+  }
+
+  void _showOkSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        content: Text(message)));
   }
 
   Widget _buildPinFields(
@@ -139,28 +146,24 @@ class _SetTransactionPinScreenState extends State<SetTransactionPinScreen> {
     return SizedBox(
       width: 50,
       child: TextField(
-        controller: controller,
-        focusNode: focusNodes[index],
-        textAlign: TextAlign.center,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        keyboardType: TextInputType.number,
-        maxLength: maxLength,
-        onChanged: (value) {
-          if (value.isNotEmpty) {
-            if (index < focusNodes.length - 1) {
-              FocusScope.of(context).requestFocus(focusNodes[index + 1]);
+          controller: controller,
+          focusNode: focusNodes[index],
+          textAlign: TextAlign.center,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          keyboardType: TextInputType.number,
+          maxLength: maxLength,
+          onChanged: (value) {
+            if (value.isNotEmpty) {
+              if (index < focusNodes.length - 1) {
+                FocusScope.of(context).requestFocus(focusNodes[index + 1]);
+              }
+            } else {
+              if (index > 0) {
+                FocusScope.of(context).requestFocus(focusNodes[index - 1]);
+              }
             }
-          } else {
-            if (index > 0) {
-              FocusScope.of(context).requestFocus(focusNodes[index - 1]);
-            }
-          }
-        },
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          counterText: '',
-        ),
-      ),
+          },
+          decoration: _getInputDecoration()),
     );
   }
 
@@ -190,35 +193,31 @@ class _SetTransactionPinScreenState extends State<SetTransactionPinScreen> {
             ),
             const SizedBox(height: 10),
             _buildPinFields(_confirmPinControllers, _confirmPinFocusNodes),
+            Spacer(),
+            NormalButton(
+              onPressed: _checkPin,
+              title: 'Set PIN',
+              size: size,
+            ),
           ],
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Container(
-          height: size.height / 6,
-          child: Column(
-            children: [
-              NormalButton(
-                onPressed: _checkPin,
-                title: 'Set PIN',
-                size: size,
-              ),
-              SizedBox(
-                height: size.height / 60,
-              ),
-              NormalButton(
-                onPressed: () {
-                  GoRouter.of(context)
-                      .pushNamed(AppRouteConst.completedAnimationRoute);
-                },
-                title: 'Skip',
-                size: size,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
+  }
+
+  InputDecoration _getInputDecoration() {
+    return InputDecoration(
+        counterText: '',
+        filled: true,
+        fillColor: Colors.blue.shade50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade300, width: 0),
+        ));
   }
 }

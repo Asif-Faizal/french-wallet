@@ -2,7 +2,6 @@ import 'package:ewallet2/presentation/widgets/shared/normal_appbar.dart';
 import 'package:ewallet2/shared/router/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +10,7 @@ import 'package:ewallet2/presentation/widgets/shared/normal_button.dart';
 import '../../../data/checkmobile/checkmobile_datasource.dart';
 import '../../../data/checkmobile/checkmobile_repo_impl.dart';
 import '../../../domain/checkmobile/checkmobile.dart';
+import '../../../shared/country_code.dart';
 import '../../bloc/checkmobile/checkmobile_bloc.dart';
 import '../../bloc/checkmobile/checkmobile_event.dart';
 import '../../bloc/checkmobile/checkmobile_state.dart';
@@ -31,6 +31,9 @@ class _LoginScreenState extends State<LoginScreen> {
   String _userType = '';
   bool _isButtonEnabled = false;
   late CheckMobileBloc _CheckMobileBloc;
+  FocusNode _numberFocusNode = FocusNode();
+  final List<Map<String, String>> _countryCodes = CountryCode.countryCodes;
+  String _selectedCountryDialCode = '+91';
 
   @override
   void initState() {
@@ -49,6 +52,77 @@ class _LoginScreenState extends State<LoginScreen> {
     _phoneController.dispose();
     _CheckMobileBloc.close();
     super.dispose();
+  }
+
+  void _showCountryCodePicker() async {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            List<Map<String, String>> filteredCountryCodes =
+                List.from(_countryCodes);
+
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              title: Text('Select Country Code'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        filteredCountryCodes = _countryCodes.where((country) {
+                          final name = country['name']?.toLowerCase() ?? '';
+                          final dialCode =
+                              country['dialCode']?.toLowerCase() ?? '';
+                          final query = value.toLowerCase();
+
+                          return name.contains(query) ||
+                              dialCode.contains(query);
+                        }).toList();
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Search',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: filteredCountryCodes.map((country) {
+                          return ListTile(
+                            leading: Text(
+                              country['flag']!,
+                              style: TextStyle(fontSize: 24),
+                            ),
+                            title: Text(
+                                '${country['name']} (${country['dialCode']})'),
+                            onTap: () {
+                              setState(() {
+                                _selectedCountryDialCode = country['dialCode']!;
+                              });
+                              Navigator.pop(context);
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Future<void> _retrieveData() async {
@@ -129,9 +203,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onLoginButtonPressed() {
+    final number = _selectedCountryDialCode + _phoneController.text;
     if (_phoneController.text.isNotEmpty) {
-      _CheckMobileBloc.add(
-          CheckMobileEvent(mobile: _phoneNumber.phoneNumber ?? ''));
+      _CheckMobileBloc.add(CheckMobileEvent(mobile: number));
     }
   }
 
@@ -148,34 +222,55 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: InternationalPhoneNumberInput(
-                onInputChanged: (PhoneNumber number) {
-                  setState(() {
-                    _phoneNumber = number;
-                  });
-                },
-                onInputValidated: (bool value) {},
-                selectorConfig: const SelectorConfig(
-                  selectorType: PhoneInputSelectorType.DROPDOWN,
-                ),
-                ignoreBlank: false,
-                selectorTextStyle: Theme.of(context).textTheme.bodyLarge,
-                textStyle: Theme.of(context).textTheme.bodyLarge,
-                initialValue: _phoneNumber,
-                textFieldController: _phoneController,
-                formatInput: true,
-                maxLength: 10,
-                keyboardType: TextInputType.number,
-                inputDecoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)?.mobile_number,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: const BorderSide(
-                      color: Colors.black,
-                      width: 2.0,
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: _showCountryCodePicker,
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Text(
+                        _selectedCountryDialCode,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 16),
+                      ),
                     ),
                   ),
-                ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: _phoneController,
+                      decoration: InputDecoration(
+                          hintText: 'Number',
+                          hintStyle: TextStyle(color: Colors.blue.shade300),
+                          filled: true,
+                          fillColor: Colors.blue.shade50,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(
+                                color: Colors.blue.shade300, width: 1),
+                          ),
+                          enabledBorder: _numberFocusNode.hasFocus
+                              ? OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                  borderSide: BorderSide(
+                                      color: Colors.blue.shade300, width: 1),
+                                )
+                              : OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                  borderSide: BorderSide(
+                                      color: Colors.blue.shade300, width: 0),
+                                )),
+                      keyboardType: TextInputType.phone,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 20),
@@ -250,7 +345,6 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
   void _login() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('number', widget.number);
-    prefs.setBool('isLoggedIn', true);
     final password = _controllers.map((controller) => controller.text).join();
     BlocProvider.of<LoginBloc>(context).add(
       LoginSubmitted(

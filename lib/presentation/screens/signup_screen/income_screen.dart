@@ -89,7 +89,7 @@ class _OccupationIncomeDetailsScreenState
 
   void _updateButtonState() {
     setState(() {
-      if (_userType == 'corporate' && _selectedCorporate == 'business-owner') {
+      if (_userType == 'CORPORATE' && _selectedCorporate == 'business-owner') {
         _isButtonEnabled = _selectedOccupation != null &&
             _selectedAnnualIncome != null &&
             _businessNameController.text.isNotEmpty &&
@@ -134,7 +134,7 @@ class _OccupationIncomeDetailsScreenState
               _buildTextFieldRow('PAN Number', _panNumberController, theme,
                   size, true, 'Enter PAN Number'),
               SizedBox(height: size.height / 60),
-              if (_userType == 'corporate' &&
+              if (_userType == 'CORPORATE' &&
                   _selectedCorporate == 'business-owner')
                 _buildTextFieldRow('Business Name', _businessNameController,
                     theme, size, true, 'Enter Business Name'),
@@ -202,8 +202,7 @@ class _OccupationIncomeDetailsScreenState
       child: Container(
         height: size.height / 14,
         child: TextField(
-            controller: controller,
-            decoration: _getInputDecoration('Enter PAN Number')),
+            controller: controller, decoration: _getInputDecoration(label)),
       ),
     );
   }
@@ -215,14 +214,14 @@ class _OccupationIncomeDetailsScreenState
     if (_selectedOccupation == null ||
         _selectedAnnualIncome == null ||
         _panNumberController.text.isEmpty ||
-        (_userType == 'corporate' &&
+        (_userType == 'CORPORATE' &&
             _selectedCorporate == 'business-owner' &&
             (_businessNameController.text.isEmpty))) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please fill in all fields')),
       );
     } else {
-      if (_userType == 'corporate' && _selectedCorporate == 'business-owner') {
+      if (_userType == 'CORPORATE' && _selectedCorporate == 'business-owner') {
         GoRouter.of(context).pushNamed(AppRouteConst.financialInfoRoute);
       } else {
         GoRouter.of(context).pushNamed(AppRouteConst.politicallyExposedRoute);
